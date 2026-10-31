@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HeartSync - Long Distance Couple Hub</title>
+    <title>Sync - Long Distance Hub</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -19,12 +19,26 @@
                 extend: {
                     colors: {
                         rose: {
-                            50: '#fff1f2',
-                            100: '#ffe4e6',
-                            300: '#fca5a5',
-                            500: '#f43f5e',
-                            600: '#e11d48',
-                            900: '#881337',
+                            50: '#fdf2f8',
+                            100: '#fce7f3',
+                            300: '#f472b6',
+                            500: '#e11d48', // Soft warm rose
+                            600: '#be123c',
+                            900: '#4c0519',
+                        },
+                        pink: {
+                            300: '#f472b6',
+                            400: '#e879f9',
+                            500: '#d946ef',
+                            600: '#c026d3',
+                            700: '#a21caf',
+                        },
+                        lavender: {
+                            300: '#e9d5ff',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            950: '#1e1b4b',
                         },
                         amber: {
                             400: '#fbbf24',
@@ -34,20 +48,25 @@
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
                         handwriting: ['"Caveat"', 'cursive'],
                     },
-                    animation: {
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'glow': 'glow 2s ease-in-out infinite alternate',
-                        'float': 'float 4s ease-in-out infinite',
-                    },
                     keyframes: {
                         glow: {
-                            '0%': { boxShadow: '0 0 15px rgba(244, 63, 94, 0.4), inset 0 0 15px rgba(244, 63, 94, 0.4)' },
-                            '100%': { boxShadow: '0 0 35px rgba(244, 63, 94, 0.9), inset 0 0 25px rgba(244, 63, 94, 0.9)' }
+                            '0%': { boxShadow: '0 0 15px rgba(225, 29, 72, 0.2), inset 0 0 15px rgba(225, 29, 72, 0.2)' },
+                            '100%': { boxShadow: '0 0 25px rgba(168, 85, 247, 0.4), inset 0 0 20px rgba(225, 29, 72, 0.4)' }
                         },
                         float: {
                             '0%, 100%': { transform: 'translateY(0px)' },
                             '50%': { transform: 'translateY(-6px)' }
+                        },
+                        borderPulse: {
+                            '0%, 100%': { borderColor: 'rgba(225, 29, 72, 0.25)', boxShadow: '0 0 8px rgba(168, 85, 247, 0.15)' },
+                            '50%': { borderColor: 'rgba(168, 85, 247, 0.45)', boxShadow: '0 0 14px rgba(225, 29, 72, 0.25)' }
                         }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 4s ease-in-out infinite',
+                        'border-pulse': 'borderPulse 3.5s ease-in-out infinite'
                     }
                 }
             }
@@ -63,10 +82,10 @@
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
         .dark-glass {
-            background: rgba(15, 23, 42, 0.65);
+            background: rgba(30, 27, 75, 0.7);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(244, 114, 182, 0.2);
         }
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
@@ -78,29 +97,34 @@
         .lamp-glow-effect {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .nav-glow-pill {
+            background: linear-gradient(135deg, rgba(244, 114, 182, 0.15) 0%, rgba(225, 29, 72, 0.1) 100%);
+            border: 1px solid rgba(244, 114, 182, 0.3);
+            box-shadow: 0 0 12px rgba(244, 114, 182, 0.15);
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-800 font-sans min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
+<body class="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
 
     <!-- Top Privacy & Self-Hosted Status Banner -->
-    <header class="fixed top-0 left-0 right-0 z-50 px-4 py-2 bg-slate-900/90 text-slate-300 text-xs flex justify-between items-center backdrop-blur-md border-b border-slate-800">
+    <header class="fixed top-0 left-0 right-0 z-50 px-4 py-2 bg-slate-950/90 text-slate-300 text-xs flex justify-between items-center backdrop-blur-md border-b border-rose-900/30">
         <div class="flex items-center space-x-2">
-            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span class="font-medium tracking-wide">HeartSync Server: <span class="text-emerald-400">Connected to Home NAS</span></span>
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-400 animate-pulse shadow-md shadow-rose-500/30"></span>
+            <span class="font-medium tracking-wide">Sync Server: <span class="text-rose-300">Connected</span></span>
         </div>
         <div class="flex items-center space-x-3">
             <!-- Active User Role Selector Toggle -->
-            <div class="flex items-center space-x-1.5 bg-slate-800/90 border border-slate-700/80 rounded-full px-2 py-0.5">
+            <div class="flex items-center space-x-1.5 bg-slate-900/80 border border-rose-900/40 rounded-full px-2.5 py-1">
                 <i class="fa-solid fa-user-tag text-rose-400 text-[10px]"></i>
-                <span class="text-[10px] text-slate-400 font-medium">Role:</span>
-                <select id="user-role-select" onchange="handleRoleChange(event)" class="bg-transparent text-white font-semibold text-[11px] focus:outline-none cursor-pointer">
-                    <option value="me" class="bg-slate-900 text-white">Me (Husband)</option>
-                    <option value="her" class="bg-slate-900 text-white">Her (Wife)</option>
+                <span class="text-[10px] text-pink-300 font-medium">Role:</span>
+                <select id="user-role-select" onchange="handleRoleChange(event)" class="bg-transparent text-slate-200 font-medium text-[11px] focus:outline-none cursor-pointer">
+                    <option value="me" class="bg-slate-900 text-slate-200">Me (Husband)</option>
+                    <option value="her" class="bg-slate-900 text-slate-200">Her (Wife)</option>
                 </select>
             </div>
 
             <button onclick="togglePrivacyModal()" class="text-slate-400 hover:text-white transition-colors">
-                <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                <i class="fa-solid fa-shield-halved text-slate-400 hover:text-rose-300"></i>
             </button>
         </div>
     </header>
@@ -112,20 +136,20 @@
         <section id="tab-1" class="tab-content transition-opacity duration-300 opacity-100 p-4 space-y-6">
             
             <!-- Animated Memory Photo Frame Header -->
-            <div class="relative rounded-3xl overflow-hidden shadow-2xl bg-slate-900 border border-slate-800 p-5 space-y-4">
+            <div class="relative rounded-3xl overflow-hidden shadow-xl bg-slate-900/80 border border-rose-900/30 p-5 space-y-4">
                 
                 <!-- Section Title & Badges -->
                 <div class="flex justify-between items-center z-20 relative">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/80 text-white backdrop-blur-md shadow-sm">
-                        <i class="fa-solid fa-heart mr-1.5 text-xs animate-pulse"></i> Next Reunion
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30 backdrop-blur-md">
+                        <i class="fa-solid fa-heart mr-1.5 text-xs animate-pulse text-rose-400"></i> Next Reunion
                     </span>
-                    <span id="role-indicator-badge" class="text-[11px] text-slate-300 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700 backdrop-blur-md">
-                        <i class="fa-solid fa-user-check text-rose-400 mr-1"></i> Active Role: Me
+                    <span id="role-indicator-badge" class="text-[11px] text-pink-200 bg-slate-950/70 px-2.5 py-1 rounded-full border border-pink-900/40 font-medium">
+                        <i class="fa-solid fa-user-check text-rose-400 mr-1"></i> Role: Me
                     </span>
                 </div>
 
                 <!-- Single Smooth Cross-Fade Frame cycling between 2 Memory Photos -->
-                <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden border border-slate-700/60 bg-slate-950 shadow-inner group">
+                <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden border border-rose-900/30 bg-slate-950 shadow-inner group">
                     
                     <!-- Memory Photo 1 -->
                     <img id="memory-photo-1" src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1000&q=80" alt="Shared Memory 1" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-100">
@@ -137,9 +161,9 @@
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-transparent"></div>
 
                     <!-- Upload Controls Overlay with Role-Based Permission Control -->
-                    <div class="absolute bottom-3 left-3 right-3 z-10 flex justify-between items-center backdrop-blur-md bg-slate-900/75 border border-slate-700/60 p-2 rounded-xl">
-                        <div class="flex items-center space-x-2 text-[11px] text-slate-200">
-                            <i class="fa-solid fa-images text-rose-400 animate-pulse"></i>
+                    <div class="absolute bottom-3 left-3 right-3 z-10 flex justify-between items-center backdrop-blur-md bg-slate-950/80 border border-slate-800 p-2 rounded-xl">
+                        <div class="flex items-center space-x-2 text-[11px] text-slate-300">
+                            <i class="fa-solid fa-images text-rose-400"></i>
                             <span id="photo-cycle-indicator" class="font-medium">Memory #1 of 2</span>
                         </div>
                         <div id="photo-permissions-container" class="flex space-x-2">
@@ -150,106 +174,120 @@
 
                 <!-- Countdown Timer Display -->
                 <div class="text-center pt-1">
-                    <h1 class="text-white text-sm font-medium opacity-90 mb-2">Counting down until we embrace again...</h1>
+                    <h1 class="text-pink-200/90 text-xs font-medium mb-3">Counting down until we embrace again...</h1>
                     
                     <div class="grid grid-cols-4 gap-2 max-w-sm mx-auto">
-                        <div class="dark-glass rounded-2xl p-2 text-center border border-white/10">
-                            <span id="timer-days" class="block text-xl font-bold text-white font-mono">00</span>
-                            <span class="text-[9px] uppercase font-semibold text-rose-300 tracking-wider">Days</span>
+                        <div class="dark-glass rounded-2xl p-2.5 text-center border border-rose-900/40 shadow-sm">
+                            <span id="timer-days" class="block text-xl font-bold text-rose-200 font-mono">00</span>
+                            <span class="text-[9px] uppercase font-semibold text-rose-400 tracking-wider">Days</span>
                         </div>
-                        <div class="dark-glass rounded-2xl p-2 text-center border border-white/10">
-                            <span id="timer-hours" class="block text-xl font-bold text-white font-mono">00</span>
-                            <span class="text-[9px] uppercase font-semibold text-rose-300 tracking-wider">Hours</span>
+                        <div class="dark-glass rounded-2xl p-2.5 text-center border border-rose-900/40 shadow-sm">
+                            <span id="timer-hours" class="block text-xl font-bold text-rose-200 font-mono">00</span>
+                            <span class="text-[9px] uppercase font-semibold text-rose-400 tracking-wider">Hours</span>
                         </div>
-                        <div class="dark-glass rounded-2xl p-2 text-center border border-white/10">
-                            <span id="timer-minutes" class="block text-xl font-bold text-white font-mono">00</span>
-                            <span class="text-[9px] uppercase font-semibold text-rose-300 tracking-wider">Mins</span>
+                        <div class="dark-glass rounded-2xl p-2.5 text-center border border-rose-900/40 shadow-sm">
+                            <span id="timer-minutes" class="block text-xl font-bold text-rose-200 font-mono">00</span>
+                            <span class="text-[9px] uppercase font-semibold text-rose-400 tracking-wider">Mins</span>
                         </div>
-                        <div class="dark-glass rounded-2xl p-2 text-center border border-white/10">
-                            <span id="timer-seconds" class="block text-xl font-bold text-white font-mono">00</span>
-                            <span class="text-[9px] uppercase font-semibold text-rose-300 tracking-wider">Secs</span>
+                        <div class="dark-glass rounded-2xl p-2.5 text-center border border-rose-900/40 shadow-sm">
+                            <span id="timer-seconds" class="block text-xl font-bold text-rose-200 font-mono">00</span>
+                            <span class="text-[9px] uppercase font-semibold text-rose-400 tracking-wider">Secs</span>
                         </div>
                     </div>
-
-                    <!-- Target Date Config Subtext -->
-                    <p class="text-slate-400 text-[11px] mt-3 font-light">
-                        Target Date: <span id="target-date-label" class="font-semibold text-white">December 25, 2026</span>
-                        <button onclick="editReunionDate()" class="ml-1.5 text-rose-400 hover:text-rose-300 underline"><i class="fa-solid fa-pen text-[9px]"></i> Edit</button>
-                    </p>
                 </div>
             </div>
 
-            <!-- Daily Question Prompt (Dual-Reveal Logic) -->
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-                <div class="flex items-center justify-between mb-4">
+            <!-- Daily Question Prompt (Dual-Reveal Logic & History Viewer) -->
+            <div class="bg-slate-900/80 border border-rose-900/30 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                <!-- Header with View Toggle (Today vs History) -->
+                <div class="flex items-center justify-between mb-4 pb-3 border-b border-rose-900/30">
                     <div class="flex items-center space-x-2">
-                        <div class="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400">
+                        <div class="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400 border border-rose-500/30">
                             <i class="fa-solid fa-comments"></i>
                         </div>
                         <div>
-                            <h2 class="text-white text-base font-semibold">Today's Couple Question</h2>
-                            <p class="text-slate-400 text-xs">Unlocks when both partners respond</p>
+                            <h2 class="text-white text-base font-semibold">Daily Connection Prompts</h2>
+                            <p class="text-pink-300/70 text-xs">Curated romantic questions updated daily</p>
                         </div>
                     </div>
-                    <span class="text-[11px] bg-slate-800 text-rose-300 px-2.5 py-1 rounded-full border border-slate-700">Day #142</span>
+                    <!-- View Mode Toggle Buttons -->
+                    <div class="flex bg-slate-950 p-1 rounded-xl border border-rose-900/40 text-[11px]">
+                        <button id="q-view-today-btn" onclick="switchQuestionView('today')" class="px-2.5 py-1 rounded-lg font-semibold bg-rose-500 text-white transition">Today</button>
+                        <button id="q-view-history-btn" onclick="switchQuestionView('history')" class="px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition">History</button>
+                    </div>
                 </div>
 
-                <!-- Active Question Text -->
-                <div class="bg-slate-950/80 rounded-2xl p-4 border border-slate-800 mb-5">
-                    <p id="current-question" class="text-slate-200 text-sm italic font-medium">"What is one tiny detail from our last date that you never want to forget?"</p>
-                </div>
-
-                <!-- Responses Section -->
-                <div class="space-y-4">
-                    <!-- Your Response Card -->
-                    <div class="space-y-2">
-                        <label class="text-xs font-semibold text-slate-300 flex justify-between">
-                            <span>Your Answer (You)</span>
-                            <span id="your-status-badge" class="text-amber-400 text-[11px]"><i class="fa-solid fa-clock mr-1"></i> Draft</span>
-                        </label>
-                        <div id="your-answer-container">
-                            <textarea id="your-answer-input" rows="2" placeholder="Write your secret answer..." class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500 transition resize-none"></textarea>
-                            <button id="submit-your-answer-btn" onclick="submitYourAnswer()" class="mt-2 w-full py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-medium text-xs rounded-xl shadow-lg shadow-rose-500/25 transition flex items-center justify-center space-x-2">
-                                <i class="fa-solid fa-paper-plane"></i>
-                                <span>Lock In My Response</span>
-                            </button>
+                <!-- SUB-SECTION 1: TODAY'S QUESTION VIEW -->
+                <div id="q-today-container" class="space-y-4">
+                    <!-- Active Question Text -->
+                    <div class="bg-slate-950/80 rounded-2xl p-4 border border-rose-900/30">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400">Today's Romantic Question</span>
+                            <span id="question-day-tag" class="text-[10px] bg-slate-900 text-pink-200 px-2 py-0.5 rounded-full border border-pink-900/40">Day #142</span>
                         </div>
-                        <div id="your-answer-submitted" class="hidden bg-slate-800/80 border border-emerald-500/30 rounded-xl p-3 text-slate-200 text-sm">
-                            <p id="your-answer-text" class="text-slate-300"></p>
-                        </div>
+                        <p id="current-question" class="text-slate-200 text-sm italic font-medium leading-relaxed"></p>
                     </div>
 
-                    <!-- Wife's Response Card (Blurred until both unlock) -->
-                    <div class="space-y-2 pt-2 border-t border-slate-800">
-                        <label class="text-xs font-semibold text-slate-300 flex justify-between">
-                            <span>Her Answer (Wife)</span>
-                            <span id="wife-status-badge" class="text-emerald-400 text-[11px]"><i class="fa-solid fa-circle-check mr-1"></i> Answered</span>
-                        </label>
-
-                        <!-- Blurred Locked Overlay State -->
-                        <div id="wife-answer-locked" class="relative rounded-xl overflow-hidden bg-slate-950 p-4 border border-slate-800 text-center">
-                            <div class="filter blur-md select-none text-slate-500 text-sm pointer-events-none">
-                                I remembered the way you held my coffee cup while I was looking for my keys in the cold evening...
+                    <!-- Responses Section -->
+                    <div class="space-y-4">
+                        <!-- Your Response Card -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-semibold text-slate-300 flex justify-between">
+                                <span>Your Answer (You)</span>
+                                <span id="your-status-badge" class="text-amber-400 text-[11px]"><i class="fa-solid fa-clock mr-1"></i> Draft</span>
+                            </label>
+                            <div id="your-answer-container">
+                                <textarea id="your-answer-input" rows="2" placeholder="Write your secret answer..." class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500 transition resize-none"></textarea>
+                                <button id="submit-your-answer-btn" onclick="submitYourAnswer()" class="mt-2 w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                    <span>Lock In My Response</span>
+                                </button>
                             </div>
-                            <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center p-3 text-center">
-                                <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mb-1">
-                                    <i class="fa-solid fa-lock text-xs"></i>
+                            <div id="your-answer-submitted" class="hidden bg-slate-800/80 border border-emerald-500/30 rounded-xl p-3 text-slate-200 text-sm">
+                                <p id="your-answer-text" class="text-slate-300"></p>
+                            </div>
+                        </div>
+
+                        <!-- Partner Response Card (Blurred until both unlock) -->
+                        <div class="space-y-2 pt-2 border-t border-slate-800">
+                            <label class="text-xs font-semibold text-slate-300 flex justify-between">
+                                <span>Her Answer (Wife)</span>
+                                <span id="wife-status-badge" class="text-emerald-400 text-[11px]"><i class="fa-solid fa-circle-check mr-1"></i> Answered</span>
+                            </label>
+
+                            <!-- Blurred Locked Overlay State -->
+                            <div id="wife-answer-locked" class="relative rounded-xl overflow-hidden bg-slate-950 p-4 border border-slate-800 text-center">
+                                <div class="filter blur-md select-none text-slate-500 text-sm pointer-events-none">
+                                    I remembered the way you held my coffee cup while I was looking for my keys in the cold evening...
                                 </div>
-                                <p class="text-xs text-slate-300 font-medium">Locked until you submit your answer!</p>
+                                <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center p-3 text-center">
+                                    <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mb-1">
+                                        <i class="fa-solid fa-lock text-xs"></i>
+                                    </div>
+                                    <p class="text-xs text-slate-300 font-medium">Locked until you submit your answer!</p>
+                                </div>
+                            </div>
+
+                            <!-- Revealed State -->
+                            <div id="wife-answer-unlocked" class="hidden bg-rose-950/20 border border-rose-500/20 rounded-xl p-3 text-slate-200 text-sm">
+                                <p id="wife-answer-text" class="text-rose-200 italic"></p>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Revealed State -->
-                        <div id="wife-answer-unlocked" class="hidden bg-rose-950/30 border border-rose-500/30 rounded-xl p-3 text-slate-200 text-sm">
-                            <p id="wife-answer-text" class="text-rose-100 italic">"When we got caught in the sudden rain shower and you gave me your sweater even though you were shivering!"</p>
-                        </div>
+                    <!-- Simulation Toggle Bar -->
+                    <div class="mt-4 pt-3 border-t border-slate-800/60 flex justify-between items-center text-[11px] text-slate-500">
+                        <span>Partner Sim Control:</span>
+                        <button onclick="toggleWifeResponseSim()" id="sim-wife-toggle" class="text-rose-400 hover:underline">Simulate Partner Answer (ON)</button>
                     </div>
                 </div>
 
-                <!-- Simulation Toggle Bar -->
-                <div class="mt-4 pt-3 border-t border-slate-800/60 flex justify-between items-center text-[11px] text-slate-500">
-                    <span>Partner Sim Control:</span>
-                    <button onclick="toggleWifeResponseSim()" id="sim-wife-toggle" class="text-rose-400 hover:underline">Simulate Partner Answer (ON)</button>
+                <!-- SUB-SECTION 2: QUESTION HISTORY SCROLLABLE LIST VIEW -->
+                <div id="q-history-container" class="hidden space-y-3">
+                    <p class="text-xs text-slate-400">Scroll back through all your shared answers & memory logs:</p>
+                    <div id="q-history-list" class="space-y-3 max-h-80 overflow-y-auto pr-1 hide-scrollbar">
+                        <!-- Populated dynamically via renderQuestionHistory() -->
+                    </div>
                 </div>
             </div>
         </section>
@@ -262,7 +300,7 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-xl font-bold text-white tracking-tight">Our Wishlist & Scrapbook</h2>
-                    <p class="text-xs text-slate-400">Future adventures & cherished memories</p>
+                    <p class="text-xs text-pink-300/70">Future adventures & cherished memories</p>
                 </div>
                 <button onclick="openAddItemModal()" class="px-3.5 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-500/30 flex items-center space-x-1.5 transition">
                     <i class="fa-solid fa-plus"></i>
@@ -275,19 +313,19 @@
                 <button onclick="filterWishlist('all')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-rose-500 text-white shadow-sm transition">
                     All Entries
                 </button>
-                <button onclick="filterWishlist('date')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">
+                <button onclick="filterWishlist('date')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition">
                     <i class="fa-solid fa-utensils text-rose-400 mr-1.5"></i> Date Ideas
                 </button>
-                <button onclick="filterWishlist('travel')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">
+                <button onclick="filterWishlist('travel')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition">
                     <i class="fa-solid fa-plane text-sky-400 mr-1.5"></i> Travel Goals
                 </button>
-                <button onclick="filterWishlist('memory')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">
+                <button onclick="filterWishlist('memory')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition">
                     <i class="fa-solid fa-heart text-amber-400 mr-1.5"></i> Memories
                 </button>
             </div>
 
-            <!-- Timeline List Container -->
-            <div id="wishlist-items-container" class="space-y-4">
+            <!-- Compact Grid Container for Card Overview (2 columns on mobile, 3 on larger displays) -->
+            <div id="wishlist-items-container" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 <!-- Timeline elements populated via JS -->
             </div>
         </section>
@@ -298,58 +336,58 @@
             
             <div class="text-center space-y-1">
                 <h2 class="text-xl font-bold text-white tracking-tight">Ambient Touch Lamp</h2>
-                <p class="text-xs text-slate-400">Select how you feel and tap to send your mood instantly</p>
+                <p class="text-xs text-pink-300/70">Select how you feel and tap to send your mood instantly</p>
             </div>
 
             <!-- Central Interactive Lamp Sphere -->
             <div class="py-6 flex flex-col items-center justify-center relative">
                 
                 <!-- Glow Effect Background -->
-                <div id="lamp-aura" class="absolute w-64 h-64 rounded-full bg-sky-500/20 blur-3xl transition-all duration-700 pointer-events-none"></div>
+                <div id="lamp-aura" class="absolute w-64 h-64 rounded-full bg-rose-500/15 blur-3xl transition-all duration-700 pointer-events-none"></div>
 
                 <!-- Main Physical Lamp Object -->
-                <button id="touch-lamp-button" onclick="triggerLampTouch()" class="relative z-10 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-900 via-slate-800 to-sky-950/40 border-4 border-sky-500/40 flex flex-col items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 group focus:outline-none">
-                    <div id="lamp-inner-icon" class="w-20 h-20 rounded-full bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110">
+                <button id="touch-lamp-button" onclick="triggerLampTouch()" class="relative z-10 w-48 h-48 rounded-full bg-slate-900/90 border-2 border-rose-500/40 flex flex-col items-center justify-center shadow-lg transition-all duration-300 active:scale-95 group focus:outline-none">
+                    <div id="lamp-inner-icon" class="w-20 h-20 rounded-full bg-rose-500/10 border border-rose-400/30 flex items-center justify-center text-rose-300 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110">
                         <i class="fa-solid fa-lightbulb"></i>
                     </div>
-                    <span id="lamp-emotion-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-500/30 text-sky-300 border border-sky-400/30 mb-1">Missing You</span>
-                    <span id="lamp-prompt-text" class="text-[11px] font-semibold text-sky-200 tracking-wider uppercase">Tap To Send Glow</span>
+                    <span id="lamp-emotion-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-rose-500/20 text-rose-200 border border-rose-400/30 mb-1">Missing You</span>
+                    <span id="lamp-prompt-text" class="text-[11px] font-semibold text-slate-300 tracking-wider uppercase">Tap To Send Glow</span>
                 </button>
 
                 <!-- Color & Feeling Palette Selector -->
-                <div class="mt-7 w-full max-w-xs bg-slate-900/90 p-3 rounded-2xl border border-slate-800 backdrop-blur-md shadow-xl space-y-2">
-                    <p class="text-[11px] text-slate-400 text-center font-medium">Choose current emotion glow:</p>
+                <div class="mt-7 w-full max-w-xs bg-slate-900/80 p-3 rounded-2xl border border-rose-900/30 backdrop-blur-md shadow-xl space-y-2">
+                    <p class="text-[11px] text-pink-200/80 text-center font-medium">Choose current emotion glow:</p>
                     <div class="grid grid-cols-4 gap-2">
                         <!-- Blue: Missing You -->
-                        <button onclick="setLampColor('sky')" id="color-btn-sky" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/90 border-2 border-sky-500 transition-all hover:bg-slate-800">
-                            <span class="w-5 h-5 rounded-full bg-sky-400 shadow-lg shadow-sky-500/50 mb-1"></span>
-                            <span class="text-[10px] font-semibold text-sky-300">Missing You</span>
-                        </button>
-
-                        <!-- Yellow: Enthusiasm -->
-                        <button onclick="setLampColor('amber')" id="color-btn-amber" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 transition-all hover:bg-slate-800">
-                            <span class="w-5 h-5 rounded-full bg-amber-400 shadow-lg shadow-amber-500/50 mb-1"></span>
-                            <span class="text-[10px] font-semibold text-amber-300">Enthusiasm</span>
-                        </button>
-
-                        <!-- Purple: Excited -->
-                        <button onclick="setLampColor('purple')" id="color-btn-purple" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 transition-all hover:bg-slate-800">
-                            <span class="w-5 h-5 rounded-full bg-purple-500 shadow-lg shadow-purple-500/50 mb-1"></span>
-                            <span class="text-[10px] font-semibold text-purple-300">Excited</span>
+                        <button onclick="setLampColor('blue')" id="color-btn-blue" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border-2 border-blue-500 transition-all">
+                            <span class="w-4 h-4 rounded-full bg-blue-500 mb-1"></span>
+                            <span class="text-[10px] font-medium text-slate-300">Missing</span>
                         </button>
 
                         <!-- Red: Sad -->
-                        <button onclick="setLampColor('rose')" id="color-btn-rose" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 transition-all hover:bg-slate-800">
-                            <span class="w-5 h-5 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 mb-1"></span>
-                            <span class="text-[10px] font-semibold text-rose-300">Sad</span>
+                        <button onclick="setLampColor('red')" id="color-btn-red" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
+                            <span class="w-4 h-4 rounded-full bg-red-500 mb-1"></span>
+                            <span class="text-[10px] font-medium text-slate-400">Sad</span>
+                        </button>
+
+                        <!-- Green: Enthusiasm -->
+                        <button onclick="setLampColor('green')" id="color-btn-green" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
+                            <span class="w-4 h-4 rounded-full bg-emerald-500 mb-1"></span>
+                            <span class="text-[10px] font-medium text-slate-400">Enthusiastic</span>
+                        </button>
+
+                        <!-- Purple: Passionate -->
+                        <button onclick="setLampColor('purple')" id="color-btn-purple" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
+                            <span class="w-4 h-4 rounded-full bg-purple-500 mb-1"></span>
+                            <span class="text-[10px] font-medium text-slate-400">Passionate</span>
                         </button>
                     </div>
                 </div>
             </div>
 
             <!-- Touch Logs & Activity Timeline -->
-            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
-                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+            <div class="bg-slate-900/80 border border-rose-900/30 rounded-3xl p-5 shadow-xl space-y-4">
+                <div class="flex justify-between items-center border-b border-rose-900/30 pb-3">
                     <div class="flex items-center space-x-2">
                         <i class="fa-solid fa-wave-square text-rose-400 text-sm"></i>
                         <h3 class="text-sm font-semibold text-white">Touch Activity Feed</h3>
@@ -357,6 +395,55 @@
                     <span id="connection-indicator" class="text-[11px] text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/50">
                         <i class="fa-solid fa-wifi text-[9px] mr-1"></i> Live Stream
                     </span>
+                </div>
+
+                <!-- Dual Partner Mood Timeline Chart Visualization -->
+                <div class="bg-slate-950/80 p-4 rounded-2xl border border-rose-900/30 space-y-3">
+                    <div class="flex justify-between items-center text-xs font-semibold text-slate-300">
+                        <span>Emotional Pulse Overview (Today)</span>
+                        <div class="flex items-center space-x-2 text-[10px]">
+                            <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 mr-1"></span> Missing</span>
+                            <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-red-500 mr-1"></span> Sad</span>
+                            <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-emerald-500 mr-1"></span> Enthusiastic</span>
+                            <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-purple-500 mr-1"></span> Passionate</span>
+                        </div>
+                    </div>
+
+                    <!-- Dual Stream Bars sharing X-Axis -->
+                    <div class="space-y-2 pt-1">
+                        <!-- Husband Track (Top) -->
+                        <div>
+                            <div class="flex justify-between items-center text-[10px] text-slate-400 mb-1">
+                                <span class="font-medium text-slate-300"><i class="fa-solid fa-mars text-rose-400 mr-1"></i> Me (Husband)</span>
+                                <span id="husband-total-pulses" class="text-pink-300/60">4 pulses</span>
+                            </div>
+                            <div id="husband-emotion-timeline" class="h-6 w-full bg-slate-900 rounded-lg p-1 flex items-center gap-1 border border-rose-900/40">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Wife Track (Bottom) -->
+                        <div>
+                            <div class="flex justify-between items-center text-[10px] text-slate-400 mb-1">
+                                <span class="font-medium text-slate-300"><i class="fa-solid fa-venus text-pink-400 mr-1"></i> Her (Wife)</span>
+                                <span id="wife-total-pulses" class="text-pink-300/60">3 pulses</span>
+                            </div>
+                            <div id="wife-emotion-timeline" class="h-6 w-full bg-slate-900 rounded-lg p-1 flex items-center gap-1 border border-rose-900/40">
+                                <!-- Rendered dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Synchronized X-Axis Timeline Labels -->
+                        <div class="flex justify-between items-center text-[9px] text-pink-300/60 px-1 pt-0.5 border-t border-rose-900/30 font-mono">
+                            <span>12 AM</span>
+                            <span>04 AM</span>
+                            <span>08 AM</span>
+                            <span>12 PM</span>
+                            <span>04 PM</span>
+                            <span>08 PM</span>
+                            <span>11 PM</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Log Items Scroll Area -->
@@ -369,26 +456,26 @@
     </main>
 
 
-    <!-- ================= BOTTOM NAVIGATION BAR ================= -->
-    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 px-6 py-2 max-w-lg mx-auto">
+    <!-- ================= ELEGANT BOTTOM NAVIGATION BAR ================= -->
+    <nav class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 bg-slate-950/90 backdrop-blur-xl border border-rose-900/30 px-5 py-2 rounded-full max-w-sm w-[92%] shadow-[0_8px_32px_rgba(244,114,182,0.12)]">
         <div class="flex justify-around items-center">
             
             <!-- Tab 1 Button -->
-            <button onclick="switchTab(1)" id="nav-btn-1" class="nav-tab-btn flex flex-col items-center py-1.5 px-3 text-rose-500 transition">
-                <i class="fa-solid fa-heart text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium tracking-tight">Reunion</span>
+            <button onclick="switchTab(1)" id="nav-btn-1" class="nav-tab-btn nav-glow-pill flex flex-col items-center py-1.5 px-4 text-rose-300 font-semibold rounded-full transition-all duration-300">
+                <i class="fa-solid fa-heart text-base mb-0.5"></i>
+                <span class="text-[10px] tracking-tight font-medium">Reunion</span>
             </button>
 
             <!-- Tab 2 Button -->
-            <button onclick="switchTab(2)" id="nav-btn-2" class="nav-tab-btn flex flex-col items-center py-1.5 px-3 text-slate-400 hover:text-slate-200 transition">
-                <i class="fa-solid fa-box-archive text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium tracking-tight">Time Capsule</span>
+            <button onclick="switchTab(2)" id="nav-btn-2" class="nav-tab-btn flex flex-col items-center py-1.5 px-4 text-slate-400 hover:text-rose-300 rounded-full transition-all duration-300">
+                <i class="fa-solid fa-box-archive text-base mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-tight">Capsule</span>
             </button>
 
             <!-- Tab 3 Button -->
-            <button onclick="switchTab(3)" id="nav-btn-3" class="nav-tab-btn flex flex-col items-center py-1.5 px-3 text-slate-400 hover:text-slate-200 transition">
-                <i class="fa-solid fa-lightbulb text-lg mb-0.5"></i>
-                <span class="text-[10px] font-medium tracking-tight">Touch Lamp</span>
+            <button onclick="switchTab(3)" id="nav-btn-3" class="nav-tab-btn flex flex-col items-center py-1.5 px-4 text-slate-400 hover:text-rose-300 rounded-full transition-all duration-300">
+                <i class="fa-solid fa-lightbulb text-base mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-tight">Lamp</span>
             </button>
 
         </div>
@@ -396,6 +483,13 @@
 
 
     <!-- ================= MODALS & OVERLAYS ================= -->
+
+    <!-- Expanded Card Detail Modal -->
+    <div id="card-detail-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div id="card-detail-content" class="bg-slate-900 border-2 border-rose-500/60 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+            <!-- Populated dynamically via openCardDetail() -->
+        </div>
+    </div>
 
     <!-- Photo Manager Modal -->
     <div id="photo-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
@@ -428,7 +522,7 @@
             <form id="add-item-form" onsubmit="saveWishlistItem(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
-                    <select id="item-category" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
+                    <select id="item-category" onchange="updateDateLabel(this.value)" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
                         <option value="date">Date Idea / Restaurant</option>
                         <option value="travel">Travel Goal / City</option>
                         <option value="memory">Cherished Memory</option>
@@ -438,6 +532,11 @@
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Title</label>
                     <input id="item-title" type="text" required placeholder="e.g. Picnic in Central Park, Tokyo Ramen Spot" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
+                </div>
+
+                <div>
+                    <label id="item-date-label" class="block text-xs font-medium text-slate-300 mb-1">Target / Planned Date (Optional)</label>
+                    <input id="item-date" type="date" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
                 </div>
 
                 <div>
@@ -476,6 +575,20 @@
 
     <!-- ================= JAVASCRIPT APPLICATION LOGIC ================= -->
     <script>
+        /* ================= ROMANTIC QUESTIONS BANK ================= */
+        const ROMANTIC_QUESTIONS_BANK = [
+            "What is a small detail about our last meeting that you still think about?",
+            "If we could teleport anywhere in the world for just 3 hours tonight, where would we go?",
+            "What was the exact moment you realized you were in love with me?",
+            "What is your favorite memory of us when things didn't go according to plan?",
+            "Which song makes you feel closest to me when we are apart?",
+            "What is something simple you are looking forward to doing together when we reunite?",
+            "If you could describe our connection in three words, what would they be?",
+            "What habit or expression of mine do you miss seeing in person the most?",
+            "What is a cozy date night idea you want us to try during our next visit?",
+            "What was the first impression you had of me that turned out to be completely true?"
+        ];
+
         /* ================= STATE MANAGEMENT ================= */
         const APP_STATE = {
             targetReunionDate: new Date("2026-12-25T00:00:00"),
@@ -487,75 +600,217 @@
             },
             activePhotoIndex: 1,
             questionData: {
-                prompt: "What is one tiny detail from our last date that you never want to forget?",
+                prompt: "",
                 yourAnswer: "",
                 wifeAnswer: "When we got caught in the sudden rain shower and you gave me your sweater even though you were shivering!",
                 yourSubmitted: false,
                 wifeSubmitted: true,
-                simulatedWife: true
+                simulatedWife: true,
+                dayNumber: 1
             },
-            wishlist: [
-                { id: 1, category: 'date', title: 'Late Night Candlelight Dinner in Paris', desc: 'Try that small authentic bistro near the Seine.', completed: false, favorite: true },
-                { id: 2, category: 'travel', title: 'Kyoto Cherry Blossom Trip', desc: 'Rent a cozy traditional ryokan with hot springs.', completed: false, favorite: true },
-                { id: 3, category: 'memory', title: 'First Stargazing Trip', desc: 'Drove out to the valley with hot chocolate in flasks.', completed: true, favorite: false }
+            questionHistory: [
+                {
+                    dayNumber: 141,
+                    date: 'Yesterday',
+                    prompt: 'What was your favorite moment from our video call this week?',
+                    husbandAnswer: 'Seeing you laugh when the cat jumped onto your keyboard right in the middle of our story!',
+                    wifeAnswer: 'Just seeing your smile at the end of a long workday made all my stress disappear.'
+                },
+                {
+                    dayNumber: 140,
+                    date: '2 days ago',
+                    prompt: 'What is a song that instantly reminds you of us?',
+                    husbandAnswer: 'Yellow by Coldplay - played during our late night road trip.',
+                    wifeAnswer: 'Whenever I hear that track, I remember looking out at the city lights with your hand in mine.'
+                }
             ],
-            lampColor: 'sky',
+            wishlist: [
+                { id: 1, category: 'date', title: 'Late Night Candlelight Dinner in Paris', date: '2027-02-14', desc: 'Try that small authentic bistro near the Seine.', completed: false, favorite: true },
+                { id: 2, category: 'travel', title: 'Kyoto Cherry Blossom Trip', date: '2027-04-10', desc: 'Rent a cozy traditional ryokan with hot springs.', completed: false, favorite: true },
+                { id: 3, category: 'memory', title: 'First Stargazing Trip', date: '2025-10-15', desc: 'Drove out to the valley with hot chocolate in flasks.', completed: true, favorite: false }
+            ],
+            lampColor: 'pink',
             emotionsConfig: {
-                sky: { name: 'Missing You', colorClass: 'sky', msg: 'Sent a "Missing You" oceanic glow' },
-                amber: { name: 'Enthusiasm', colorClass: 'amber', msg: 'Sent an "Enthusiastic" energetic glow' },
-                purple: { name: 'Excited', colorClass: 'purple', msg: 'Sent an "Excited!" vibrant pulse' },
-                rose: { name: 'Sad', colorClass: 'rose', msg: 'Feeling sad - sending a deep warm hug pulse' }
+                red: { name: 'Sad', colorClass: 'red', msg: 'Sent a "Sad" comforting red glow', hex: 'rgba(239, 68, 68, 0.5)' },
+                blue: { name: 'Missing You', colorClass: 'blue', msg: 'Sent a "Missing You" blue glow', hex: 'rgba(59, 130, 246, 0.5)' },
+                green: { name: 'Enthusiastic', colorClass: 'green', msg: 'Sent an "Enthusiastic" green glow', hex: 'rgba(34, 197, 94, 0.5)' },
+                purple: { name: 'Passionate', colorClass: 'purple', msg: 'Sent a "Passionate" purple glow', hex: 'rgba(168, 85, 247, 0.5)' }
             },
             touchLogs: [
-                { sender: 'wife', time: '10 mins ago', message: 'Wife sent an "Excited!" vibrant pulse', color: 'purple' },
-                { sender: 'you', time: '1 hour ago', message: 'You sent a "Missing You" oceanic glow', color: 'sky' }
+                { sender: 'wife', time: '10 mins ago', message: 'Wife sent a "Missing You" blue pulse', color: 'blue' },
+                { sender: 'you', time: '1 hour ago', message: 'You sent a "Passionate" purple glow', color: 'purple' }
             ]
         };
 
         /* ================= INITIALIZATION ================= */
         window.addEventListener('DOMContentLoaded', () => {
             loadLocalStorageData();
+            initDailyQuestion();
             startCountdownTimer();
             renderSharedMemories();
             startPhotoCrossFadeLoop();
             renderWishlist();
             renderTouchLogs();
+            renderEmotionGraph();
             updateDailyQuestionUI();
+            renderQuestionHistory();
             updateRolePermissionsUI();
-            setLampColor(APP_STATE.lampColor || 'sky');
+            setLampColor(APP_STATE.lampColor || 'blue');
         });
 
-        /* ================= NAVIGATION & TAB SWITCHING ================= */
+        /* ================= NAVIGATION & ROLE PERMISSIONS ================= */
         function switchTab(tabIndex) {
             APP_STATE.activeTab = tabIndex;
-
-            // Hide all tabs
-            for (let i = 1; i <= 3; i++) {
-                const tabEl = document.getElementById(`tab-${i}`);
-                const navBtn = document.getElementById(`nav-btn-${i}`);
-                if (tabEl) {
-                    tabEl.classList.add('hidden');
-                    tabEl.classList.remove('opacity-100');
-                    tabEl.classList.add('opacity-0');
+            [1, 2, 3].forEach(id => {
+                const tab = document.getElementById(`tab-${id}`);
+                const navBtn = document.getElementById(`nav-btn-${id}`);
+                if (id === tabIndex) {
+                    tab.classList.remove('hidden');
+                    setTimeout(() => tab.classList.remove('opacity-0'), 10);
+                    navBtn.className = "nav-tab-btn nav-glow-pill flex flex-col items-center py-1.5 px-4 text-rose-300 font-semibold rounded-full transition-all duration-300";
+                } else {
+                    tab.classList.add('opacity-0');
+                    tab.classList.add('hidden');
+                    navBtn.className = "nav-tab-btn flex flex-col items-center py-1.5 px-4 text-slate-400 hover:text-rose-300 rounded-full transition-all duration-300";
                 }
-                if (navBtn) {
-                    navBtn.className = "nav-tab-btn flex flex-col items-center py-1.5 px-3 text-slate-400 hover:text-slate-200 transition";
-                }
+            });
+        }
+
+        function handleRoleChange(event) {
+            APP_STATE.currentUserRole = event.target.value;
+            saveLocalStorageData();
+            updateRolePermissionsUI();
+            updateDailyQuestionUI();
+        }
+
+        function updateRolePermissionsUI() {
+            const roleSelect = document.getElementById('user-role-select');
+            if (roleSelect) roleSelect.value = APP_STATE.currentUserRole;
+
+            const roleBadge = document.getElementById('role-indicator-badge');
+            if (roleBadge) {
+                const roleName = APP_STATE.currentUserRole === 'me' ? 'Me (Husband)' : 'Her (Wife)';
+                roleBadge.innerHTML = `<i class="fa-solid fa-user-check text-rose-400 mr-1"></i> Role: ${roleName}`;
             }
 
-            // Reveal selected tab with transition
-            const activeTabEl = document.getElementById(`tab-${tabIndex}`);
-            const activeNavBtn = document.getElementById(`nav-btn-${tabIndex}`);
-            if (activeTabEl) {
-                activeTabEl.classList.remove('hidden');
-                setTimeout(() => {
-                    activeTabEl.classList.remove('opacity-0');
-                    activeTabEl.classList.add('opacity-100');
-                }, 50);
+            const permContainer = document.getElementById('photo-permissions-container');
+            if (!permContainer) return;
+
+            if (APP_STATE.currentUserRole === 'me') {
+                permContainer.innerHTML = `
+                    <label class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Edit Photo #1</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="handlePhotoUpload(event, 1)">
+                    </label>
+                    <button onclick="alert('Only Wife (Her) can upload Memory Photo #2!')" class="px-2.5 py-1 bg-slate-800 text-slate-400 border border-slate-700 text-[10px] font-semibold rounded-lg cursor-not-allowed flex items-center space-x-1 opacity-70">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>#2 (Wife Only)</span>
+                    </button>
+                `;
+            } else {
+                permContainer.innerHTML = `
+                    <button onclick="alert('Only Husband (Me) can upload Memory Photo #1!')" class="px-2.5 py-1 bg-slate-800 text-slate-400 border border-slate-700 text-[10px] font-semibold rounded-lg cursor-not-allowed flex items-center space-x-1 opacity-70">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>#1 (Husband Only)</span>
+                    </button>
+                    <label class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Edit Photo #2</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="handlePhotoUpload(event, 2)">
+                    </label>
+                `;
             }
-            if (activeNavBtn) {
-                activeNavBtn.className = "nav-tab-btn flex flex-col items-center py-1.5 px-3 text-rose-500 transition";
+        }
+
+        /* ================= COUNTDOWN & MEMORY PHOTO SLIDESHOW ================= */
+        function startCountdownTimer() {
+            function updateTimer() {
+                const now = new Date();
+                const diff = APP_STATE.targetReunionDate - now;
+
+                if (diff <= 0) {
+                    document.getElementById('timer-days').innerText = "00";
+                    document.getElementById('timer-hours').innerText = "00";
+                    document.getElementById('timer-minutes').innerText = "00";
+                    document.getElementById('timer-seconds').innerText = "00";
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                const daysEl = document.getElementById('timer-days');
+                const hoursEl = document.getElementById('timer-hours');
+                const minsEl = document.getElementById('timer-minutes');
+                const secsEl = document.getElementById('timer-seconds');
+                if (daysEl) daysEl.innerText = String(days).padStart(2, '0');
+                if (hoursEl) hoursEl.innerText = String(hours).padStart(2, '0');
+                if (minsEl) minsEl.innerText = String(minutes).padStart(2, '0');
+                if (secsEl) secsEl.innerText = String(seconds).padStart(2, '0');
             }
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        function renderSharedMemories() {
+            const p1 = document.getElementById('memory-photo-1');
+            const p2 = document.getElementById('memory-photo-2');
+            if (p1 && APP_STATE.sharedMemories.photo1) p1.src = APP_STATE.sharedMemories.photo1;
+            if (p2 && APP_STATE.sharedMemories.photo2) p2.src = APP_STATE.sharedMemories.photo2;
+        }
+
+        function startPhotoCrossFadeLoop() {
+            setInterval(() => {
+                const p1 = document.getElementById('memory-photo-1');
+                const p2 = document.getElementById('memory-photo-2');
+                const indicator = document.getElementById('photo-cycle-indicator');
+                if (!p1 || !p2) return;
+
+                if (APP_STATE.activePhotoIndex === 1) {
+                    p1.classList.replace('opacity-100', 'opacity-0');
+                    p2.classList.replace('opacity-0', 'opacity-100');
+                    APP_STATE.activePhotoIndex = 2;
+                    if (indicator) indicator.innerText = "Memory #2 of 2";
+                } else {
+                    p2.classList.replace('opacity-100', 'opacity-0');
+                    p1.classList.replace('opacity-0', 'opacity-100');
+                    APP_STATE.activePhotoIndex = 1;
+                    if (indicator) indicator.innerText = "Memory #1 of 2";
+                }
+            }, 6000);
+        }
+
+        function handlePhotoUpload(event, photoSlot) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (photoSlot === 1) {
+                    APP_STATE.sharedMemories.photo1 = e.target.result;
+                } else {
+                    APP_STATE.sharedMemories.photo2 = e.target.result;
+                }
+                saveLocalStorageData();
+                renderSharedMemories();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /* ================= DAILY ROMANTIC QUESTION GENERATOR ================= */
+        function initDailyQuestion() {
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 0);
+            const diff = now - startOfYear;
+            const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            APP_STATE.questionData.dayNumber = dayOfYear;
+
+            const qIndex = dayOfYear % ROMANTIC_QUESTIONS_BANK.length;
+            APP_STATE.questionData.prompt = ROMANTIC_QUESTIONS_BANK[qIndex];
         }
 
         /* ================= LOCAL STORAGE HELPERS ================= */
@@ -565,6 +820,7 @@
                     targetDate: APP_STATE.targetReunionDate.toISOString(),
                     sharedMemories: APP_STATE.sharedMemories,
                     questionData: APP_STATE.questionData,
+                    questionHistory: APP_STATE.questionHistory,
                     wishlist: APP_STATE.wishlist,
                     touchLogs: APP_STATE.touchLogs,
                     currentUserRole: APP_STATE.currentUserRole
@@ -582,6 +838,7 @@
                     if (parsed.targetDate) APP_STATE.targetReunionDate = new Date(parsed.targetDate);
                     if (parsed.sharedMemories) APP_STATE.sharedMemories = parsed.sharedMemories;
                     if (parsed.questionData) APP_STATE.questionData = parsed.questionData;
+                    if (parsed.questionHistory) APP_STATE.questionHistory = parsed.questionHistory;
                     if (parsed.wishlist) APP_STATE.wishlist = parsed.wishlist;
                     if (parsed.touchLogs) APP_STATE.touchLogs = parsed.touchLogs;
                     if (parsed.currentUserRole) APP_STATE.currentUserRole = parsed.currentUserRole;
@@ -591,236 +848,27 @@
             }
         }
 
-        /* ================= ROLE CONTROL & PERMISSIONS ================= */
-        function handleRoleChange(event) {
-            APP_STATE.currentUserRole = event.target.value;
-            saveLocalStorageData();
-            updateRolePermissionsUI();
-        }
+        /* ================= DAILY QUESTION & HISTORY LOGIC ================= */
+        function switchQuestionView(view) {
+            const todayBtn = document.getElementById('q-view-today-btn');
+            const historyBtn = document.getElementById('q-view-history-btn');
+            const todayContainer = document.getElementById('q-today-container');
+            const historyContainer = document.getElementById('q-history-container');
 
-        function updateRolePermissionsUI() {
-            const select = document.getElementById('user-role-select');
-            if (select) select.value = APP_STATE.currentUserRole;
-
-            const badge = document.getElementById('role-indicator-badge');
-            if (badge) {
-                badge.innerHTML = APP_STATE.currentUserRole === 'me'
-                    ? '<i class="fa-solid fa-user text-rose-400 mr-1"></i> Role: Me (Husband)'
-                    : '<i class="fa-solid fa-heart text-purple-400 mr-1"></i> Role: Her (Wife)';
-            }
-
-            const permContainer = document.getElementById('photo-permissions-container');
-            if (!permContainer) return;
-
-            if (APP_STATE.currentUserRole === 'me') {
-                // User 'Me' can edit Photo #1 only; Photo #2 shows locked status button
-                permContainer.innerHTML = `
-                    <label class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 border border-rose-400 shadow-sm">
-                        <i class="fa-solid fa-camera"></i>
-                        <span>Change #1 (You)</span>
-                        <input type="file" accept="image/*" class="hidden" onchange="handleSharedImageUpload(event, 1)">
-                    </label>
-                    <button onclick="showPermissionDeniedMsg(2)" class="px-2.5 py-1 bg-slate-800/80 text-slate-400 text-[10px] font-medium rounded-lg border border-slate-700/60 flex items-center space-x-1 cursor-not-allowed">
-                        <i class="fa-solid fa-lock text-amber-400"></i>
-                        <span>#2 (Wife Only)</span>
-                    </button>
-                `;
+            if (view === 'today') {
+                todayBtn.className = "px-2.5 py-1 rounded-lg font-semibold bg-rose-500 text-white transition";
+                historyBtn.className = "px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition";
+                todayContainer.classList.remove('hidden');
+                historyContainer.classList.add('hidden');
             } else {
-                // User 'Her' can edit Photo #2 only; Photo #1 shows locked status button
-                permContainer.innerHTML = `
-                    <button onclick="showPermissionDeniedMsg(1)" class="px-2.5 py-1 bg-slate-800/80 text-slate-400 text-[10px] font-medium rounded-lg border border-slate-700/60 flex items-center space-x-1 cursor-not-allowed">
-                        <i class="fa-solid fa-lock text-amber-400"></i>
-                        <span>#1 (Husband Only)</span>
-                    </button>
-                    <label class="px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 border border-purple-400 shadow-sm">
-                        <i class="fa-solid fa-camera"></i>
-                        <span>Change #2 (You)</span>
-                        <input type="file" accept="image/*" class="hidden" onchange="handleSharedImageUpload(event, 2)">
-                    </label>
-                `;
+                historyBtn.className = "px-2.5 py-1 rounded-lg font-semibold bg-rose-500 text-white transition";
+                todayBtn.className = "px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition";
+                todayContainer.classList.add('hidden');
+                historyContainer.classList.remove('hidden');
+                renderQuestionHistory();
             }
         }
 
-        function showPermissionDeniedMsg(photoNum) {
-            const owner = photoNum === 1 ? "Husband (Me)" : "Wife (Her)";
-            alert(`Only ${owner} can update Memory #${photoNum}! Switch roles in the top bar to simulate partner photo updates.`);
-        }
-
-        /* ================= SHARED MEMORIES CROSS-FADE LOGIC ================= */
-        function renderSharedMemories() {
-            const img1 = document.getElementById('memory-photo-1');
-            const img2 = document.getElementById('memory-photo-2');
-            if (img1 && APP_STATE.sharedMemories.photo1) img1.src = APP_STATE.sharedMemories.photo1;
-            if (img2 && APP_STATE.sharedMemories.photo2) img2.src = APP_STATE.sharedMemories.photo2;
-        }
-
-        function startPhotoCrossFadeLoop() {
-            setInterval(() => {
-                const img1 = document.getElementById('memory-photo-1');
-                const img2 = document.getElementById('memory-photo-2');
-                const indicator = document.getElementById('photo-cycle-indicator');
-
-                if (!img1 || !img2) return;
-
-                if (APP_STATE.activePhotoIndex === 1) {
-                    img1.classList.remove('opacity-100');
-                    img1.classList.add('opacity-0');
-                    img2.classList.remove('opacity-0');
-                    img2.classList.add('opacity-100');
-                    APP_STATE.activePhotoIndex = 2;
-                    if (indicator) indicator.innerText = "Memory #2 of 2";
-                } else {
-                    img2.classList.remove('opacity-100');
-                    img2.classList.add('opacity-0');
-                    img1.classList.remove('opacity-0');
-                    img1.classList.add('opacity-100');
-                    APP_STATE.activePhotoIndex = 1;
-                    if (indicator) indicator.innerText = "Memory #1 of 2";
-                }
-            }, 5000);
-        }
-
-        function handleSharedImageUpload(event, photoNumber) {
-            // Guard clause for extra protection
-            if (photoNumber === 1 && APP_STATE.currentUserRole !== 'me') {
-                showPermissionDeniedMsg(1);
-                return;
-            }
-            if (photoNumber === 2 && APP_STATE.currentUserRole !== 'her') {
-                showPermissionDeniedMsg(2);
-                return;
-            }
-
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const base64Img = e.target.result;
-                if (photoNumber === 1) {
-                    APP_STATE.sharedMemories.photo1 = base64Img;
-                } else {
-                    APP_STATE.sharedMemories.photo2 = base64Img;
-                }
-                saveLocalStorageData();
-                renderSharedMemories();
-            };
-            reader.readAsDataURL(file);
-        }
-
-        /* ================= TAB 1: REUNION TIMER & SLIDESHOW ================= */
-        function startCountdownTimer() {
-            function update() {
-                const now = new Date();
-                const diff = APP_STATE.targetReunionDate - now;
-
-                if (diff <= 0) {
-                    document.getElementById('timer-days').innerText = "00";
-                    document.getElementById('timer-hours').innerText = "00";
-                    document.getElementById('timer-minutes').innerText = "00";
-                    document.getElementById('timer-seconds').innerText = "00";
-                    return;
-                }
-
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const minutes = Math.floor((diff / 1000 / 60) % 60);
-                const seconds = Math.floor((diff / 1000) % 60);
-
-                document.getElementById('timer-days').innerText = days.toString().padStart(2, '0');
-                document.getElementById('timer-hours').innerText = hours.toString().padStart(2, '0');
-                document.getElementById('timer-minutes').innerText = minutes.toString().padStart(2, '0');
-                document.getElementById('timer-seconds').innerText = seconds.toString().padStart(2, '0');
-
-                // Update formatted date label
-                const options = { year: 'numeric', month: 'long', day: 'numeric' };
-                document.getElementById('target-date-label').innerText = APP_STATE.targetReunionDate.toLocaleDateString(undefined, options);
-            }
-
-            update();
-            setInterval(update, 1000);
-        }
-
-        function editReunionDate() {
-            const newDateStr = prompt("Enter new reunion date (YYYY-MM-DD):", APP_STATE.targetReunionDate.toISOString().split('T')[0]);
-            if (newDateStr) {
-                const parsed = new Date(newDateStr);
-                if (!isNaN(parsed.getTime())) {
-                    APP_STATE.targetReunionDate = parsed;
-                    saveLocalStorageData();
-                } else {
-                    alert("Invalid date format entered.");
-                }
-            }
-        }
-
-        function startSlideshowLoop() {
-            setInterval(() => {
-                if (APP_STATE.photos.length <= 1) return;
-                
-                const container = document.getElementById('slideshow-container');
-                const slides = container.querySelectorAll('.slide');
-                if (!slides || slides.length === 0) return;
-
-                slides[APP_STATE.currentPhotoIndex].classList.add('opacity-0');
-                slides[APP_STATE.currentPhotoIndex].classList.remove('opacity-100');
-
-                APP_STATE.currentPhotoIndex = (APP_STATE.currentPhotoIndex + 1) % APP_STATE.photos.length;
-
-                slides[APP_STATE.currentPhotoIndex].classList.remove('opacity-0');
-                slides[APP_STATE.currentPhotoIndex].classList.add('opacity-100');
-
-                // Update dots
-                const dotsContainer = document.getElementById('slideshow-dots');
-                const dots = dotsContainer.querySelectorAll('button');
-                dots.forEach((dot, idx) => {
-                    dot.className = idx === APP_STATE.currentPhotoIndex 
-                        ? 'w-2 h-2 rounded-full bg-white opacity-100 transition' 
-                        : 'w-2 h-2 rounded-full bg-white opacity-40 transition';
-                });
-            }, 6000);
-        }
-
-        function openPhotoManagerModal() {
-            renderPhotoList();
-            document.getElementById('photo-modal').classList.remove('hidden');
-        }
-
-        function closePhotoManagerModal() {
-            document.getElementById('photo-modal').classList.add('hidden');
-        }
-
-        function renderPhotoList() {
-            const container = document.getElementById('photo-url-list');
-            container.innerHTML = APP_STATE.photos.map((url, idx) => `
-                <div class="flex items-center justify-between bg-slate-800/80 p-2 rounded-xl text-xs text-slate-300">
-                    <span class="truncate max-w-[240px]">${url}</span>
-                    <button onclick="removePhotoUrl(${idx})" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash-can"></i></button>
-                </div>
-            `).join('');
-        }
-
-        function addNewPhotoUrl() {
-            const input = document.getElementById('new-photo-url');
-            if (input.value.trim()) {
-                APP_STATE.photos.push(input.value.trim());
-                input.value = '';
-                saveLocalStorageData();
-                renderPhotoList();
-            }
-        }
-
-        function removePhotoUrl(idx) {
-            if (APP_STATE.photos.length <= 1) {
-                alert("Please keep at least one background photo!");
-                return;
-            }
-            APP_STATE.photos.splice(idx, 1);
-            saveLocalStorageData();
-            renderPhotoList();
-        }
-
-        /* ================= TAB 1: DAILY QUESTION DUAL-REVEAL ================= */
         function submitYourAnswer() {
             const val = document.getElementById('your-answer-input').value.trim();
             if (!val) return;
@@ -833,54 +881,105 @@
 
         function updateDailyQuestionUI() {
             const q = APP_STATE.questionData;
-            document.getElementById('current-question').innerText = `"${q.prompt}"`;
+            const currentQEl = document.getElementById('current-question');
+            const dayTagEl = document.getElementById('question-day-tag');
+            
+            if (currentQEl) currentQEl.innerText = `"${q.prompt}"`;
+            if (dayTagEl) dayTagEl.innerText = `Day #${q.dayNumber}`;
 
-            // Your Answer UI logic
+            const yourContainer = document.getElementById('your-answer-container');
+            const yourSubmitted = document.getElementById('your-answer-submitted');
+            const yourText = document.getElementById('your-answer-text');
+            const yourBadge = document.getElementById('your-status-badge');
+
             if (q.yourSubmitted) {
-                document.getElementById('your-answer-container').classList.add('hidden');
-                document.getElementById('your-answer-submitted').classList.remove('hidden');
-                document.getElementById('your-answer-text').innerText = q.yourAnswer;
-                document.getElementById('your-status-badge').className = "text-emerald-400 text-[11px]";
-                document.getElementById('your-status-badge').innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Answered';
+                if (yourContainer) yourContainer.classList.add('hidden');
+                if (yourSubmitted) yourSubmitted.classList.remove('hidden');
+                if (yourText) yourText.innerText = q.yourAnswer;
+                if (yourBadge) {
+                    yourBadge.className = "text-emerald-400 text-[11px]";
+                    yourBadge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Answered';
+                }
             } else {
-                document.getElementById('your-answer-container').classList.remove('hidden');
-                document.getElementById('your-answer-submitted').classList.add('hidden');
+                if (yourContainer) yourContainer.classList.remove('hidden');
+                if (yourSubmitted) yourSubmitted.classList.add('hidden');
             }
 
-            // Dual Reveal check
+            const wifeLocked = document.getElementById('wife-answer-locked');
+            const wifeUnlocked = document.getElementById('wife-answer-unlocked');
+            const wifeText = document.getElementById('wife-answer-text');
+
             const bothUnlocked = q.yourSubmitted && q.wifeSubmitted;
             if (bothUnlocked) {
-                document.getElementById('wife-answer-locked').classList.add('hidden');
-                document.getElementById('wife-answer-unlocked').classList.remove('hidden');
-                document.getElementById('wife-answer-text').innerText = `"${q.wifeAnswer}"`;
+                if (wifeLocked) wifeLocked.classList.add('hidden');
+                if (wifeUnlocked) wifeUnlocked.classList.remove('hidden');
+                if (wifeText) wifeText.innerText = q.wifeAnswer;
             } else {
-                document.getElementById('wife-answer-locked').classList.remove('hidden');
-                document.getElementById('wife-answer-unlocked').classList.add('hidden');
+                if (wifeLocked) wifeLocked.classList.remove('hidden');
+                if (wifeUnlocked) wifeUnlocked.classList.add('hidden');
             }
         }
 
         function toggleWifeResponseSim() {
             APP_STATE.questionData.wifeSubmitted = !APP_STATE.questionData.wifeSubmitted;
-            document.getElementById('sim-wife-toggle').innerText = APP_STATE.questionData.wifeSubmitted 
-                ? "Simulate Partner Answer (ON)" 
-                : "Simulate Partner Answer (OFF)";
-            
-            const badge = document.getElementById('wife-status-badge');
-            if (APP_STATE.questionData.wifeSubmitted) {
-                badge.className = "text-emerald-400 text-[11px]";
-                badge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Answered';
-            } else {
-                badge.className = "text-amber-400 text-[11px]";
-                badge.innerHTML = '<i class="fa-solid fa-clock mr-1"></i> Pending';
+            const toggleBtn = document.getElementById('sim-wife-toggle');
+            if (toggleBtn) {
+                toggleBtn.innerText = `Simulate Partner Answer (${APP_STATE.questionData.wifeSubmitted ? 'ON' : 'OFF'})`;
             }
-
             saveLocalStorageData();
             updateDailyQuestionUI();
         }
 
+        function renderQuestionHistory() {
+            const container = document.getElementById('q-history-list');
+            if (!container) return;
+
+            if (APP_STATE.questionHistory.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-6 bg-slate-950/60 rounded-xl border border-rose-900/30 text-xs text-pink-300/60">
+                        No history entries yet. Answer today's prompt to start archiving!
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = APP_STATE.questionHistory.map(item => `
+                <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-rose-900/30 space-y-2">
+                    <div class="flex justify-between items-center text-[10px] font-medium">
+                        <span class="text-rose-400 font-semibold">Day #${item.dayNumber}</span>
+                        <span class="text-pink-300/60">${item.date}</span>
+                    </div>
+                    <p class="text-xs italic font-medium text-slate-200">"${item.prompt}"</p>
+                    <div class="space-y-1.5 pt-1.5 border-t border-rose-900/30 text-[11px]">
+                        <div class="bg-slate-900/80 p-2 rounded-lg border border-rose-900/20 text-slate-300">
+                            <span class="text-rose-300 font-semibold block mb-0.5"><i class="fa-solid fa-mars mr-1"></i> Husband:</span>
+                            <span>${item.husbandAnswer}</span>
+                        </div>
+                        <div class="bg-slate-900/80 p-2 rounded-lg border border-rose-900/20 text-slate-300">
+                            <span class="text-pink-300 font-semibold block mb-0.5"><i class="fa-solid fa-venus mr-1"></i> Wife:</span>
+                            <span>${item.wifeAnswer}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
         /* ================= TAB 2: WISHLIST & TIMELINE ================= */
+        function updateDateLabel(category) {
+            const label = document.getElementById('item-date-label');
+            if (!label) return;
+            if (category === 'memory') {
+                label.innerText = 'Date Cherished (Optional)';
+            } else if (category === 'travel') {
+                label.innerText = 'Target Travel Date (Optional)';
+            } else {
+                label.innerText = 'Planned Date (Optional)';
+            }
+        }
+
         function renderWishlist(filterCategory = 'all') {
             const container = document.getElementById('wishlist-items-container');
+            if (!container) return;
             let items = APP_STATE.wishlist;
 
             if (filterCategory !== 'all') {
@@ -889,44 +988,149 @@
 
             if (items.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-10 bg-slate-900/50 rounded-2xl border border-slate-800">
-                        <i class="fa-solid fa-compass-drafting text-2xl text-slate-600 mb-2"></i>
-                        <p class="text-xs text-slate-400">No entries in this section yet. Tap 'Add New' to pin one!</p>
+                    <div class="col-span-full text-center py-10 bg-slate-900/50 rounded-2xl border border-rose-900/30">
+                        <i class="fa-solid fa-compass-drafting text-2xl text-pink-400/40 mb-2"></i>
+                        <p class="text-xs text-pink-300/70">No entries in this section yet. Tap 'Add New' to pin one!</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = items.map(item => {
-                let catBadge = '';
-                if (item.category === 'date') catBadge = '<span class="text-[10px] text-rose-400 bg-rose-950/60 border border-rose-800/40 px-2 py-0.5 rounded-full"><i class="fa-solid fa-utensils mr-1"></i> Date Idea</span>';
-                if (item.category === 'travel') catBadge = '<span class="text-[10px] text-sky-400 bg-sky-950/60 border border-sky-800/40 px-2 py-0.5 rounded-full"><i class="fa-solid fa-plane mr-1"></i> Travel</span>';
-                if (item.category === 'memory') catBadge = '<span class="text-[10px] text-amber-400 bg-amber-950/60 border border-amber-800/40 px-2 py-0.5 rounded-full"><i class="fa-solid fa-heart mr-1"></i> Memory</span>';
+                let catIcon = 'fa-heart text-amber-400';
+                if (item.category === 'date') catIcon = 'fa-utensils text-rose-400';
+                if (item.category === 'travel') catIcon = 'fa-plane text-sky-400';
+
+                let formattedDate = '';
+                if (item.date) {
+                    const parsedDate = new Date(item.date + 'T00:00:00');
+                    formattedDate = parsedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+                }
+
+                const photoIndicator = item.image ? '<i class="fa-solid fa-image text-rose-400 text-[10px]"></i>' : '';
+                const starIndicator = item.favorite ? '<i class="fa-solid fa-star text-amber-400 text-[10px]"></i>' : '';
 
                 return `
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 transition-all hover:border-slate-700">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="space-y-1">
-                                ${catBadge}
-                                <h3 class="text-sm font-semibold text-white ${item.completed ? 'line-through text-slate-500' : ''}">${item.title}</h3>
+                    <div onclick="openCardDetail(${item.id})" class="aspect-square w-full bg-slate-900/80 rounded-2xl p-3 border border-rose-900/30 hover:border-rose-400/60 shadow-md flex flex-col justify-between cursor-pointer transition-all hover:scale-[1.02] relative overflow-hidden group">
+                        
+                        ${item.image ? `<div class="absolute inset-0 bg-cover bg-center opacity-25 group-hover:opacity-35 transition" style="background-image: url('${item.image}')"></div>` : ''}
+
+                        <div class="relative z-10 flex justify-between items-start">
+                            <i class="fa-solid ${catIcon} text-xs"></i>
+                            <div class="flex items-center space-x-1">
+                                ${starIndicator}
+                                ${photoIndicator}
                             </div>
-                            <button onclick="toggleItemFavorite(${item.id})" class="text-amber-400 text-xs p-1">
-                                <i class="${item.favorite ? 'fa-solid' : 'fa-regular'} fa-star"></i>
-                            </button>
                         </div>
-                        <p class="text-xs text-slate-400 mb-3 leading-relaxed">${item.desc}</p>
-                        <div class="flex justify-between items-center text-[11px] pt-2 border-t border-slate-800/60">
-                            <button onclick="toggleItemCompleted(${item.id})" class="text-slate-400 hover:text-emerald-400 flex items-center space-x-1.5 transition">
-                                <i class="${item.completed ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-regular fa-circle'}"></i>
-                                <span>${item.completed ? 'Completed' : 'Mark as Done'}</span>
-                            </button>
-                            <button onclick="deleteWishlistItem(${item.id})" class="text-slate-500 hover:text-rose-400 transition">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
+
+                        <div class="relative z-10 my-auto text-center">
+                            <h3 class="text-xs font-semibold text-white leading-tight line-clamp-2 ${item.completed ? 'line-through text-pink-300/50' : ''}">${item.title}</h3>
+                        </div>
+
+                        <div class="relative z-10 flex justify-between items-center text-[9px] text-pink-300/70 border-t border-rose-900/30 pt-1.5">
+                            <span>${formattedDate || 'No date'}</span>
+                            <span class="text-rose-400 group-hover:translate-x-0.5 transition"><i class="fa-solid fa-expand"></i></span>
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        function openCardDetail(id) {
+            const item = APP_STATE.wishlist.find(i => i.id === id);
+            if (!item) return;
+
+            const modal = document.getElementById('card-detail-modal');
+            const content = document.getElementById('card-detail-content');
+
+            let catBadge = '';
+            if (item.category === 'date') catBadge = '<span class="text-[10px] text-rose-300 bg-rose-950/40 border border-rose-800/30 px-2.5 py-1 rounded-full"><i class="fa-solid fa-utensils mr-1"></i> Date Idea</span>';
+            if (item.category === 'travel') catBadge = '<span class="text-[10px] text-sky-300 bg-sky-950/40 border border-sky-800/30 px-2.5 py-1 rounded-full"><i class="fa-solid fa-plane mr-1"></i> Travel Goal</span>';
+            if (item.category === 'memory') catBadge = '<span class="text-[10px] text-amber-300 bg-amber-950/40 border border-amber-800/30 px-2.5 py-1 rounded-full"><i class="fa-solid fa-heart mr-1"></i> Memory</span>';
+
+            let dateBadge = '';
+            if (item.date) {
+                const parsedDate = new Date(item.date + 'T00:00:00');
+                const formattedDate = parsedDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                const icon = item.category === 'memory' ? 'fa-calendar-check' : 'fa-calendar-days';
+                const prefix = item.category === 'memory' ? 'Cherished:' : 'Target:';
+                dateBadge = `<span class="text-[10px] text-slate-300 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700/60 flex items-center space-x-1"><i class="fa-solid ${icon} text-rose-400 text-[9px]"></i><span>${prefix} ${formattedDate}</span></span>`;
+            }
+
+            const imageSection = item.image ? `
+                <div class="relative w-full h-44 rounded-2xl overflow-hidden mb-3 border border-slate-700/60 group">
+                    <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover">
+                    <label class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center cursor-pointer text-xs text-white space-x-1">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Change Photo</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadItemImage(event, ${item.id})">
+                    </label>
+                </div>
+            ` : `
+                <label class="w-full py-4 mb-3 rounded-2xl border border-dashed border-slate-700 hover:border-rose-400/60 bg-slate-950/40 hover:bg-slate-900/60 flex items-center justify-center space-x-2 text-xs text-slate-400 hover:text-slate-200 cursor-pointer transition">
+                    <i class="fa-solid fa-image text-rose-400"></i>
+                    <span>Upload Memory Photo</span>
+                    <input type="file" accept="image/*" class="hidden" onchange="uploadItemImage(event, ${item.id})">
+                </label>
+            `;
+
+            content.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div class="flex flex-wrap items-center gap-1.5">
+                        ${catBadge}
+                        ${dateBadge}
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="toggleItemFavorite(${item.id})" class="text-amber-400 text-sm">
+                            <i class="${item.favorite ? 'fa-solid' : 'fa-regular'} fa-star"></i>
+                        </button>
+                        <button onclick="closeCardDetailModal()" class="text-slate-400 hover:text-white p-1">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <h2 class="text-lg font-bold text-white leading-snug ${item.completed ? 'line-through text-slate-500' : ''}">${item.title}</h2>
+
+                ${imageSection}
+
+                <div class="bg-slate-950/70 p-3.5 rounded-2xl border border-slate-800 text-xs text-slate-300 leading-relaxed font-light min-h-[60px]">
+                    ${item.desc || 'No detailed description added yet.'}
+                </div>
+
+                <div class="flex justify-between items-center text-xs pt-3 border-t border-slate-800">
+                    <button onclick="toggleItemCompleted(${item.id})" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-emerald-400 flex items-center space-x-1.5 transition">
+                        <i class="${item.completed ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-regular fa-circle'}"></i>
+                        <span>${item.completed ? 'Completed' : 'Mark Completed'}</span>
+                    </button>
+                    <button onclick="deleteWishlistItem(${item.id}); closeCardDetailModal();" class="px-3 py-1.5 rounded-xl bg-rose-950/30 hover:bg-rose-900/50 text-rose-400 hover:text-rose-300 transition">
+                        <i class="fa-solid fa-trash-can mr-1"></i> Delete
+                    </button>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeCardDetailModal() {
+            document.getElementById('card-detail-modal').classList.add('hidden');
+        }
+
+        function uploadItemImage(event, id) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const item = APP_STATE.wishlist.find(i => i.id === id);
+                if (item) {
+                    item.image = e.target.result;
+                    saveLocalStorageData();
+                    renderWishlist();
+                    openCardDetail(id);
+                }
+            };
+            reader.readAsDataURL(file);
         }
 
         function filterWishlist(cat) {
@@ -949,6 +1153,7 @@
             e.preventDefault();
             const cat = document.getElementById('item-category').value;
             const title = document.getElementById('item-title').value.trim();
+            const dateVal = document.getElementById('item-date').value;
             const desc = document.getElementById('item-description').value.trim();
 
             if (title) {
@@ -956,6 +1161,7 @@
                     id: Date.now(),
                     category: cat,
                     title: title,
+                    date: dateVal || null,
                     desc: desc,
                     completed: false,
                     favorite: false
@@ -973,6 +1179,9 @@
                 item.completed = !item.completed;
                 saveLocalStorageData();
                 renderWishlist();
+                if (!document.getElementById('card-detail-modal').classList.contains('hidden')) {
+                    openCardDetail(id);
+                }
             }
         }
 
@@ -982,6 +1191,9 @@
                 item.favorite = !item.favorite;
                 saveLocalStorageData();
                 renderWishlist();
+                if (!document.getElementById('card-detail-modal').classList.contains('hidden')) {
+                    openCardDetail(id);
+                }
             }
         }
 
@@ -994,44 +1206,42 @@
         /* ================= TAB 3: AMBIENT TOUCH LAMP ================= */
         function setLampColor(color) {
             APP_STATE.lampColor = color;
-            const emotion = APP_STATE.emotionsConfig[color];
+            const emotion = APP_STATE.emotionsConfig[color] || APP_STATE.emotionsConfig.blue;
             const aura = document.getElementById('lamp-aura');
             const icon = document.getElementById('lamp-inner-icon');
             const button = document.getElementById('touch-lamp-button');
             const badge = document.getElementById('lamp-emotion-badge');
 
-            // Reset all color selector button borders
             document.querySelectorAll('.color-select-btn').forEach(btn => {
-                btn.className = "color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 transition-all hover:bg-slate-800";
+                btn.className = "color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800";
             });
 
-            // Highlight active selector button
             const activeBtn = document.getElementById(`color-btn-${color}`);
-            if (activeBtn) {
-                activeBtn.className = `color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/90 border-2 border-${color}-500 transition-all hover:bg-slate-800`;
-            }
 
-            // Update Lamp visual theme
-            if (color === 'sky') {
-                aura.className = "absolute w-64 h-64 rounded-full bg-sky-500/20 blur-3xl transition-all duration-700 pointer-events-none";
-                icon.className = "w-20 h-20 rounded-full bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
-                button.className = "relative z-10 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-900 via-slate-800 to-sky-950/40 border-4 border-sky-500/40 flex flex-col items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 group focus:outline-none";
-                badge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-500/30 text-sky-300 border border-sky-400/30 mb-1";
-            } else if (color === 'amber') {
-                aura.className = "absolute w-64 h-64 rounded-full bg-amber-500/20 blur-3xl transition-all duration-700 pointer-events-none";
-                icon.className = "w-20 h-20 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
-                button.className = "relative z-10 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-900 via-slate-800 to-amber-950/40 border-4 border-amber-500/40 flex flex-col items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 group focus:outline-none";
-                badge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/30 text-amber-300 border border-amber-400/30 mb-1";
+            if (color === 'red') {
+                if (activeBtn) activeBtn.className = `color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border-2 border-red-500 transition-all`;
+                aura.className = "absolute w-80 h-80 rounded-full bg-red-500/30 blur-3xl transition-all duration-700 pointer-events-none scale-100 opacity-80";
+                icon.className = "w-20 h-20 rounded-full bg-red-500/10 border border-red-400/30 flex items-center justify-center text-red-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
+                button.className = "relative z-10 w-52 h-52 rounded-full bg-slate-900 border-2 border-red-500/50 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(239,68,68,0.3)] transition-all duration-300 active:scale-95 group focus:outline-none";
+                badge.className = "px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-red-500/20 text-red-200 border border-red-400/40 mb-1";
+            } else if (color === 'blue') {
+                if (activeBtn) activeBtn.className = `color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border-2 border-blue-500 transition-all`;
+                aura.className = "absolute w-80 h-80 rounded-full bg-blue-500/30 blur-3xl transition-all duration-700 pointer-events-none scale-100 opacity-80";
+                icon.className = "w-20 h-20 rounded-full bg-blue-500/10 border border-blue-400/30 flex items-center justify-center text-blue-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
+                button.className = "relative z-10 w-52 h-52 rounded-full bg-slate-900 border-2 border-blue-500/50 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(59,130,246,0.3)] transition-all duration-300 active:scale-95 group focus:outline-none";
+                badge.className = "px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-blue-500/20 text-blue-200 border border-blue-400/40 mb-1";
+            } else if (color === 'green') {
+                if (activeBtn) activeBtn.className = `color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border-2 border-emerald-500 transition-all`;
+                aura.className = "absolute w-80 h-80 rounded-full bg-emerald-500/30 blur-3xl transition-all duration-700 pointer-events-none scale-100 opacity-80";
+                icon.className = "w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-400/30 flex items-center justify-center text-emerald-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
+                button.className = "relative z-10 w-52 h-52 rounded-full bg-slate-900 border-2 border-emerald-500/50 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(34,197,94,0.3)] transition-all duration-300 active:scale-95 group focus:outline-none";
+                badge.className = "px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-emerald-500/20 text-emerald-200 border border-emerald-400/40 mb-1";
             } else if (color === 'purple') {
-                aura.className = "absolute w-64 h-64 rounded-full bg-purple-500/20 blur-3xl transition-all duration-700 pointer-events-none";
-                icon.className = "w-20 h-20 rounded-full bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
-                button.className = "relative z-10 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-900 via-slate-800 to-purple-950/40 border-4 border-purple-500/40 flex flex-col items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 group focus:outline-none";
-                badge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-500/30 text-purple-300 border border-purple-400/30 mb-1";
-            } else if (color === 'rose') {
-                aura.className = "absolute w-64 h-64 rounded-full bg-rose-500/20 blur-3xl transition-all duration-700 pointer-events-none";
-                icon.className = "w-20 h-20 rounded-full bg-rose-500/20 border border-rose-400/40 flex items-center justify-center text-rose-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
-                button.className = "relative z-10 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-900 via-slate-800 to-rose-950/40 border-4 border-rose-500/40 flex flex-col items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 group focus:outline-none";
-                badge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/30 text-rose-300 border border-rose-400/30 mb-1";
+                if (activeBtn) activeBtn.className = `color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border-2 border-purple-500 transition-all`;
+                aura.className = "absolute w-80 h-80 rounded-full bg-purple-500/30 blur-3xl transition-all duration-700 pointer-events-none scale-100 opacity-80";
+                icon.className = "w-20 h-20 rounded-full bg-purple-500/10 border border-purple-400/30 flex items-center justify-center text-purple-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
+                button.className = "relative z-10 w-52 h-52 rounded-full bg-slate-900 border-2 border-purple-500/50 flex flex-col items-center justify-center shadow-[0_0_50px_rgba(168,85,247,0.3)] transition-all duration-300 active:scale-95 group focus:outline-none";
+                badge.className = "px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-purple-500/20 text-purple-200 border border-purple-400/40 mb-1";
             }
 
             badge.innerText = emotion.name;
@@ -1042,42 +1252,102 @@
             const prompt = document.getElementById('lamp-prompt-text');
             const emotion = APP_STATE.emotionsConfig[APP_STATE.lampColor];
 
-            // Burst pulse effect
             aura.classList.remove('blur-3xl');
-            aura.classList.add('blur-xl', 'scale-125', 'opacity-100');
+            aura.classList.add('blur-2xl', 'scale-125', 'opacity-100');
             prompt.innerText = `Sending ${emotion.name}...`;
             prompt.className = "text-[11px] font-semibold text-white tracking-wider uppercase animate-pulse";
 
             setTimeout(() => {
                 aura.classList.add('blur-3xl');
-                aura.classList.remove('blur-xl', 'scale-125', 'opacity-100');
+                aura.classList.remove('blur-2xl', 'scale-125', 'opacity-100');
                 prompt.innerText = "Tap To Send Glow";
-                prompt.className = `text-[11px] font-semibold text-${emotion.colorClass}-200 tracking-wider uppercase`;
+                prompt.className = "text-[11px] font-semibold text-slate-300 tracking-wider uppercase";
             }, 1200);
 
-            // Add to activity log
             const now = new Date();
             const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
             APP_STATE.touchLogs.unshift({
-                sender: 'you',
+                sender: APP_STATE.currentUserRole === 'me' ? 'you' : 'wife',
                 time: `Just now (${timeStr})`,
-                message: emotion.msg,
-                color: APP_STATE.lampColor
+                message: `${APP_STATE.currentUserRole === 'me' ? 'You' : 'Wife'} sent a "${emotion.name}" pulse`,
+                color: APP_STATE.lampColor,
+                hour: now.getHours()
             });
 
             saveLocalStorageData();
             renderTouchLogs();
+            renderEmotionGraph();
+        }
+
+        function renderEmotionGraph() {
+            const husbandContainer = document.getElementById('husband-emotion-timeline');
+            const wifeContainer = document.getElementById('wife-emotion-timeline');
+
+            if (!husbandContainer || !wifeContainer) return;
+
+            const timeBlocks = Array.from({ length: 12 }, (_, i) => ({
+                blockIndex: i,
+                husbandLogs: [],
+                wifeLogs: []
+            }));
+
+            const colorBgMap = {
+                red: 'bg-red-500',
+                blue: 'bg-blue-500',
+                green: 'bg-emerald-500',
+                purple: 'bg-purple-500'
+            };
+
+            let husbandTotal = 0;
+            let wifeTotal = 0;
+
+            APP_STATE.touchLogs.forEach(log => {
+                const hour = log.hour !== undefined ? log.hour : 12;
+                const blockIdx = Math.min(11, Math.floor(hour / 2));
+                
+                if (log.sender === 'you') {
+                    timeBlocks[blockIdx].husbandLogs.push(log);
+                    husbandTotal++;
+                } else {
+                    timeBlocks[blockIdx].wifeLogs.push(log);
+                    wifeTotal++;
+                }
+            });
+
+            const husbandPulseEl = document.getElementById('husband-total-pulses');
+            const wifePulseEl = document.getElementById('wife-total-pulses');
+            if (husbandPulseEl) husbandPulseEl.innerText = `${husbandTotal} pulse${husbandTotal !== 1 ? 's' : ''}`;
+            if (wifePulseEl) wifePulseEl.innerText = `${wifeTotal} pulse${wifeTotal !== 1 ? 's' : ''}`;
+
+            husbandContainer.innerHTML = timeBlocks.map(block => {
+                if (block.husbandLogs.length === 0) {
+                    return `<div class="h-full flex-1 bg-slate-950/40 rounded-sm"></div>`;
+                }
+                const latest = block.husbandLogs[0];
+                const colorClass = colorBgMap[latest.color] || 'bg-slate-700';
+                return `<div title="${latest.message}" class="h-full flex-1 ${colorClass} rounded-sm transition-transform hover:scale-110 cursor-pointer"></div>`;
+            }).join('');
+
+            wifeContainer.innerHTML = timeBlocks.map(block => {
+                if (block.wifeLogs.length === 0) {
+                    return `<div class="h-full flex-1 bg-slate-950/40 rounded-sm"></div>`;
+                }
+                const latest = block.wifeLogs[0];
+                const colorClass = colorBgMap[latest.color] || 'bg-slate-700';
+                return `<div title="${latest.message}" class="h-full flex-1 ${colorClass} rounded-sm transition-transform hover:scale-110 cursor-pointer"></div>`;
+            }).join('');
         }
 
         function renderTouchLogs() {
             const container = document.getElementById('touch-logs-list');
+            if (!container) return;
             container.innerHTML = APP_STATE.touchLogs.map(log => {
-                const color = log.color || 'rose';
+                const color = log.color || 'pink';
                 return `
                     <div class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
                         <div class="flex items-center space-x-2.5">
-                            <div class="w-7 h-7 rounded-full bg-${color}-500/20 text-${color}-400 flex items-center justify-center text-xs">
+                            <div class="w-7 h-7 rounded-full bg-slate-800 text-rose-400 flex items-center justify-center text-xs">
                                 <i class="fa-solid ${log.sender === 'you' ? 'fa-fingerprint' : 'fa-heart'}"></i>
                             </div>
                             <div>
@@ -1093,7 +1363,7 @@
         /* ================= PRIVACY OVERLAY ================= */
         function togglePrivacyModal() {
             const modal = document.getElementById('privacy-modal');
-            modal.classList.toggle('hidden');
+            if (modal) modal.classList.toggle('hidden');
         }
     </script>
 </body>
