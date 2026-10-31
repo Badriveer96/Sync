@@ -68,16 +68,16 @@
             scrollbar-width: none;
         }
         .nav-glow-pill {
-            background: linear-gradient(135deg, rgba(244, 114, 182, 0.15) 0%, rgba(225, 29, 72, 0.1) 100%);
-            border: 1px solid rgba(244, 114, 182, 0.3);
-            box-shadow: 0 0 12px rgba(244, 114, 182, 0.15);
+            background: linear-gradient(135deg, rgba(244, 114, 182, 0.25) 0%, rgba(225, 29, 72, 0.2) 100%);
+            border: 1px solid rgba(244, 114, 182, 0.4);
+            box-shadow: 0 0 15px rgba(244, 114, 182, 0.25);
         }
     </style>
 </head>
 <body class="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
 
-    <!-- Top Privacy & Self-Hosted Status Banner -->
-    <header class="fixed top-0 left-0 right-0 z-50 px-4 py-2 bg-slate-950/90 text-slate-300 text-xs flex justify-between items-center backdrop-blur-md border-b border-rose-900/30">
+    <!-- Top Status Banner -->
+    <header class="sticky top-0 z-50 px-4 py-2.5 bg-slate-950/90 text-slate-300 text-xs flex justify-between items-center backdrop-blur-md border-b border-rose-900/30">
         <div class="flex items-center space-x-2">
             <span class="inline-block w-2.5 h-2.5 rounded-full bg-rose-400 animate-pulse shadow-md shadow-rose-500/30"></span>
             <span class="font-medium tracking-wide">Sync Server: <span class="text-rose-300">Connected</span></span>
@@ -97,11 +97,11 @@
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="flex-1 pt-14 pb-28 max-w-lg mx-auto w-full relative min-h-screen overflow-x-hidden p-4">
+    <!-- Main Content Container with safe bottom padding so content isn't hidden behind the nav bar -->
+    <main class="flex-1 pt-4 pb-36 max-w-lg mx-auto w-full relative min-h-screen overflow-x-hidden px-4 space-y-6">
 
         <!-- ================= TAB 1: COUNTDOWN & DAILY QUESTION ================= -->
-        <section id="tab-1" class="tab-content transition-opacity duration-300 opacity-100 space-y-6">
+        <section id="tab-1" class="tab-content space-y-6">
             
             <!-- Animated Memory Photo Frame Header -->
             <div class="relative rounded-3xl overflow-hidden shadow-xl bg-slate-900/80 border border-rose-900/30 p-5 space-y-4">
@@ -119,7 +119,7 @@
                     <img id="memory-photo-2" src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1000&q=80" alt="Shared Memory 2" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-0">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-transparent"></div>
                     
-                    <div class="absolute bottom-3 left-3 right-3 z-10 flex justify-between items-center backdrop-blur-md bg-slate-950/80 border border-slate-800 p-2 rounded-xl">
+                    <div class="absolute bottom-3 left-3 right-3 z-10 flex justify-between items-center backdrop-blur-md bg-slate-950/85 border border-slate-800 p-2.5 rounded-xl shadow-lg">
                         <div class="flex items-center space-x-2 text-[11px] text-slate-300">
                             <i class="fa-solid fa-images text-rose-400"></i>
                             <span id="photo-cycle-indicator" class="font-medium">Memory #1 of 2</span>
@@ -232,9 +232,8 @@
             </div>
         </section>
 
-
         <!-- ================= TAB 2: DIGITAL TIME CAPSULE & WISHLIST ================= -->
-        <section id="tab-2" class="tab-content hidden transition-opacity duration-300 opacity-0 space-y-6">
+        <section id="tab-2" class="tab-content hidden space-y-6">
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-xl font-bold text-white tracking-tight">Our Wishlist & Scrapbook</h2>
@@ -256,9 +255,8 @@
             <div id="wishlist-items-container" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
         </section>
 
-
         <!-- ================= TAB 3: AMBIENT TOUCH LAMP ================= -->
-        <section id="tab-3" class="tab-content hidden transition-opacity duration-300 opacity-0 space-y-6">
+        <section id="tab-3" class="tab-content hidden space-y-6">
             <div class="text-center space-y-1">
                 <h2 class="text-xl font-bold text-white tracking-tight">Ambient Touch Lamp</h2>
                 <p class="text-xs text-pink-300/70">Select how you feel and tap to send your mood instantly</p>
@@ -349,8 +347,8 @@
 
     </main>
 
-    <!-- ================= ELEGANT BOTTOM NAVIGATION BAR ================= -->
-    <nav class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-slate-950/95 backdrop-blur-xl border border-rose-900/40 px-6 py-2.5 rounded-full max-w-sm w-[92%] shadow-[0_8px_32px_rgba(244,114,182,0.2)]">
+    <!-- ================= FIXED BOTTOM NAVIGATION BAR ================= -->
+    <nav class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-slate-950/95 backdrop-blur-xl border border-rose-900/40 px-6 py-2.5 rounded-full max-w-sm w-[92%] shadow-[0_8px_32px_rgba(244,114,182,0.25)]">
         <div class="flex justify-around items-center">
             <button onclick="switchTab(1)" id="nav-btn-1" class="nav-tab-btn nav-glow-pill flex flex-col items-center py-1.5 px-4 text-rose-300 font-semibold rounded-full transition-all duration-300">
                 <i class="fa-solid fa-heart text-base mb-0.5"></i>
@@ -437,4 +435,382 @@
             currentUserRole: 'me',
             sharedMemories: {
                 photo1: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1000&q=80',
-                photo2: '
+                photo2: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1000&q=80'
+            },
+            activePhotoIndex: 1,
+            questionData: {
+                prompt: "",
+                yourAnswer: "",
+                wifeAnswer: "When we got caught in the sudden rain shower...",
+                yourSubmitted: false,
+                wifeSubmitted: true,
+                dayNumber: 1
+            },
+            questionHistory: [],
+            wishlist: [
+                { id: 1, category: 'date', title: 'Late Night Candlelight Dinner', date: '2027-02-14', desc: 'Try that small authentic bistro.', completed: false, favorite: true }
+            ],
+            lampColor: 'blue',
+            emotionsConfig: {
+                red: { name: 'Sad', hex: 'rgba(239, 68, 68, 0.5)' },
+                blue: { name: 'Missing You', hex: 'rgba(59, 130, 246, 0.5)' },
+                green: { name: 'Enthusiastic', hex: 'rgba(34, 197, 94, 0.5)' },
+                purple: { name: 'Passionate', hex: 'rgba(168, 85, 247, 0.5)' }
+            },
+            touchLogs: [
+                { sender: 'wife', time: '10 mins ago', message: 'Wife sent a "Missing You" blue pulse', color: 'blue' }
+            ]
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLocalStorageData();
+            initDailyQuestion();
+            startCountdownTimer();
+            renderSharedMemories();
+            startPhotoCrossFadeLoop();
+            renderWishlist();
+            renderTouchLogs();
+            renderEmotionGraph();
+            updateDailyQuestionUI();
+            renderQuestionHistory();
+            updateRolePermissionsUI();
+            setLampColor(APP_STATE.lampColor || 'blue');
+        });
+
+        function switchTab(tabIndex) {
+            APP_STATE.activeTab = tabIndex;
+            [1, 2, 3].forEach(id => {
+                const tab = document.getElementById(`tab-${id}`);
+                const navBtn = document.getElementById(`nav-btn-${id}`);
+                if (id === tabIndex) {
+                    tab.classList.remove('hidden');
+                    navBtn.className = "nav-tab-btn nav-glow-pill flex flex-col items-center py-1.5 px-4 text-rose-300 font-semibold rounded-full transition-all duration-300";
+                } else {
+                    tab.classList.add('hidden');
+                    navBtn.className = "nav-tab-btn flex flex-col items-center py-1.5 px-4 text-slate-400 hover:text-rose-300 rounded-full transition-all duration-300";
+                }
+            });
+        }
+
+        function handleRoleChange(event) {
+            APP_STATE.currentUserRole = event.target.value;
+            saveLocalStorageData();
+            updateRolePermissionsUI();
+            updateDailyQuestionUI();
+        }
+
+        function updateRolePermissionsUI() {
+            const roleSelect = document.getElementById('user-role-select');
+            if (roleSelect) roleSelect.value = APP_STATE.currentUserRole;
+
+            const roleBadge = document.getElementById('role-indicator-badge');
+            if (roleBadge) {
+                const roleName = APP_STATE.currentUserRole === 'me' ? 'Me (Husband)' : 'Her (Wife)';
+                roleBadge.innerHTML = `<i class="fa-solid fa-user-check text-rose-400 mr-1"></i> Role: ${roleName}`;
+            }
+
+            const permContainer = document.getElementById('photo-permissions-container');
+            if (!permContainer) return;
+
+            if (APP_STATE.currentUserRole === 'me') {
+                permContainer.innerHTML = `
+                    <label class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 shadow-md">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Edit Photo #1</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="handlePhotoUpload(event, 1)">
+                    </label>
+                `;
+            } else {
+                permContainer.innerHTML = `
+                    <label class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 shadow-md">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Edit Photo #2</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="handlePhotoUpload(event, 2)">
+                    </label>
+                `;
+            }
+        }
+
+        function startCountdownTimer() {
+            function updateTimer() {
+                const now = new Date();
+                const diff = APP_STATE.targetReunionDate - now;
+                if (diff <= 0) return;
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                const dEl = document.getElementById('timer-days');
+                const hEl = document.getElementById('timer-hours');
+                const mEl = document.getElementById('timer-minutes');
+                const sEl = document.getElementById('timer-seconds');
+                if (dEl) dEl.innerText = String(days).padStart(2, '0');
+                if (hEl) hEl.innerText = String(hours).padStart(2, '0');
+                if (mEl) mEl.innerText = String(minutes).padStart(2, '0');
+                if (sEl) sEl.innerText = String(seconds).padStart(2, '0');
+            }
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        function renderSharedMemories() {
+            const p1 = document.getElementById('memory-photo-1');
+            const p2 = document.getElementById('memory-photo-2');
+            if (p1) p1.src = APP_STATE.sharedMemories.photo1;
+            if (p2) p2.src = APP_STATE.sharedMemories.photo2;
+        }
+
+        function startPhotoCrossFadeLoop() {
+            setInterval(() => {
+                const p1 = document.getElementById('memory-photo-1');
+                const p2 = document.getElementById('memory-photo-2');
+                const indicator = document.getElementById('photo-cycle-indicator');
+                if (!p1 || !p2) return;
+
+                if (APP_STATE.activePhotoIndex === 1) {
+                    p1.classList.replace('opacity-100', 'opacity-0');
+                    p2.classList.replace('opacity-0', 'opacity-100');
+                    APP_STATE.activePhotoIndex = 2;
+                    if (indicator) indicator.innerText = "Memory #2 of 2";
+                } else {
+                    p2.classList.replace('opacity-100', 'opacity-0');
+                    p1.classList.replace('opacity-0', 'opacity-100');
+                    APP_STATE.activePhotoIndex = 1;
+                    if (indicator) indicator.innerText = "Memory #1 of 2";
+                }
+            }, 6000);
+        }
+
+        function handlePhotoUpload(event, photoSlot) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (photoSlot === 1) APP_STATE.sharedMemories.photo1 = e.target.result;
+                else APP_STATE.sharedMemories.photo2 = e.target.result;
+                saveLocalStorageData();
+                renderSharedMemories();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function initDailyQuestion() {
+            const now = new Date();
+            const startOfYear = new Date(now.getFullYear(), 0, 0);
+            const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+            APP_STATE.questionData.dayNumber = dayOfYear;
+            APP_STATE.questionData.prompt = ROMANTIC_QUESTIONS_BANK[dayOfYear % ROMANTIC_QUESTIONS_BANK.length];
+        }
+
+        function saveLocalStorageData() {
+            try {
+                localStorage.setItem('heart_sync_data', JSON.stringify({
+                    targetDate: APP_STATE.targetReunionDate.toISOString(),
+                    sharedMemories: APP_STATE.sharedMemories,
+                    questionData: APP_STATE.questionData,
+                    questionHistory: APP_STATE.questionHistory,
+                    wishlist: APP_STATE.wishlist,
+                    touchLogs: APP_STATE.touchLogs,
+                    currentUserRole: APP_STATE.currentUserRole
+                }));
+            } catch (e) {}
+        }
+
+        function loadLocalStorageData() {
+            try {
+                const data = localStorage.getItem('heart_sync_data');
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    if (parsed.targetDate) APP_STATE.targetReunionDate = new Date(parsed.targetDate);
+                    if (parsed.sharedMemories) APP_STATE.sharedMemories = parsed.sharedMemories;
+                    if (parsed.questionData) APP_STATE.questionData = parsed.questionData;
+                    if (parsed.questionHistory) APP_STATE.questionHistory = parsed.questionHistory;
+                    if (parsed.wishlist) APP_STATE.wishlist = parsed.wishlist;
+                    if (parsed.touchLogs) APP_STATE.touchLogs = parsed.touchLogs;
+                    if (parsed.currentUserRole) APP_STATE.currentUserRole = parsed.currentUserRole;
+                }
+            } catch (e) {}
+        }
+
+        function switchQuestionView(view) {
+            const todayBtn = document.getElementById('q-view-today-btn');
+            const historyBtn = document.getElementById('q-view-history-btn');
+            const todayContainer = document.getElementById('q-today-container');
+            const historyContainer = document.getElementById('q-history-container');
+
+            if (view === 'today') {
+                todayBtn.className = "px-2.5 py-1 rounded-lg font-semibold bg-rose-500 text-white transition";
+                historyBtn.className = "px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition";
+                todayContainer.classList.remove('hidden');
+                historyContainer.classList.add('hidden');
+            } else {
+                historyBtn.className = "px-2.5 py-1 rounded-lg font-semibold bg-rose-500 text-white transition";
+                todayBtn.className = "px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition";
+                todayContainer.classList.add('hidden');
+                historyContainer.classList.remove('hidden');
+                renderQuestionHistory();
+            }
+        }
+
+        function submitYourAnswer() {
+            const val = document.getElementById('your-answer-input').value.trim();
+            if (!val) return;
+            APP_STATE.questionData.yourAnswer = val;
+            APP_STATE.questionData.yourSubmitted = true;
+            saveLocalStorageData();
+            updateDailyQuestionUI();
+        }
+
+        function updateDailyQuestionUI() {
+            const q = APP_STATE.questionData;
+            const curQ = document.getElementById('current-question');
+            const dayTag = document.getElementById('question-day-tag');
+            if (curQ) curQ.innerText = `"${q.prompt}"`;
+            if (dayTag) dayTag.innerText = `Day #${q.dayNumber}`;
+
+            if (q.yourSubmitted) {
+                const yCont = document.getElementById('your-answer-container');
+                const ySub = document.getElementById('your-answer-submitted');
+                const yTxt = document.getElementById('your-answer-text');
+                if (yCont) yCont.classList.add('hidden');
+                if (ySub) ySub.classList.remove('hidden');
+                if (yTxt) yTxt.innerText = q.yourAnswer;
+            }
+
+            if (q.yourSubmitted && q.wifeSubmitted) {
+                const wLock = document.getElementById('wife-answer-locked');
+                const wUnlock = document.getElementById('wife-answer-unlocked');
+                const wTxt = document.getElementById('wife-answer-text');
+                if (wLock) wLock.classList.add('hidden');
+                if (wUnlock) wUnlock.classList.remove('hidden');
+                if (wTxt) wTxt.innerText = q.wifeAnswer;
+            }
+        }
+
+        function toggleWifeResponseSim() {
+            APP_STATE.questionData.wifeSubmitted = !APP_STATE.questionData.wifeSubmitted;
+            saveLocalStorageData();
+            updateDailyQuestionUI();
+        }
+
+        function renderQuestionHistory() {
+            const container = document.getElementById('q-history-list');
+            if (!container) return;
+            container.innerHTML = APP_STATE.questionHistory.map(item => `
+                <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-rose-900/30 space-y-2">
+                    <p class="text-xs italic font-medium text-slate-200">"${item.prompt}"</p>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-400">No history yet.</p>';
+        }
+
+        function updateDateLabel(cat) {
+            const label = document.getElementById('item-date-label');
+            if (label) label.innerText = cat === 'memory' ? 'Date Cherished (Optional)' : 'Target Date (Optional)';
+        }
+
+        function renderWishlist(cat = 'all') {
+            const container = document.getElementById('wishlist-items-container');
+            if (!container) return;
+            let items = APP_STATE.wishlist;
+            if (cat !== 'all') items = items.filter(i => i.category === cat);
+
+            container.innerHTML = items.map(item => `
+                <div onclick="openCardDetail(${item.id})" class="aspect-square w-full bg-slate-900/80 rounded-2xl p-3 border border-rose-900/30 flex flex-col justify-between cursor-pointer">
+                    <h3 class="text-xs font-semibold text-white">${item.title}</h3>
+                </div>
+            `).join('') || '<p class="text-xs text-slate-400 col-span-full text-center">No entries yet.</p>';
+        }
+
+        function openCardDetail(id) {
+            const item = APP_STATE.wishlist.find(i => i.id === id);
+            if (!item) return;
+            const content = document.getElementById('card-detail-content');
+            if (content) {
+                content.innerHTML = `
+                    <h2 class="text-lg font-bold text-white">${item.title}</h2>
+                    <p class="text-xs text-slate-300">${item.desc}</p>
+                    <button onclick="document.getElementById('card-detail-modal').classList.add('hidden')" class="px-3 py-1 bg-rose-500 text-white rounded-xl text-xs">Close</button>
+                `;
+            }
+            const modal = document.getElementById('card-detail-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function filterWishlist(cat) {
+            renderWishlist(cat);
+        }
+
+        function openAddItemModal() { 
+            const m = document.getElementById('add-item-modal');
+            if (m) m.classList.remove('hidden'); 
+        }
+        function closeAddItemModal() { 
+            const m = document.getElementById('add-item-modal');
+            if (m) m.classList.add('hidden'); 
+        }
+
+        function saveWishlistItem(e) {
+            e.preventDefault();
+            const titleInput = document.getElementById('item-title');
+            if (!titleInput) return;
+            const title = titleInput.value.trim();
+            if (title) {
+                APP_STATE.wishlist.unshift({
+                    id: Date.now(),
+                    category: document.getElementById('item-category').value,
+                    title: title,
+                    date: document.getElementById('item-date').value,
+                    desc: document.getElementById('item-description').value.trim()
+                });
+                saveLocalStorageData();
+                renderWishlist();
+                closeAddItemModal();
+            }
+        }
+
+        function setLampColor(color) {
+            APP_STATE.lampColor = color;
+            const badge = document.getElementById('lamp-emotion-badge');
+            if (badge && APP_STATE.emotionsConfig[color]) {
+                badge.innerText = APP_STATE.emotionsConfig[color].name;
+            }
+        }
+
+        function triggerLampTouch() {
+            APP_STATE.touchLogs.unshift({
+                sender: 'you',
+                time: 'Just now',
+                message: `You sent a pulse`,
+                color: APP_STATE.lampColor,
+                hour: new Date().getHours()
+            });
+            saveLocalStorageData();
+            renderTouchLogs();
+            renderEmotionGraph();
+        }
+
+        function renderEmotionGraph() {
+            const h = document.getElementById('husband-emotion-timeline');
+            const w = document.getElementById('wife-emotion-timeline');
+            if (h) h.innerHTML = '<div class="h-full flex-1 bg-rose-500 rounded-sm"></div>';
+            if (w) w.innerHTML = '<div class="h-full flex-1 bg-blue-500 rounded-sm"></div>';
+        }
+
+        function renderTouchLogs() {
+            const logs = document.getElementById('touch-logs-list');
+            if (logs) {
+                logs.innerHTML = APP_STATE.touchLogs.map(l => `
+                    <div class="bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs text-slate-200">${l.message}</div>
+                `).join('');
+            }
+        }
+
+        function togglePrivacyModal() {
+            const m = document.getElementById('privacy-modal');
+            if (m) m.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
