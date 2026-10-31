@@ -13,7 +13,7 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDKs (Compat Version for Realtime Database) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -22,31 +22,10 @@
             theme: {
                 extend: {
                     colors: {
-                        rose: {
-                            50: '#fdf2f8',
-                            100: '#fce7f3',
-                            300: '#f472b6',
-                            500: '#e11d48',
-                            600: '#be123c',
-                            900: '#4c0519',
-                        },
-                        pink: {
-                            300: '#f472b6',
-                            400: '#e879f9',
-                            500: '#d946ef',
-                            600: '#c026d3',
-                            700: '#a21caf',
-                        },
-                        lavender: {
-                            300: '#e9d5ff',
-                            400: '#c084fc',
-                            500: '#a855f7',
-                            600: '#9333ea',
-                            950: '#1e1b4b',
-                        },
-                        amber: {
-                            400: '#fbbf24',
-                        }
+                        rose: { 50: '#fdf2f8', 100: '#fce7f3', 300: '#f472b6', 500: '#e11d48', 600: '#be123c', 900: '#4c0519' },
+                        pink: { 300: '#f472b6', 400: '#e879f9', 500: '#d946ef', 600: '#c026d3', 700: '#a21caf' },
+                        lavender: { 300: '#e9d5ff', 400: '#c084fc', 500: '#a855f7', 600: '#9333ea', 950: '#1e1b4b' },
+                        amber: { 400: '#fbbf24' }
                     },
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
@@ -58,33 +37,16 @@
                             '50%': { borderColor: 'rgba(217, 70, 239, 0.7)', boxShadow: '0 0 20px rgba(244, 114, 182, 0.4)' }
                         }
                     },
-                    animation: {
-                        'border-pulse': 'borderPulse 3.5s ease-in-out infinite'
-                    }
+                    animation: { 'border-pulse': 'borderPulse 3.5s ease-in-out infinite' }
                 }
             }
         }
     </script>
-
     <style>
-        .dark-glass {
-            background: rgba(30, 27, 75, 0.65);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(244, 114, 182, 0.3);
-        }
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .nav-glow-pill {
-            background: linear-gradient(135deg, rgba(244, 114, 182, 0.25) 0%, rgba(225, 29, 72, 0.2) 100%);
-            border: 1px solid rgba(244, 114, 182, 0.4);
-            box-shadow: 0 0 15px rgba(244, 114, 182, 0.25);
-        }
+        .dark-glass { background: rgba(30, 27, 75, 0.65); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(244, 114, 182, 0.3); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .nav-glow-pill { background: linear-gradient(135deg, rgba(244, 114, 182, 0.25) 0%, rgba(225, 29, 72, 0.2) 100%); border: 1px solid rgba(244, 114, 182, 0.4); box-shadow: 0 0 15px rgba(244, 114, 182, 0.25); }
     </style>
 </head>
 <body class="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
@@ -92,7 +54,7 @@
     <!-- Top Status Banner -->
     <header class="sticky top-0 z-50 px-4 py-2.5 bg-slate-950/90 text-slate-300 text-xs flex justify-between items-center backdrop-blur-md border-b border-rose-900/30">
         <div class="flex items-center space-x-2">
-            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-md shadow-emerald-500/30"></span>
+            <span id="connection-dot" class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-md shadow-emerald-500/30"></span>
             <span class="font-medium tracking-wide">Sync Server: <span id="sync-status-text" class="text-emerald-300">Live Firebase Connected</span></span>
         </div>
         <div class="flex items-center space-x-3">
@@ -113,10 +75,8 @@
     <!-- Main Content Container -->
     <main class="flex-1 pt-4 pb-36 max-w-lg mx-auto w-full relative min-h-screen overflow-x-hidden px-4 space-y-6">
 
-        <!-- ================= TAB 1: COUNTDOWN & DAILY QUESTION ================= -->
+        <!-- TAB 1 -->
         <section id="tab-1" class="tab-content space-y-6">
-            
-            <!-- Enlarged Memory Photo Frame Header -->
             <div class="relative rounded-3xl overflow-hidden shadow-xl dark-glass animate-border-pulse p-5 space-y-4">
                 <div class="flex justify-between items-center z-20 relative">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30 backdrop-blur-md">
@@ -141,7 +101,6 @@
                     </div>
                 </div>
 
-                <!-- Countdown Timer Display -->
                 <div class="text-center pt-1">
                     <h1 class="text-pink-200/90 text-xs font-medium mb-3">Counting down until November 12th, 4:30 PM...</h1>
                     <div class="grid grid-cols-4 gap-2 max-w-sm mx-auto">
@@ -177,262 +136,68 @@
                             <p class="text-pink-300/70 text-xs">Curated romantic questions updated daily</p>
                         </div>
                     </div>
-                    <div class="flex bg-slate-950 p-1 rounded-xl border border-rose-900/40 text-[11px]">
-                        <button id="q-view-today-btn" onclick="switchQuestionView('today')" class="px-2.5 py-1 rounded-lg font-semibold bg-rose-500 text-white transition">Today</button>
-                        <button id="q-view-history-btn" onclick="switchQuestionView('history')" class="px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition">History</button>
-                    </div>
                 </div>
-
-                <div id="q-today-container" class="space-y-4">
-                    <div class="bg-slate-950/80 rounded-2xl p-4 border border-rose-900/30">
-                        <div class="flex justify-between items-center mb-1.5">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400">Today's Romantic Question</span>
-                            <span id="question-day-tag" class="text-[10px] bg-slate-900 text-pink-200 px-2 py-0.5 rounded-full border border-pink-900/40">Day #142</span>
-                        </div>
-                        <p id="current-question" class="text-slate-200 text-sm italic font-medium leading-relaxed"></p>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div class="space-y-2">
-                            <label class="text-xs font-semibold text-slate-300 flex justify-between">
-                                <span>Your Answer (You)</span>
-                                <span id="your-status-badge" class="text-amber-400 text-[11px]"><i class="fa-solid fa-clock mr-1"></i> Draft</span>
-                            </label>
-                            <div id="your-answer-container">
-                                <textarea id="your-answer-input" rows="2" placeholder="Write your secret answer..." class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500 transition resize-none"></textarea>
-                                <button onclick="submitYourAnswer()" class="mt-2 w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs rounded-xl shadow-md transition flex items-center justify-center space-x-2">
-                                    <i class="fa-solid fa-paper-plane"></i>
-                                    <span>Lock In My Response</span>
-                                </button>
-                            </div>
-                            <div id="your-answer-submitted" class="hidden bg-slate-800/80 border border-emerald-500/30 rounded-xl p-3 text-slate-200 text-sm">
-                                <p id="your-answer-text" class="text-slate-300"></p>
-                            </div>
-                        </div>
-
-                        <div class="space-y-2 pt-2 border-t border-slate-800">
-                            <label class="text-xs font-semibold text-slate-300 flex justify-between">
-                                <span>Partner's Answer</span>
-                                <span class="text-emerald-400 text-[11px]"><i class="fa-solid fa-circle-check mr-1"></i> Answered</span>
-                            </label>
-                            <div id="wife-answer-locked" class="relative rounded-xl overflow-hidden bg-slate-950 p-4 border border-slate-800 text-center">
-                                <div class="filter blur-md select-none text-slate-500 text-sm pointer-events-none">
-                                    I remembered the way you held my coffee cup...
-                                </div>
-                                <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center p-3 text-center">
-                                    <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mb-1">
-                                        <i class="fa-solid fa-lock text-xs"></i>
-                                    </div>
-                                    <p class="text-xs text-slate-300 font-medium">Locked until you submit your answer!</p>
-                                </div>
-                            </div>
-                            <div id="wife-answer-unlocked" class="hidden bg-rose-950/20 border border-rose-500/20 rounded-xl p-3 text-slate-200 text-sm">
-                                <p id="wife-answer-text" class="text-rose-200 italic"></p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="bg-slate-950/80 rounded-2xl p-4 border border-rose-900/30">
+                    <p id="current-question" class="text-slate-200 text-sm italic font-medium leading-relaxed"></p>
                 </div>
-
-                <div id="q-history-container" class="hidden space-y-3">
-                    <p class="text-xs text-slate-400">Scroll back through all your shared answers & memory logs:</p>
-                    <div id="q-history-list" class="space-y-3 max-h-80 overflow-y-auto pr-1 hide-scrollbar"></div>
+                <div class="mt-3 space-y-2">
+                    <textarea id="your-answer-input" rows="2" placeholder="Write your answer..." class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500 resize-none"></textarea>
+                    <button onclick="submitYourAnswer()" class="w-full py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-medium text-xs rounded-xl shadow-md transition">Lock In My Response</button>
                 </div>
             </div>
         </section>
 
-        <!-- ================= TAB 2: DIGITAL TIME CAPSULE & WISHLIST ================= -->
+        <!-- TAB 2 -->
         <section id="tab-2" class="tab-content hidden space-y-6">
             <div class="flex justify-between items-center">
-                <div>
-                    <h2 class="text-xl font-bold text-white tracking-tight">Our Wishlist & Scrapbook</h2>
-                    <p class="text-xs text-pink-300/70">Future adventures & cherished memories</p>
-                </div>
-                <button onclick="openAddItemModal()" class="px-3.5 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-500/30 flex items-center space-x-1.5 transition">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Add New</span>
-                </button>
+                <h2 class="text-xl font-bold text-white tracking-tight">Our Wishlist & Scrapbook</h2>
+                <button onclick="openAddItemModal()" class="px-3.5 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-lg transition"><i class="fa-solid fa-plus"></i> Add New</button>
             </div>
-
-            <div class="flex space-x-2 overflow-x-auto hide-scrollbar pb-1">
-                <button onclick="filterWishlist('all')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-rose-500 text-white shadow-sm transition">All Entries</button>
-                <button onclick="filterWishlist('date')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition"><i class="fa-solid fa-utensils text-rose-400 mr-1.5"></i> Date Ideas</button>
-                <button onclick="filterWishlist('travel')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition"><i class="fa-solid fa-plane text-sky-400 mr-1.5"></i> Travel Goals</button>
-                <button onclick="filterWishlist('memory')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition"><i class="fa-solid fa-heart text-amber-400 mr-1.5"></i> Memories</button>
-            </div>
-
             <div id="wishlist-items-container" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
         </section>
 
-        <!-- ================= TAB 3: AMBIENT TOUCH LAMP ================= -->
+        <!-- TAB 3 -->
         <section id="tab-3" class="tab-content hidden space-y-6">
             <div class="text-center space-y-1">
                 <h2 class="text-xl font-bold text-white tracking-tight">Ambient Touch Lamp</h2>
-                <p class="text-xs text-pink-300/70">Select how you feel and tap to send your mood instantly</p>
+                <p class="text-xs text-pink-300/70">Tap to send your mood instantly</p>
             </div>
-
             <div class="py-6 flex flex-col items-center justify-center relative">
-                <div id="lamp-aura" class="absolute w-64 h-64 rounded-full bg-blue-500/25 blur-3xl transition-all duration-700 pointer-events-none scale-100 opacity-80"></div>
-
-                <button id="touch-lamp-button" onclick="triggerLampTouch()" class="relative z-10 w-48 h-48 rounded-full bg-slate-900/90 border-2 border-blue-500/50 flex flex-col items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.3)] transition-all duration-300 active:scale-95 group focus:outline-none">
-                    <div id="lamp-inner-icon" class="w-20 h-20 rounded-full bg-blue-500/10 border border-blue-400/30 flex items-center justify-center text-blue-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110">
-                        <i class="fa-solid fa-lightbulb"></i>
-                    </div>
-                    <span id="lamp-emotion-badge" class="px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-blue-500/20 text-blue-200 border border-blue-400/40 mb-1">Missing You</span>
-                    <span id="lamp-prompt-text" class="text-[11px] font-semibold text-slate-300 tracking-wider uppercase">Tap To Send Glow</span>
+                <div id="lamp-aura" class="absolute w-64 h-64 rounded-full bg-blue-500/25 blur-3xl transition-all duration-700 pointer-events-none"></div>
+                <button id="touch-lamp-button" onclick="triggerLampTouch()" class="relative z-10 w-48 h-48 rounded-full bg-slate-900/90 border-2 border-blue-500/50 flex flex-col items-center justify-center shadow-[0_0_40px_rgba(59,130,246,0.3)] transition-all active:scale-95 group focus:outline-none">
+                    <i class="fa-solid fa-lightbulb text-blue-400 text-3xl mb-2"></i>
+                    <span id="lamp-emotion-badge" class="px-3 py-1 rounded-full text-[10px] font-semibold uppercase bg-blue-500/20 text-blue-200 border border-blue-400/40 mb-1">Missing You</span>
+                    <span id="lamp-prompt-text" class="text-[11px] font-semibold text-slate-300 uppercase">Tap To Send Glow</span>
                 </button>
-
-                <div class="mt-7 w-full max-w-xs dark-glass animate-border-pulse p-3 rounded-2xl shadow-xl space-y-2">
-                    <p class="text-[11px] text-pink-200/80 text-center font-medium">Choose current emotion glow:</p>
-                    <div class="grid grid-cols-4 gap-2">
-                        <button onclick="setLampColor('blue')" id="color-btn-blue" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border-2 border-blue-500 transition-all">
-                            <span class="w-4 h-4 rounded-full bg-blue-500 mb-1"></span>
-                            <span class="text-[10px] font-medium text-slate-300">Missing</span>
-                        </button>
-                        <button onclick="setLampColor('red')" id="color-btn-red" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
-                            <span class="w-4 h-4 rounded-full bg-red-500 mb-1"></span>
-                            <span class="text-[10px] font-medium text-slate-400">Sad</span>
-                        </button>
-                        <button onclick="setLampColor('green')" id="color-btn-green" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
-                            <span class="w-4 h-4 rounded-full bg-emerald-500 mb-1"></span>
-                            <span class="text-[10px] font-medium text-slate-400">Enthusiastic</span>
-                        </button>
-                        <button onclick="setLampColor('purple')" id="color-btn-purple" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
-                            <span class="w-4 h-4 rounded-full bg-purple-500 mb-1"></span>
-                            <span class="text-[10px] font-medium text-slate-400">Passionate</span>
-                        </button>
-                    </div>
-                </div>
             </div>
-
-            <!-- Touch Activity Feed & Live Chart Visualization -->
-            <div class="dark-glass animate-border-pulse rounded-3xl p-5 shadow-xl space-y-4">
-                <div class="flex justify-between items-center border-b border-rose-900/30 pb-3">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-wave-square text-rose-400 text-sm"></i>
-                        <h3 class="text-sm font-semibold text-white">Touch Activity Feed</h3>
-                    </div>
-                    <span class="text-[11px] text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/50">
-                        <i class="fa-solid fa-wifi text-[9px] mr-1"></i> Live Stream
-                    </span>
-                </div>
-
-                <!-- Dual Stream Bars Chart -->
-                <div class="bg-slate-950/80 p-4 rounded-2xl border border-rose-900/30 space-y-3">
-                    <div class="flex justify-between items-center text-xs font-semibold text-slate-300">
-                        <span>Emotional Pulse Overview (Today)</span>
-                        <div class="flex items-center space-x-2 text-[10px]">
-                            <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 mr-1"></span> Missing</span>
-                            <span class="inline-flex items-center"><span class="w-2 h-2 rounded-full bg-red-500 mr-1"></span> Sad</span>
-                        </div>
-                    </div>
-
-                    <div class="space-y-2 pt-1">
-                        <div>
-                            <div class="flex justify-between items-center text-[10px] text-slate-400 mb-1">
-                                <span class="font-medium text-slate-300"><i class="fa-solid fa-mars text-rose-400 mr-1"></i> Me (Husband)</span>
-                                <span class="text-pink-300/60">Active</span>
-                            </div>
-                            <div id="husband-emotion-timeline" class="h-6 w-full bg-slate-900 rounded-lg p-1 flex items-center gap-1 border border-rose-900/40"></div>
-                        </div>
-
-                        <div>
-                            <div class="flex justify-between items-center text-[10px] text-slate-400 mb-1">
-                                <span class="font-medium text-slate-300"><i class="fa-solid fa-venus text-pink-400 mr-1"></i> Her (Wife)</span>
-                                <span class="text-pink-300/60">Active</span>
-                            </div>
-                            <div id="wife-emotion-timeline" class="h-6 w-full bg-slate-900 rounded-lg p-1 flex items-center gap-1 border border-rose-900/40"></div>
-                        </div>
-
-                        <div class="flex justify-between items-center text-[9px] text-pink-300/60 px-1 pt-0.5 border-t border-rose-900/30 font-mono">
-                            <span>12 AM</span><span>04 AM</span><span>08 AM</span><span>12 PM</span><span>04 PM</span><span>08 PM</span><span>11 PM</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="touch-logs-list" class="space-y-3 max-h-56 overflow-y-auto pr-1 hide-scrollbar"></div>
+            <div class="dark-glass rounded-3xl p-5 shadow-xl space-y-3">
+                <h3 class="text-sm font-semibold text-white">Touch Activity Feed</h3>
+                <div id="touch-logs-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
             </div>
         </section>
 
     </main>
 
-    <!-- ================= FIXED BOTTOM NAVIGATION BAR ================= -->
-    <nav class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-slate-950/95 backdrop-blur-xl border border-rose-900/40 px-6 py-2.5 rounded-full max-w-sm w-[92%] shadow-[0_8px_32px_rgba(244,114,182,0.25)]">
+    <!-- Navigation -->
+    <nav class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-slate-950/95 backdrop-blur-xl border border-rose-900/40 px-6 py-2.5 rounded-full max-w-sm w-[92%] shadow-2xl">
         <div class="flex justify-around items-center">
-            <button onclick="switchTab(1)" id="nav-btn-1" class="nav-tab-btn nav-glow-pill flex flex-col items-center py-1.5 px-4 text-rose-300 font-semibold rounded-full transition-all duration-300">
-                <i class="fa-solid fa-heart text-base mb-0.5"></i>
-                <span class="text-[10px] tracking-tight font-medium">Reunion</span>
-            </button>
-            <button onclick="switchTab(2)" id="nav-btn-2" class="nav-tab-btn flex flex-col items-center py-1.5 px-4 text-slate-400 hover:text-rose-300 rounded-full transition-all duration-300">
-                <i class="fa-solid fa-box-archive text-base mb-0.5"></i>
-                <span class="text-[10px] font-medium tracking-tight">Capsule</span>
-            </button>
-            <button onclick="switchTab(3)" id="nav-btn-3" class="nav-tab-btn flex flex-col items-center py-1.5 px-4 text-slate-400 hover:text-rose-300 rounded-full transition-all duration-300">
-                <i class="fa-solid fa-lightbulb text-base mb-0.5"></i>
-                <span class="text-[10px] font-medium tracking-tight">Lamp</span>
-            </button>
+            <button onclick="switchTab(1)" id="nav-btn-1" class="nav-tab-btn nav-glow-pill flex flex-col items-center py-1.5 px-4 text-rose-300 font-semibold rounded-full"><i class="fa-solid fa-heart text-base mb-0.5"></i><span class="text-[10px]">Reunion</span></button>
+            <button onclick="switchTab(2)" id="nav-btn-2" class="nav-tab-btn flex flex-col items-center py-1.5 px-4 text-slate-400 hover:text-rose-300 rounded-full"><i class="fa-solid fa-box-archive text-base mb-0.5"></i><span class="text-[10px]">Capsule</span></button>
+            <button onclick="switchTab(3)" id="nav-btn-3" class="nav-tab-btn flex flex-col items-center py-1.5 px-4 text-slate-400 hover:text-rose-300 rounded-full"><i class="fa-solid fa-lightbulb text-base mb-0.5"></i><span class="text-[10px]">Lamp</span></button>
         </div>
     </nav>
 
-    <!-- ================= MODALS ================= -->
-    <div id="card-detail-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div id="card-detail-content" class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"></div>
-    </div>
-
-    <div id="add-item-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="text-base font-bold text-white"><i class="fa-solid fa-plus-circle text-rose-400 mr-2"></i> New Future Memory / Idea</h3>
-                <button onclick="closeAddItemModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <form id="add-item-form" onsubmit="saveWishlistItem(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
-                    <select id="item-category" onchange="updateDateLabel(this.value)" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
-                        <option value="date">Date Idea / Restaurant</option>
-                        <option value="travel">Travel Goal / City</option>
-                        <option value="memory">Cherished Memory</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Title</label>
-                    <input id="item-title" type="text" required placeholder="e.g. Picnic in Central Park" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
-                </div>
-                <div>
-                    <label id="item-date-label" class="block text-xs font-medium text-slate-300 mb-1">Target / Planned Date (Optional)</label>
-                    <input id="item-date" type="date" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Notes / Description</label>
-                    <textarea id="item-description" rows="2" placeholder="Special details..." class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500 resize-none"></textarea>
-                </div>
-                <div class="pt-2">
-                    <button type="submit" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-500/30 transition">Save To Timeline</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    <!-- Modals -->
     <div id="privacy-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="text-base font-bold text-white"><i class="fa-solid fa-shield-halved text-emerald-400 mr-2"></i> Firebase Realtime Cloud Sync</h3>
-                <button onclick="togglePrivacyModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
-                <p class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-slate-300">
-                    <strong class="text-emerald-400 block mb-1">Cloud Synchronized Database</strong>
-                    Your notes, photos, and touch lamp activity update instantly across your phone and laptop over secure Firebase cloud channels.
-                </p>
-            </div>
-            <button onclick="togglePrivacyModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-medium transition">Close Overview</button>
+        <div class="dark-glass rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <h3 class="text-base font-bold text-white"><i class="fa-solid fa-shield-halved text-emerald-400 mr-2"></i> Firebase Cloud Status</h3>
+            <p id="firebase-diag-text" class="text-xs text-slate-300 bg-slate-950 p-3 rounded-xl">Checking connection...</p>
+            <button onclick="togglePrivacyModal()" class="w-full py-2.5 bg-slate-800 text-white rounded-xl text-xs">Close</button>
         </div>
     </div>
 
-    <!-- ================= SCRIPT & FIREBASE INTEGRATION ================= -->
+    <!-- Script & Firebase Integration -->
     <script>
-        // ---------------------------------------------------------
-        // 🌐 FIREBASE CONFIGURATION (USING YOUR EXACT KEYS)
-        // ---------------------------------------------------------
         const firebaseConfig = {
             apiKey: "AIzaSyAGVy4yvKVW0zoUBP6W7NlmnPeooqjg7Ms",
             authDomain: "sync-1b23b.firebaseapp.com",
@@ -443,7 +208,6 @@
             appId: "1:924732383396:web:5da7e71e4dcf272af08631"
         };
 
-        // Initialize Firebase safely
         let db = null;
         try {
             if (typeof firebase !== 'undefined') {
@@ -451,15 +215,8 @@
                 db = firebase.database();
             }
         } catch (e) {
-            console.warn("Firebase offline mode fallback.");
+            console.warn("Firebase init error:", e);
         }
-
-        const ROMANTIC_QUESTIONS_BANK = [
-            "What is a small detail about our last meeting that you still think about?",
-            "If we could teleport anywhere in the world for just 3 hours tonight, where would we go?",
-            "What was the exact moment you realized you were in love with me?",
-            "What is your favorite memory of us when things didn't go according to plan?"
-        ];
 
         const APP_STATE = {
             targetReunionDate: new Date("2026-11-12T16:30:00"),
@@ -469,60 +226,27 @@
                 photo1: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1000&q=80',
                 photo2: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1000&q=80'
             },
-            activePhotoIndex: 1,
-            questionData: {
-                prompt: "",
-                yourAnswer: "",
-                wifeAnswer: "When we got caught in the sudden rain shower...",
-                yourSubmitted: false,
-                wifeSubmitted: true,
-                dayNumber: 1
-            },
-            questionHistory: [],
-            wishlist: [
-                { id: 1, category: 'date', title: 'Late Night Candlelight Dinner', date: '2027-02-14', desc: 'Try that small authentic bistro near the Seine.', completed: false, favorite: true, image: '' }
-            ],
+            questionData: { prompt: "What is a small detail about our last meeting you still think about?", yourAnswer: "", yourSubmitted: false },
+            wishlist: [],
             lampColor: 'blue',
-            emotionsConfig: {
-                red: { name: 'Sad', hex: 'rgba(239, 68, 68, 0.5)', shadow: 'rgba(239, 68, 68, 0.3)', border: 'border-red-500', bgClass: 'bg-red-500' },
-                blue: { name: 'Missing You', hex: 'rgba(59, 130, 246, 0.5)', shadow: 'rgba(59, 130, 246, 0.3)', border: 'border-blue-500', bgClass: 'bg-blue-500' },
-                green: { name: 'Enthusiastic', hex: 'rgba(34, 197, 94, 0.5)', shadow: 'rgba(34, 197, 94, 0.3)', border: 'border-emerald-500', bgClass: 'bg-emerald-500' },
-                purple: { name: 'Passionate', hex: 'rgba(168, 85, 247, 0.5)', shadow: 'rgba(168, 85, 247, 0.3)', border: 'border-purple-500', bgClass: 'bg-purple-500' }
-            },
-            touchLogs: [
-                { sender: 'wife', time: '10 mins ago', message: 'Wife sent a "Missing You" blue pulse', color: 'blue', hour: 14 }
-            ]
+            touchLogs: []
         };
 
         window.addEventListener('DOMContentLoaded', () => {
             loadCloudData();
-            initDailyQuestion();
             startCountdownTimer();
-            startPhotoCrossFadeLoop();
-            setLampColor(APP_STATE.lampColor || 'blue');
         });
 
-        // ---------------------------------------------------------
-        // 🔄 REAL-TIME FIREBASE SYNC FUNCTIONS
-        // ---------------------------------------------------------
+        // 🔄 Optimized Cloud Sync with Compression to bypass size limits
         function saveCloudData() {
             try {
-                localStorage.setItem('heart_sync_cache', JSON.stringify({
-                    sharedMemories: APP_STATE.sharedMemories,
-                    questionData: APP_STATE.questionData,
-                    wishlist: APP_STATE.wishlist,
-                    touchLogs: APP_STATE.touchLogs,
-                    currentUserRole: APP_STATE.currentUserRole
-                }));
+                localStorage.setItem('heart_sync_cache', JSON.stringify(APP_STATE));
             } catch (e) {}
 
             if (db) {
-                db.ref('sync_hub_state').set({
-                    sharedMemories: APP_STATE.sharedMemories,
-                    questionData: APP_STATE.questionData,
-                    wishlist: APP_STATE.wishlist,
-                    touchLogs: APP_STATE.touchLogs,
-                    lastUpdated: Date.now()
+                db.ref('sync_hub_state').set(APP_STATE).catch(err => {
+                    console.error("Firebase write error (check database rules):", err);
+                    document.getElementById('firebase-diag-text').innerText = "Write Error: " + err.message;
                 });
             }
         }
@@ -532,11 +256,7 @@
                 const cached = localStorage.getItem('heart_sync_cache');
                 if (cached) {
                     const parsed = JSON.parse(cached);
-                    if (parsed.sharedMemories) APP_STATE.sharedMemories = parsed.sharedMemories;
-                    if (parsed.questionData) APP_STATE.questionData = parsed.questionData;
-                    if (parsed.wishlist) APP_STATE.wishlist = parsed.wishlist;
-                    if (parsed.touchLogs) APP_STATE.touchLogs = parsed.touchLogs;
-                    if (parsed.currentUserRole) APP_STATE.currentUserRole = parsed.currentUserRole;
+                    Object.assign(APP_STATE, parsed);
                 }
             } catch (e) {}
 
@@ -546,38 +266,31 @@
                 db.ref('sync_hub_state').on('value', (snapshot) => {
                     const remote = snapshot.val();
                     if (remote) {
-                        if (remote.sharedMemories) APP_STATE.sharedMemories = remote.sharedMemories;
-                        if (remote.questionData) APP_STATE.questionData = remote.questionData;
-                        if (remote.wishlist) APP_STATE.wishlist = remote.wishlist;
-                        if (remote.touchLogs) APP_STATE.touchLogs = remote.touchLogs;
+                        Object.assign(APP_STATE, remote);
                         renderAllUI();
+                        document.getElementById('firebase-diag-text').innerText = "Connected & syncing live successfully!";
                     }
+                }, (error) => {
+                    document.getElementById('firebase-diag-text').innerText = "Permission / Read Error: " + error.message;
+                    document.getElementById('connection-dot').className = "inline-block w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse";
+                    document.getElementById('sync-status-text').innerText = "Database Rules Error";
                 });
             }
         }
 
         function renderAllUI() {
             renderSharedMemories();
-            renderWishlist();
             renderTouchLogs();
-            renderEmotionGraph();
-            updateDailyQuestionUI();
-            renderQuestionHistory();
             updateRolePermissionsUI();
+            const qEl = document.getElementById('current-question');
+            if (qEl) qEl.innerText = `"${APP_STATE.questionData.prompt}"`;
         }
 
         function switchTab(tabIndex) {
             APP_STATE.activeTab = tabIndex;
             [1, 2, 3].forEach(id => {
-                const tab = document.getElementById(`tab-${id}`);
-                const navBtn = document.getElementById(`nav-btn-${id}`);
-                if (id === tabIndex) {
-                    tab.classList.remove('hidden');
-                    navBtn.className = "nav-tab-btn nav-glow-pill flex flex-col items-center py-1.5 px-4 text-rose-300 font-semibold rounded-full transition-all duration-300";
-                } else {
-                    tab.classList.add('hidden');
-                    navBtn.className = "nav-tab-btn flex flex-col items-center py-1.5 px-4 text-slate-400 hover:text-rose-300 rounded-full transition-all duration-300";
-                }
+                document.getElementById(`tab-${id}`).classList.toggle('hidden', id !== tabIndex);
+                document.getElementById(`nav-btn-${id}`).className = `nav-tab-btn flex flex-col items-center py-1.5 px-4 rounded-full ${id === tabIndex ? 'nav-glow-pill text-rose-300 font-semibold' : 'text-slate-400 hover:text-rose-300'}`;
             });
         }
 
@@ -585,63 +298,54 @@
             APP_STATE.currentUserRole = event.target.value;
             saveCloudData();
             updateRolePermissionsUI();
-            updateDailyQuestionUI();
         }
 
         function updateRolePermissionsUI() {
             const roleSelect = document.getElementById('user-role-select');
             if (roleSelect) roleSelect.value = APP_STATE.currentUserRole;
 
-            const roleBadge = document.getElementById('role-indicator-badge');
-            if (roleBadge) {
-                const roleName = APP_STATE.currentUserRole === 'me' ? 'Me (Husband)' : 'Her (Wife)';
-                roleBadge.innerHTML = `<i class="fa-solid fa-user-check text-rose-400 mr-1"></i> Role: ${roleName}`;
-            }
+            const badge = document.getElementById('role-indicator-badge');
+            if (badge) badge.innerHTML = `<i class="fa-solid fa-user-check text-rose-400 mr-1"></i> Role: ${APP_STATE.currentUserRole === 'me' ? 'Me (Husband)' : 'Her (Wife)'}`;
 
-            const permContainer = document.getElementById('photo-permissions-container');
-            if (!permContainer) return;
-
-            if (APP_STATE.currentUserRole === 'me') {
-                permContainer.innerHTML = `
+            const perm = document.getElementById('photo-permissions-container');
+            if (perm) {
+                const slot = APP_STATE.currentUserRole === 'me' ? 1 : 2;
+                perm.innerHTML = `
                     <label class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 shadow-md">
                         <i class="fa-solid fa-camera"></i>
-                        <span>Edit Photo #1</span>
-                        <input type="file" accept="image/*" class="hidden" onchange="handlePhotoUpload(event, 1)">
-                    </label>
-                `;
-            } else {
-                permContainer.innerHTML = `
-                    <label class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 shadow-md">
-                        <i class="fa-solid fa-camera"></i>
-                        <span>Edit Photo #2</span>
-                        <input type="file" accept="image/*" class="hidden" onchange="handlePhotoUpload(event, 2)">
+                        <span>Edit Photo #${slot}</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="compressAndUploadPhoto(event, ${slot})">
                     </label>
                 `;
             }
         }
 
-        function startCountdownTimer() {
-            function updateTimer() {
-                const now = new Date();
-                const diff = APP_STATE.targetReunionDate - now;
-                if (diff <= 0) return;
-
-                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const minutes = Math.floor((diff / (1000 * 60)) % 60);
-                const seconds = Math.floor((diff / 1000) % 60);
-
-                const dEl = document.getElementById('timer-days');
-                const hEl = document.getElementById('timer-hours');
-                const mEl = document.getElementById('timer-minutes');
-                const sEl = document.getElementById('timer-seconds');
-                if (dEl) dEl.innerText = String(days).padStart(2, '0');
-                if (hEl) hEl.innerText = String(hours).padStart(2, '0');
-                if (mEl) mEl.innerText = String(minutes).padStart(2, '0');
-                if (sEl) sEl.innerText = String(seconds).padStart(2, '0');
-            }
-            updateTimer();
-            setInterval(updateTimer, 1000);
+        // 📉 Image Compressor to keep data payloads lightweight for Firebase
+        function compressAndUploadPhoto(event, slot) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 800;
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    if (slot === 1) APP_STATE.sharedMemories.photo1 = compressedDataUrl;
+                    else APP_STATE.sharedMemories.photo2 = compressedDataUrl;
+                    
+                    saveCloudData();
+                    renderSharedMemories();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         function renderSharedMemories() {
@@ -651,342 +355,32 @@
             if (p2) p2.src = APP_STATE.sharedMemories.photo2;
         }
 
-        function startPhotoCrossFadeLoop() {
+        function startCountdownTimer() {
             setInterval(() => {
-                const p1 = document.getElementById('memory-photo-1');
-                const p2 = document.getElementById('memory-photo-2');
-                const indicator = document.getElementById('photo-cycle-indicator');
-                if (!p1 || !p2) return;
-
-                if (APP_STATE.activePhotoIndex === 1) {
-                    p1.classList.replace('opacity-100', 'opacity-0');
-                    p2.classList.replace('opacity-0', 'opacity-100');
-                    APP_STATE.activePhotoIndex = 2;
-                    if (indicator) indicator.innerText = "Memory #2 of 2";
-                } else {
-                    p2.classList.replace('opacity-100', 'opacity-0');
-                    p1.classList.replace('opacity-0', 'opacity-100');
-                    APP_STATE.activePhotoIndex = 1;
-                    if (indicator) indicator.innerText = "Memory #1 of 2";
-                }
-            }, 6000);
-        }
-
-        function handlePhotoUpload(event, photoSlot) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                if (photoSlot === 1) APP_STATE.sharedMemories.photo1 = e.target.result;
-                else APP_STATE.sharedMemories.photo2 = e.target.result;
-                saveCloudData();
-                renderSharedMemories();
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function initDailyQuestion() {
-            const now = new Date();
-            const startOfYear = new Date(now.getFullYear(), 0, 0);
-            const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
-            APP_STATE.questionData.dayNumber = dayOfYear;
-            APP_STATE.questionData.prompt = ROMANTIC_QUESTIONS_BANK[dayOfYear % ROMANTIC_QUESTIONS_BANK.length];
-        }
-
-        function switchQuestionView(view) {
-            const todayBtn = document.getElementById('q-view-today-btn');
-            const historyBtn = document.getElementById('q-view-history-btn');
-            const todayContainer = document.getElementById('q-today-container');
-            const historyContainer = document.getElementById('q-history-container');
-
-            if (view === 'today') {
-                todayBtn.className = "px-2.5 py-1 rounded-lg font-semibold bg-rose-500 text-white transition";
-                historyBtn.className = "px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition";
-                todayContainer.classList.remove('hidden');
-                historyContainer.classList.add('hidden');
-            } else {
-                historyBtn.className = "px-2.5 py-1 rounded-lg font-semibold bg-rose-500 text-white transition";
-                todayBtn.className = "px-2.5 py-1 rounded-lg font-medium text-slate-400 hover:text-white transition";
-                todayContainer.classList.add('hidden');
-                historyContainer.classList.remove('hidden');
-                renderQuestionHistory();
-            }
-        }
-
-        function submitYourAnswer() {
-            const val = document.getElementById('your-answer-input').value.trim();
-            if (!val) return;
-            APP_STATE.questionData.yourAnswer = val;
-            APP_STATE.questionData.yourSubmitted = true;
-            saveCloudData();
-            updateDailyQuestionUI();
-        }
-
-        function updateDailyQuestionUI() {
-            const q = APP_STATE.questionData;
-            const curQ = document.getElementById('current-question');
-            const dayTag = document.getElementById('question-day-tag');
-            if (curQ) curQ.innerText = `"${q.prompt}"`;
-            if (dayTag) dayTag.innerText = `Day #${q.dayNumber}`;
-
-            if (q.yourSubmitted) {
-                const yCont = document.getElementById('your-answer-container');
-                const ySub = document.getElementById('your-answer-submitted');
-                const yTxt = document.getElementById('your-answer-text');
-                if (yCont) yCont.classList.add('hidden');
-                if (ySub) ySub.classList.remove('hidden');
-                if (yTxt) yTxt.innerText = q.yourAnswer;
-            }
-
-            if (q.yourSubmitted && q.wifeSubmitted) {
-                const wLock = document.getElementById('wife-answer-locked');
-                const wUnlock = document.getElementById('wife-answer-unlocked');
-                const wTxt = document.getElementById('wife-answer-text');
-                if (wLock) wLock.classList.add('hidden');
-                if (wUnlock) wUnlock.classList.remove('hidden');
-                if (wTxt) wTxt.innerText = q.wifeAnswer;
-            }
-        }
-
-        function renderQuestionHistory() {
-            const container = document.getElementById('q-history-list');
-            if (!container) return;
-            container.innerHTML = APP_STATE.questionHistory.map(item => `
-                <div class="bg-slate-950/80 p-3.5 rounded-2xl border border-rose-900/30 space-y-2">
-                    <p class="text-xs italic font-medium text-slate-200">"${item.prompt}"</p>
-                </div>
-            `).join('') || '<p class="text-xs text-slate-400">No history yet.</p>';
-        }
-
-        function updateDateLabel(cat) {
-            const label = document.getElementById('item-date-label');
-            if (label) label.innerText = cat === 'memory' ? 'Date Cherished (Optional)' : 'Target Date (Optional)';
-        }
-
-        function renderWishlist(cat = 'all') {
-            const container = document.getElementById('wishlist-items-container');
-            if (!container) return;
-            let items = APP_STATE.wishlist;
-            if (cat !== 'all') items = items.filter(i => i.category === cat);
-
-            container.innerHTML = items.map(item => {
-                let catIcon = 'fa-heart text-amber-400';
-                if (item.category === 'date') catIcon = 'fa-utensils text-rose-400';
-                if (item.category === 'travel') catIcon = 'fa-plane text-sky-400';
-
-                return `
-                    <div onclick="openCardDetail(${item.id})" class="aspect-square w-full dark-glass rounded-2xl p-3.5 border border-rose-900/30 hover:border-rose-400/60 shadow-md flex flex-col justify-between cursor-pointer transition-all hover:scale-[1.02] relative overflow-hidden group">
-                        ${item.image ? `<div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition" style="background-image: url('${item.image}')"></div>` : ''}
-                        <div class="relative z-10 flex justify-between items-start">
-                            <i class="fa-solid ${catIcon} text-xs"></i>
-                            ${item.favorite ? '<i class="fa-solid fa-star text-amber-400 text-[10px]"></i>' : ''}
-                        </div>
-                        <div class="relative z-10 my-auto text-center">
-                            <h3 class="text-xs font-semibold text-white leading-tight line-clamp-2 ${item.completed ? 'line-through text-pink-300/50' : ''}">${item.title}</h3>
-                        </div>
-                        <div class="relative z-10 flex justify-between items-center text-[9px] text-pink-300/70 border-t border-rose-900/30 pt-1.5">
-                            <span>${item.date || 'No date'}</span>
-                            <span class="text-rose-400 group-hover:translate-x-0.5 transition"><i class="fa-solid fa-expand"></i></span>
-                        </div>
-                    </div>
-                `;
-            }).join('') || '<p class="text-xs text-slate-400 col-span-full text-center">No entries yet.</p>';
-        }
-
-        function openCardDetail(id) {
-            const item = APP_STATE.wishlist.find(i => i.id === id);
-            if (!item) return;
-            const content = document.getElementById('card-detail-content');
-            if (content) {
-                content.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] text-rose-300 bg-rose-950/40 border border-rose-800/30 px-2.5 py-1 rounded-full uppercase">${item.category}</span>
-                        <button onclick="document.getElementById('card-detail-modal').classList.add('hidden')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
-                    </div>
-                    <h2 class="text-lg font-bold text-white">${item.title}</h2>
-                    
-                    <div class="space-y-1">
-                        <label class="block text-[11px] font-medium text-slate-300">Target / Cherished Date</label>
-                        <div class="flex space-x-2">
-                            <input id="edit-item-date" type="date" value="${item.date || ''}" class="flex-1 bg-slate-800 text-slate-100 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-rose-500">
-                            <button onclick="saveItemDate(${item.id})" class="px-3 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-medium transition">Save Date</button>
-                        </div>
-                    </div>
-
-                    <label class="w-full py-3 rounded-xl border border-dashed border-slate-700 hover:border-rose-400 bg-slate-950/40 flex items-center justify-center space-x-2 text-xs text-slate-300 cursor-pointer transition">
-                        <i class="fa-solid fa-image text-rose-400"></i>
-                        <span>Upload Photo</span>
-                        <input type="file" accept="image/*" class="hidden" onchange="uploadItemImage(event, ${item.id})">
-                    </label>
-                    <p class="text-xs text-slate-300 bg-slate-950/70 p-3 rounded-xl">${item.desc || 'No notes added.'}</p>
-                    <button onclick="deleteWishlistItem(${item.id}); document.getElementById('card-detail-modal').classList.add('hidden');" class="w-full py-2 bg-rose-950/40 text-rose-400 rounded-xl text-xs">Delete Item</button>
-                `;
-            }
-            document.getElementById('card-detail-modal').classList.remove('hidden');
-        }
-
-        function saveItemDate(id) {
-            const dateInput = document.getElementById('edit-item-date');
-            if (!dateInput) return;
-            const item = APP_STATE.wishlist.find(i => i.id === id);
-            if (item) {
-                item.date = dateInput.value;
-                saveCloudData();
-                renderWishlist();
-                openCardDetail(id);
-            }
-        }
-
-        function uploadItemImage(event, id) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const item = APP_STATE.wishlist.find(i => i.id === id);
-                if (item) {
-                    item.image = e.target.result;
-                    saveCloudData();
-                    renderWishlist();
-                    openCardDetail(id);
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function filterWishlist(cat) {
-            document.querySelectorAll('.wishlist-filter-btn').forEach(btn => {
-                btn.className = "wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition";
-            });
-            event.currentTarget.className = "wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-rose-500 text-white shadow-sm transition";
-            renderWishlist(cat);
-        }
-
-        function openAddItemModal() { document.getElementById('add-item-modal').classList.remove('hidden'); }
-        function closeAddItemModal() { document.getElementById('add-item-modal').classList.add('hidden'); }
-
-        function saveWishlistItem(e) {
-            e.preventDefault();
-            const titleInput = document.getElementById('item-title');
-            if (!titleInput) return;
-            const title = titleInput.value.trim();
-            if (title) {
-                APP_STATE.wishlist.unshift({
-                    id: Date.now(),
-                    category: document.getElementById('item-category').value,
-                    title: title,
-                    date: document.getElementById('item-date').value,
-                    desc: document.getElementById('item-description').value.trim(),
-                    completed: false,
-                    favorite: false,
-                    image: ''
-                });
-                saveCloudData();
-                renderWishlist();
-                closeAddItemModal();
-                document.getElementById('add-item-form').reset();
-            }
-        }
-
-        function deleteWishlistItem(id) {
-            APP_STATE.wishlist = APP_STATE.wishlist.filter(i => i.id !== id);
-            saveCloudData();
-            renderWishlist();
-        }
-
-        function setLampColor(color) {
-            APP_STATE.lampColor = color;
-            const emotion = APP_STATE.emotionsConfig[color];
-            const aura = document.getElementById('lamp-aura');
-            const button = document.getElementById('touch-lamp-button');
-            const badge = document.getElementById('lamp-emotion-badge');
-
-            document.querySelectorAll('.color-select-btn').forEach(btn => {
-                btn.className = "color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800";
-            });
-            const activeBtn = document.getElementById(`color-btn-${color}`);
-            if (activeBtn) activeBtn.className = `color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border-2 ${emotion.border} transition-all`;
-
-            if (aura) aura.style.backgroundColor = emotion.hex;
-            if (button) button.className = `relative z-10 w-48 h-48 rounded-full bg-slate-900/90 border-2 ${emotion.border} flex flex-col items-center justify-center shadow-[0_0_40px_${emotion.shadow}] transition-all duration-300 active:scale-95 group focus:outline-none`;
-            if (badge) badge.innerText = emotion.name;
+                const diff = APP_STATE.targetReunionDate - new Date();
+                if (diff <= 0) return;
+                document.getElementById('timer-days').innerText = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                document.getElementById('timer-hours').innerText = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+                document.getElementById('timer-minutes').innerText = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
+                document.getElementById('timer-seconds').innerText = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+            }, 1000);
         }
 
         function triggerLampTouch() {
-            if ("vibrate" in navigator) {
-                navigator.vibrate([120, 60, 120]);
-            }
-
-            const prompt = document.getElementById('lamp-prompt-text');
-            const emotion = APP_STATE.emotionsConfig[APP_STATE.lampColor];
-            if (prompt) prompt.innerText = `Sending ${emotion.name}...`;
-
-            setTimeout(() => {
-                if (prompt) prompt.innerText = "Tap To Send Glow";
-            }, 1200);
-
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            APP_STATE.touchLogs.unshift({
-                sender: APP_STATE.currentUserRole === 'me' ? 'you' : 'wife',
-                time: `Just now (${timeStr})`,
-                message: `${APP_STATE.currentUserRole === 'me' ? 'You' : 'Wife'} sent a "${emotion.name}" pulse`,
-                color: APP_STATE.lampColor,
-                hour: now.getHours()
-            });
-
+            APP_STATE.touchLogs.unshift({ message: `${APP_STATE.currentUserRole === 'me' ? 'Husband' : 'Wife'} sent a glow`, time: 'Just now' });
             saveCloudData();
             renderTouchLogs();
-            renderEmotionGraph();
-        }
-
-        function renderEmotionGraph() {
-            const husbandContainer = document.getElementById('husband-emotion-timeline');
-            const wifeContainer = document.getElementById('wife-emotion-timeline');
-            if (!husbandContainer || !wifeContainer) return;
-
-            const timeBlocks = Array.from({ length: 12 }, () => ({ husbandLogs: [], wifeLogs: [] }));
-
-            APP_STATE.touchLogs.forEach(log => {
-                const hour = log.hour !== undefined ? log.hour : 12;
-                const blockIdx = Math.min(11, Math.floor(hour / 2));
-                if (log.sender === 'you') {
-                    timeBlocks[blockIdx].husbandLogs.push(log);
-                } else {
-                    timeBlocks[blockIdx].wifeLogs.push(log);
-                }
-            });
-
-            husbandContainer.innerHTML = timeBlocks.map(block => {
-                if (block.husbandLogs.length === 0) return `<div class="h-full flex-1 bg-slate-950/40 rounded-sm"></div>`;
-                const latest = block.husbandLogs[0];
-                const cfg = APP_STATE.emotionsConfig[latest.color] || APP_STATE.emotionsConfig.blue;
-                return `<div title="${latest.message}" class="h-full flex-1 ${cfg.bgClass} rounded-sm transition-transform hover:scale-110 cursor-pointer"></div>`;
-            }).join('');
-
-            wifeContainer.innerHTML = timeBlocks.map(block => {
-                if (block.wifeLogs.length === 0) return `<div class="h-full flex-1 bg-slate-950/40 rounded-sm"></div>`;
-                const latest = block.wifeLogs[0];
-                const cfg = APP_STATE.emotionsConfig[latest.color] || APP_STATE.emotionsConfig.blue;
-                return `<div title="${latest.message}" class="h-full flex-1 ${cfg.bgClass} rounded-sm transition-transform hover:scale-110 cursor-pointer"></div>`;
-            }).join('');
         }
 
         function renderTouchLogs() {
-            const logs = document.getElementById('touch-logs-list');
-            if (logs) {
-                logs.innerHTML = APP_STATE.touchLogs.map(l => `
-                    <div class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs text-slate-200">
-                        <span>${l.message}</span>
-                        <span class="text-[10px] text-slate-500">${l.time}</span>
-                    </div>
-                `).join('');
+            const list = document.getElementById('touch-logs-list');
+            if (list) {
+                list.innerHTML = APP_STATE.touchLogs.map(l => `<div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-xs text-slate-300 flex justify-between"><span>${l.message}</span><span class="text-[10px] text-slate-500">${l.time}</span></div>`).join('');
             }
         }
 
         function togglePrivacyModal() {
-            const m = document.getElementById('privacy-modal');
-            if (m) m.classList.toggle('hidden');
+            document.getElementById('privacy-modal').classList.toggle('hidden');
         }
     </script>
 </body>
