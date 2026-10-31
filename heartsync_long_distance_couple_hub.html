@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartSync - Long Distance Couple Hub</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rose: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            300: '#fca5a5',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            900: '#881337',
+                        },
+                        amber: {
+                            400: '#fbbf24',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        handwriting: ['"Caveat"', 'cursive'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'glow': 'glow 2s ease-in-out infinite alternate',
+                        'float': 'float 4s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        glow: {
+                            '0%': { boxShadow: '0 0 15px rgba(244, 63, 94, 0.4), inset 0 0 15px rgba(244, 63, 94, 0.4)' },
+                            '100%': { boxShadow: '0 0 35px rgba(244, 63, 94, 0.9), inset 0 0 25px rgba(244, 63, 94, 0.9)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-6px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom styling for glassmorphism and touch effects */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .dark-glass {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .lamp-glow-effect {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-800 font-sans min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
+
+    <!-- Top Privacy & Self-Hosted Status Banner -->
+    <header class="fixed top-0 left-0 right-0 z-50 px-4 py-2 bg-slate-900/90 text-slate-300 text-xs flex justify-between items-center backdrop-blur-md border-b border-slate-800">
+        <div class="flex items-center space-x-2">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="font-medium tracking-wide">HeartSync Server: <span class="text-emerald-400">Connected to Home NAS</span></span>
+        </div>
+        <div class="flex items-center space-x-3">
+            <!-- Active User Role Selector Toggle -->
+            <div class="flex items-center space-x-1.5 bg-slate-800/90 border border-slate-700/80 rounded-full px-2 py-0.5">
+                <i class="fa-solid fa-user-tag text-rose-400 text-[10px]"></i>
+                <span class="text-[10px] text-slate-400 font-medium">Role:</span>
+                <select id="user-role-select" onchange="handleRoleChange(event)" class="bg-transparent text-white font-semibold text-[11px] focus:outline-none cursor-pointer">
+                    <option value="me" class="bg-slate-900 text-white">Me (Husband)</option>
+                    <option value="her" class="bg-slate-900 text-white">Her (Wife)</option>
+                </select>
+            </div>
+
+            <button onclick="togglePrivacyModal()" class="text-slate-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container with bottom padding for navigation bar -->
+    <main class="flex-1 pt-12 pb-24 max-w-lg mx-auto w-full relative min-h-screen overflow-x-hidden">
+
+        <!-- ================= TAB 1: COUNTDOWN & DAILY QUESTION ================= -->
+        <section id="tab-1" class="tab-content transition-opacity duration-300 opacity-100 p-4 space-y-6">
+            
+            <!-- Animated Memory Photo Frame Header -->
+            <div class="relative rounded-3xl overflow-hidden shadow-2xl bg-slate-900 border border-slate-800 p-5 space-y-4">
+                
+                <!-- Section Title & Badges -->
+                <div class="flex justify-between items-center z-20 relative">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/80 text-white backdrop-blur-md shadow-sm">
+                        <i class="fa-solid fa-heart mr-1.5 text-xs animate-pulse"></i> Next Reunion
+                    </span>
+                    <span id="role-indicator-badge" class="text-[11px] text-slate-300 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700 backdrop-blur-md">
+                        <i class="fa-solid fa-user-check text-rose-400 mr-1"></i> Active Role: Me
+                    </span>
+                </div>
+
+                <!-- Single Smooth Cross-Fade Frame cycling between 2 Memory Photos -->
+                <div class="relative w-full aspect-[16/10] sm:aspect-[16/9] rounded-2xl overflow-hidden border border-slate-700/60 bg-slate-950 shadow-inner group">
+                    
+                    <!-- Memory Photo 1 -->
+                    <img id="memory-photo-1" src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1000&q=80" alt="Shared Memory 1" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-100">
+                    
+                    <!-- Memory Photo 2 -->
+                    <img id="memory-photo-2" src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1000&q=80" alt="Shared Memory 2" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out opacity-0">
+                    
+                    <!-- Subtle Dark Overlay Gradient -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/10 to-transparent"></div>
+
+                    <!-- Upload Controls Overlay with Role-Based Permission Control -->
+                    <div class="absolute bottom-3 left-3 right-3 z-10 flex justify-between items-center backdrop-blur-md bg-slate-900/75 border border-slate-700/60 p-2 rounded-xl">
+                        <div class="flex items-center space-x-2 text-[11px] text-slate-200">
+                            <i class="fa-solid fa-images text-rose-400 animate-pulse"></i>
+                            <span id="photo-cycle-indicator" class="font-medium">Memory #1 of 2</span>
+                        </div>
+                        <div id="photo-permissions-container" class="flex space-x-2">
+                            <!-- Populated dynamically based on user role -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Countdown Timer Display -->
+                <div class="text-center pt-1">
+                    <h1 class="text-white text-sm font-medium opacity-90 mb-2">Counting down until we embrace again...</h1>
+                    
+                    <div class="grid grid-cols-4 gap-2 max-w-sm mx-auto">
+                        <div class="dark-glass rounded-2xl p-2 text-center border border-white/10">
+                            <span id="timer-days" class="block text-xl font-bold text-white font-mono">00</span>
+                            <span class="text-[9px] uppercase font-semibold text-rose-300 tracking-wider">Days</span>
+                        </div>
+                        <div class="dark-glass rounded-2xl p-2 text-center border border-white/10">
+                            <span id="timer-hours" class="block text-xl font-bold text-white font-mono">00</span>
+                            <span class="text-[9px] uppercase font-semibold text-rose-300 tracking-wider">Hours</span>
+                        </div>
+                        <div class="dark-glass rounded-2xl p-2 text-center border border-white/10">
+                            <span id="timer-minutes" class="block text-xl font-bold text-white font-mono">00</span>
+                            <span class="text-[9px] uppercase font-semibold text-rose-300 tracking-wider">Mins</span>
+                        </div>
+                        <div class="dark-glass rounded-2xl p-2 text-center border border-white/10">
+                            <span id="timer-seconds" class="block text-xl font-bold text-white font-mono">00</span>
+                            <span class="text-[9px] uppercase font-semibold text-rose-300 tracking-wider">Secs</span>
+                        </div>
+                    </div>
+
+                    <!-- Target Date Config Subtext -->
+                    <p class="text-slate-400 text-[11px] mt-3 font-light">
+                        Target Date: <span id="target-date-label" class="font-semibold text-white">December 25, 2026</span>
+                        <button onclick="editReunionDate()" class="ml-1.5 text-rose-400 hover:text-rose-300 underline"><i class="fa-solid fa-pen text-[9px]"></i> Edit</button>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Daily Question Prompt (Dual-Reveal Logic) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-full bg-rose-500/20 flex items-center justify-center text-rose-400">
+                            <i class="fa-solid fa-comments"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-white text-base font-semibold">Today's Couple Question</h2>
+                            <p class="text-slate-400 text-xs">Unlocks when both partners respond</p>
+                        </div>
+                    </div>
+                    <span class="text-[11px] bg-slate-800 text-rose-300 px-2.5 py-1 rounded-full border border-slate-700">Day #142</span>
+                </div>
+
+                <!-- Active Question Text -->
+                <div class="bg-slate-950/80 rounded-2xl p-4 border border-slate-800 mb-5">
+                    <p id="current-question" class="text-slate-200 text-sm italic font-medium">"What is one tiny detail from our last date that you never want to forget?"</p>
+                </div>
+
+                <!-- Responses Section -->
+                <div class="space-y-4">
+                    <!-- Your Response Card -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-slate-300 flex justify-between">
+                            <span>Your Answer (You)</span>
+                            <span id="your-status-badge" class="text-amber-400 text-[11px]"><i class="fa-solid fa-clock mr-1"></i> Draft</span>
+                        </label>
+                        <div id="your-answer-container">
+                            <textarea id="your-answer-input" rows="2" placeholder="Write your secret answer..." class="w-full bg-slate-800 text-slate-100 text-sm rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500 transition resize-none"></textarea>
+                            <button id="submit-your-answer-btn" onclick="submitYourAnswer()" class="mt-2 w-full py-2.5 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white font-medium text-xs rounded-xl shadow-lg shadow-rose-500/25 transition flex items-center justify-center space-x-2">
+                                <i class="fa-solid fa-paper-plane"></i>
+                                <span>Lock In My Response</span>
+                            </button>
+                        </div>
+                        <div id="your-answer-submitted" class="hidden bg-slate-800/80 border border-emerald-500/30 rounded-xl p-3 text-slate-200 text-sm">
+                            <p id="your-answer-text" class="text-slate-300"></p>
+                        </div>
+                    </div>
+
+                    <!-- Wife's Response Card (Blurred until both unlock) -->
+                    <div class="space-y-2 pt-2 border-t border-slate-800">
+                        <label class="text-xs font-semibold text-slate-300 flex justify-between">
+                            <span>Her Answer (Wife)</span>
+                            <span id="wife-status-badge" class="text-emerald-400 text-[11px]"><i class="fa-solid fa-circle-check mr-1"></i> Answered</span>
+                        </label>
+
+                        <!-- Blurred Locked Overlay State -->
+                        <div id="wife-answer-locked" class="relative rounded-xl overflow-hidden bg-slate-950 p-4 border border-slate-800 text-center">
+                            <div class="filter blur-md select-none text-slate-500 text-sm pointer-events-none">
+                                I remembered the way you held my coffee cup while I was looking for my keys in the cold evening...
+                            </div>
+                            <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center p-3 text-center">
+                                <div class="w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mb-1">
+                                    <i class="fa-solid fa-lock text-xs"></i>
+                                </div>
+                                <p class="text-xs text-slate-300 font-medium">Locked until you submit your answer!</p>
+                            </div>
+                        </div>
+
+                        <!-- Revealed State -->
+                        <div id="wife-answer-unlocked" class="hidden bg-rose-950/30 border border-rose-500/30 rounded-xl p-3 text-slate-200 text-sm">
+                            <p id="wife-answer-text" class="text-rose-100 italic">"When we got caught in the sudden rain shower and you gave me your sweater even though you were shivering!"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Toggle Bar -->
+                <div class="mt-4 pt-3 border-t border-slate-800/60 flex justify-between items-center text-[11px] text-slate-500">
+                    <span>Partner Sim Control:</span>
+                    <button onclick="toggleWifeResponseSim()" id="sim-wife-toggle" class="text-rose-400 hover:underline">Simulate Partner Answer (ON)</button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ================= TAB 2: DIGITAL TIME CAPSULE & WISHLIST ================= -->
+        <section id="tab-2" class="tab-content hidden transition-opacity duration-300 opacity-0 p-4 space-y-6">
+            
+            <!-- Header Section -->
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-white tracking-tight">Our Wishlist & Scrapbook</h2>
+                    <p class="text-xs text-slate-400">Future adventures & cherished memories</p>
+                </div>
+                <button onclick="openAddItemModal()" class="px-3.5 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-500/30 flex items-center space-x-1.5 transition">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Add New</span>
+                </button>
+            </div>
+
+            <!-- Category Filter Tabs -->
+            <div class="flex space-x-2 overflow-x-auto hide-scrollbar pb-1">
+                <button onclick="filterWishlist('all')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-rose-500 text-white shadow-sm transition">
+                    All Entries
+                </button>
+                <button onclick="filterWishlist('date')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">
+                    <i class="fa-solid fa-utensils text-rose-400 mr-1.5"></i> Date Ideas
+                </button>
+                <button onclick="filterWishlist('travel')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">
+                    <i class="fa-solid fa-plane text-sky-400 mr-1.5"></i> Travel Goals
+                </button>
+                <button onclick="filterWishlist('memory')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition">
+                    <i class="fa-solid fa-heart text-amber-400 mr-1.5"></i> Memories
+                </button>
+            </div>
+
+            <!-- Timeline List Container -->
+            <div id="wishlist-items-container" class="space-y-4">
+                <!-- Timeline elements populated via JS -->
+            </div>
+        </section>
+
+
+        <!-- ================= TAB 3: AMBIENT TOUCH LAMP ================= -->
+        <section id="tab-3" class="tab-content hidden transition-opacity duration-300 opacity-0 p-4 space-y-6">
+            
+            <div class="text-center space-y-1">
+                <h2 class="text-xl font-bold text-white tracking-tight">Ambient Touch Lamp</h2>
+                <p class="text-xs text-slate-400">Select how you feel and tap to send your mood instantly</p>
+            </div>
+
+            <!-- Central Interactive Lamp Sphere -->
+            <div class="py-6 flex flex-col items-center justify-center relative">
+                
+                <!-- Glow Effect Background -->
+                <div id="lamp-aura" class="absolute w-64 h-64 rounded-full bg-sky-500/20 blur-3xl transition-all duration-700 pointer-events-none"></div>
+
+                <!-- Main Physical Lamp Object -->
+                <button id="touch-lamp-button" onclick="triggerLampTouch()" class="relative z-10 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-900 via-slate-800 to-sky-950/40 border-4 border-sky-500/40 flex flex-col items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 group focus:outline-none">
+                    <div id="lamp-inner-icon" class="w-20 h-20 rounded-full bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <span id="lamp-emotion-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-500/30 text-sky-300 border border-sky-400/30 mb-1">Missing You</span>
+                    <span id="lamp-prompt-text" class="text-[11px] font-semibold text-sky-200 tracking-wider uppercase">Tap To Send Glow</span>
+                </button>
+
+                <!-- Color & Feeling Palette Selector -->
+                <div class="mt-7 w-full max-w-xs bg-slate-900/90 p-3 rounded-2xl border border-slate-800 backdrop-blur-md shadow-xl space-y-2">
+                    <p class="text-[11px] text-slate-400 text-center font-medium">Choose current emotion glow:</p>
+                    <div class="grid grid-cols-4 gap-2">
+                        <!-- Blue: Missing You -->
+                        <button onclick="setLampColor('sky')" id="color-btn-sky" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/90 border-2 border-sky-500 transition-all hover:bg-slate-800">
+                            <span class="w-5 h-5 rounded-full bg-sky-400 shadow-lg shadow-sky-500/50 mb-1"></span>
+                            <span class="text-[10px] font-semibold text-sky-300">Missing You</span>
+                        </button>
+
+                        <!-- Yellow: Enthusiasm -->
+                        <button onclick="setLampColor('amber')" id="color-btn-amber" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 transition-all hover:bg-slate-800">
+                            <span class="w-5 h-5 rounded-full bg-amber-400 shadow-lg shadow-amber-500/50 mb-1"></span>
+                            <span class="text-[10px] font-semibold text-amber-300">Enthusiasm</span>
+                        </button>
+
+                        <!-- Purple: Excited -->
+                        <button onclick="setLampColor('purple')" id="color-btn-purple" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 transition-all hover:bg-slate-800">
+                            <span class="w-5 h-5 rounded-full bg-purple-500 shadow-lg shadow-purple-500/50 mb-1"></span>
+                            <span class="text-[10px] font-semibold text-purple-300">Excited</span>
+                        </button>
+
+                        <!-- Red: Sad -->
+                        <button onclick="setLampColor('rose')" id="color-btn-rose" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 transition-all hover:bg-slate-800">
+                            <span class="w-5 h-5 rounded-full bg-rose-500 shadow-lg shadow-rose-500/50 mb-1"></span>
+                            <span class="text-[10px] font-semibold text-rose-300">Sad</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Touch Logs & Activity Timeline -->
+            <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-wave-square text-rose-400 text-sm"></i>
+                        <h3 class="text-sm font-semibold text-white">Touch Activity Feed</h3>
+                    </div>
+                    <span id="connection-indicator" class="text-[11px] text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/50">
+                        <i class="fa-solid fa-wifi text-[9px] mr-1"></i> Live Stream
+                    </span>
+                </div>
+
+                <!-- Log Items Scroll Area -->
+                <div id="touch-logs-list" class="space-y-3 max-h-56 overflow-y-auto pr-1 hide-scrollbar">
+                    <!-- Logs inserted dynamically -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ================= BOTTOM NAVIGATION BAR ================= -->
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/90 backdrop-blur-lg border-t border-slate-800 px-6 py-2 max-w-lg mx-auto">
+        <div class="flex justify-around items-center">
+            
+            <!-- Tab 1 Button -->
+            <button onclick="switchTab(1)" id="nav-btn-1" class="nav-tab-btn flex flex-col items-center py-1.5 px-3 text-rose-500 transition">
+                <i class="fa-solid fa-heart text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-tight">Reunion</span>
+            </button>
+
+            <!-- Tab 2 Button -->
+            <button onclick="switchTab(2)" id="nav-btn-2" class="nav-tab-btn flex flex-col items-center py-1.5 px-3 text-slate-400 hover:text-slate-200 transition">
+                <i class="fa-solid fa-box-archive text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-tight">Time Capsule</span>
+            </button>
+
+            <!-- Tab 3 Button -->
+            <button onclick="switchTab(3)" id="nav-btn-3" class="nav-tab-btn flex flex-col items-center py-1.5 px-3 text-slate-400 hover:text-slate-200 transition">
+                <i class="fa-solid fa-lightbulb text-lg mb-0.5"></i>
+                <span class="text-[10px] font-medium tracking-tight">Touch Lamp</span>
+            </button>
+
+        </div>
+    </nav>
+
+
+    <!-- ================= MODALS & OVERLAYS ================= -->
+
+    <!-- Photo Manager Modal -->
+    <div id="photo-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-base font-bold text-white"><i class="fa-solid fa-images text-rose-400 mr-2"></i> Slideshow Memories</h3>
+                <button onclick="closePhotoManagerModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-slate-400">Add image URLs from your self-hosted server or hard drive storage to shuffle on the main screen.</p>
+            
+            <div id="photo-url-list" class="space-y-2 max-h-48 overflow-y-auto">
+                <!-- List items loaded dynamically -->
+            </div>
+
+            <div class="space-y-2 pt-2 border-t border-slate-800">
+                <input id="new-photo-url" type="text" placeholder="https://your-nas.local/photos/date1.jpg" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
+                <button onclick="addNewPhotoUrl()" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold transition">Add To Slideshow</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Wishlist Item Modal -->
+    <div id="add-item-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-base font-bold text-white"><i class="fa-solid fa-plus-circle text-rose-400 mr-2"></i> New Future Memory / Idea</h3>
+                <button onclick="closeAddItemModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form id="add-item-form" onsubmit="saveWishlistItem(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
+                    <select id="item-category" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
+                        <option value="date">Date Idea / Restaurant</option>
+                        <option value="travel">Travel Goal / City</option>
+                        <option value="memory">Cherished Memory</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Title</label>
+                    <input id="item-title" type="text" required placeholder="e.g. Picnic in Central Park, Tokyo Ramen Spot" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Notes / Description</label>
+                    <textarea id="item-description" rows="2" placeholder="Why you want to do this together or special details..." class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500 resize-none"></textarea>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-500/30 transition">Save To Timeline</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Local Privacy Modal -->
+    <div id="privacy-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-base font-bold text-white"><i class="fa-solid fa-shield-halved text-emerald-400 mr-2"></i> Self-Hosted Privacy Guarantee</h3>
+                <button onclick="togglePrivacyModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+                <p class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-slate-300">
+                    <strong class="text-emerald-400 block mb-1">100% Local Hard Drive Storage</strong>
+                    All photos, private answers, touch logs, and wishlist items stay directly stored on your home server database or browser LocalStorage. No third-party servers hold your personal data.
+                </p>
+                <div class="flex items-center space-x-2 text-slate-400">
+                    <i class="fa-solid fa-lock text-rose-400"></i>
+                    <span>Encrypted end-to-end between you and your wife.</span>
+                </div>
+            </div>
+            <button onclick="togglePrivacyModal()" class="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-medium transition">Close Overview</button>
+        </div>
+    </div>
+
+
+    <!-- ================= JAVASCRIPT APPLICATION LOGIC ================= -->
+    <script>
+        /* ================= STATE MANAGEMENT ================= */
+        const APP_STATE = {
+            targetReunionDate: new Date("2026-12-25T00:00:00"),
+            activeTab: 1,
+            currentUserRole: 'me', // 'me' (Husband) or 'her' (Wife)
+            sharedMemories: {
+                photo1: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1000&q=80',
+                photo2: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1000&q=80'
+            },
+            activePhotoIndex: 1,
+            questionData: {
+                prompt: "What is one tiny detail from our last date that you never want to forget?",
+                yourAnswer: "",
+                wifeAnswer: "When we got caught in the sudden rain shower and you gave me your sweater even though you were shivering!",
+                yourSubmitted: false,
+                wifeSubmitted: true,
+                simulatedWife: true
+            },
+            wishlist: [
+                { id: 1, category: 'date', title: 'Late Night Candlelight Dinner in Paris', desc: 'Try that small authentic bistro near the Seine.', completed: false, favorite: true },
+                { id: 2, category: 'travel', title: 'Kyoto Cherry Blossom Trip', desc: 'Rent a cozy traditional ryokan with hot springs.', completed: false, favorite: true },
+                { id: 3, category: 'memory', title: 'First Stargazing Trip', desc: 'Drove out to the valley with hot chocolate in flasks.', completed: true, favorite: false }
+            ],
+            lampColor: 'sky',
+            emotionsConfig: {
+                sky: { name: 'Missing You', colorClass: 'sky', msg: 'Sent a "Missing You" oceanic glow' },
+                amber: { name: 'Enthusiasm', colorClass: 'amber', msg: 'Sent an "Enthusiastic" energetic glow' },
+                purple: { name: 'Excited', colorClass: 'purple', msg: 'Sent an "Excited!" vibrant pulse' },
+                rose: { name: 'Sad', colorClass: 'rose', msg: 'Feeling sad - sending a deep warm hug pulse' }
+            },
+            touchLogs: [
+                { sender: 'wife', time: '10 mins ago', message: 'Wife sent an "Excited!" vibrant pulse', color: 'purple' },
+                { sender: 'you', time: '1 hour ago', message: 'You sent a "Missing You" oceanic glow', color: 'sky' }
+            ]
+        };
+
+        /* ================= INITIALIZATION ================= */
+        window.addEventListener('DOMContentLoaded', () => {
+            loadLocalStorageData();
+            startCountdownTimer();
+            renderSharedMemories();
+            startPhotoCrossFadeLoop();
+            renderWishlist();
+            renderTouchLogs();
+            updateDailyQuestionUI();
+            updateRolePermissionsUI();
+            setLampColor(APP_STATE.lampColor || 'sky');
+        });
+
+        /* ================= NAVIGATION & TAB SWITCHING ================= */
+        function switchTab(tabIndex) {
+            APP_STATE.activeTab = tabIndex;
+
+            // Hide all tabs
+            for (let i = 1; i <= 3; i++) {
+                const tabEl = document.getElementById(`tab-${i}`);
+                const navBtn = document.getElementById(`nav-btn-${i}`);
+                if (tabEl) {
+                    tabEl.classList.add('hidden');
+                    tabEl.classList.remove('opacity-100');
+                    tabEl.classList.add('opacity-0');
+                }
+                if (navBtn) {
+                    navBtn.className = "nav-tab-btn flex flex-col items-center py-1.5 px-3 text-slate-400 hover:text-slate-200 transition";
+                }
+            }
+
+            // Reveal selected tab with transition
+            const activeTabEl = document.getElementById(`tab-${tabIndex}`);
+            const activeNavBtn = document.getElementById(`nav-btn-${tabIndex}`);
+            if (activeTabEl) {
+                activeTabEl.classList.remove('hidden');
+                setTimeout(() => {
+                    activeTabEl.classList.remove('opacity-0');
+                    activeTabEl.classList.add('opacity-100');
+                }, 50);
+            }
+            if (activeNavBtn) {
+                activeNavBtn.className = "nav-tab-btn flex flex-col items-center py-1.5 px-3 text-rose-500 transition";
+            }
+        }
+
+        /* ================= LOCAL STORAGE HELPERS ================= */
+        function saveLocalStorageData() {
+            try {
+                localStorage.setItem('heart_sync_data', JSON.stringify({
+                    targetDate: APP_STATE.targetReunionDate.toISOString(),
+                    sharedMemories: APP_STATE.sharedMemories,
+                    questionData: APP_STATE.questionData,
+                    wishlist: APP_STATE.wishlist,
+                    touchLogs: APP_STATE.touchLogs,
+                    currentUserRole: APP_STATE.currentUserRole
+                }));
+            } catch (e) {
+                console.warn('LocalStorage save failed', e);
+            }
+        }
+
+        function loadLocalStorageData() {
+            try {
+                const data = localStorage.getItem('heart_sync_data');
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    if (parsed.targetDate) APP_STATE.targetReunionDate = new Date(parsed.targetDate);
+                    if (parsed.sharedMemories) APP_STATE.sharedMemories = parsed.sharedMemories;
+                    if (parsed.questionData) APP_STATE.questionData = parsed.questionData;
+                    if (parsed.wishlist) APP_STATE.wishlist = parsed.wishlist;
+                    if (parsed.touchLogs) APP_STATE.touchLogs = parsed.touchLogs;
+                    if (parsed.currentUserRole) APP_STATE.currentUserRole = parsed.currentUserRole;
+                }
+            } catch (e) {
+                console.warn('LocalStorage load failed', e);
+            }
+        }
+
+        /* ================= ROLE CONTROL & PERMISSIONS ================= */
+        function handleRoleChange(event) {
+            APP_STATE.currentUserRole = event.target.value;
+            saveLocalStorageData();
+            updateRolePermissionsUI();
+        }
+
+        function updateRolePermissionsUI() {
+            const select = document.getElementById('user-role-select');
+            if (select) select.value = APP_STATE.currentUserRole;
+
+            const badge = document.getElementById('role-indicator-badge');
+            if (badge) {
+                badge.innerHTML = APP_STATE.currentUserRole === 'me'
+                    ? '<i class="fa-solid fa-user text-rose-400 mr-1"></i> Role: Me (Husband)'
+                    : '<i class="fa-solid fa-heart text-purple-400 mr-1"></i> Role: Her (Wife)';
+            }
+
+            const permContainer = document.getElementById('photo-permissions-container');
+            if (!permContainer) return;
+
+            if (APP_STATE.currentUserRole === 'me') {
+                // User 'Me' can edit Photo #1 only; Photo #2 shows locked status button
+                permContainer.innerHTML = `
+                    <label class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 border border-rose-400 shadow-sm">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Change #1 (You)</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="handleSharedImageUpload(event, 1)">
+                    </label>
+                    <button onclick="showPermissionDeniedMsg(2)" class="px-2.5 py-1 bg-slate-800/80 text-slate-400 text-[10px] font-medium rounded-lg border border-slate-700/60 flex items-center space-x-1 cursor-not-allowed">
+                        <i class="fa-solid fa-lock text-amber-400"></i>
+                        <span>#2 (Wife Only)</span>
+                    </button>
+                `;
+            } else {
+                // User 'Her' can edit Photo #2 only; Photo #1 shows locked status button
+                permContainer.innerHTML = `
+                    <button onclick="showPermissionDeniedMsg(1)" class="px-2.5 py-1 bg-slate-800/80 text-slate-400 text-[10px] font-medium rounded-lg border border-slate-700/60 flex items-center space-x-1 cursor-not-allowed">
+                        <i class="fa-solid fa-lock text-amber-400"></i>
+                        <span>#1 (Husband Only)</span>
+                    </button>
+                    <label class="px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 border border-purple-400 shadow-sm">
+                        <i class="fa-solid fa-camera"></i>
+                        <span>Change #2 (You)</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="handleSharedImageUpload(event, 2)">
+                    </label>
+                `;
+            }
+        }
+
+        function showPermissionDeniedMsg(photoNum) {
+            const owner = photoNum === 1 ? "Husband (Me)" : "Wife (Her)";
+            alert(`Only ${owner} can update Memory #${photoNum}! Switch roles in the top bar to simulate partner photo updates.`);
+        }
+
+        /* ================= SHARED MEMORIES CROSS-FADE LOGIC ================= */
+        function renderSharedMemories() {
+            const img1 = document.getElementById('memory-photo-1');
+            const img2 = document.getElementById('memory-photo-2');
+            if (img1 && APP_STATE.sharedMemories.photo1) img1.src = APP_STATE.sharedMemories.photo1;
+            if (img2 && APP_STATE.sharedMemories.photo2) img2.src = APP_STATE.sharedMemories.photo2;
+        }
+
+        function startPhotoCrossFadeLoop() {
+            setInterval(() => {
+                const img1 = document.getElementById('memory-photo-1');
+                const img2 = document.getElementById('memory-photo-2');
+                const indicator = document.getElementById('photo-cycle-indicator');
+
+                if (!img1 || !img2) return;
+
+                if (APP_STATE.activePhotoIndex === 1) {
+                    img1.classList.remove('opacity-100');
+                    img1.classList.add('opacity-0');
+                    img2.classList.remove('opacity-0');
+                    img2.classList.add('opacity-100');
+                    APP_STATE.activePhotoIndex = 2;
+                    if (indicator) indicator.innerText = "Memory #2 of 2";
+                } else {
+                    img2.classList.remove('opacity-100');
+                    img2.classList.add('opacity-0');
+                    img1.classList.remove('opacity-0');
+                    img1.classList.add('opacity-100');
+                    APP_STATE.activePhotoIndex = 1;
+                    if (indicator) indicator.innerText = "Memory #1 of 2";
+                }
+            }, 5000);
+        }
+
+        function handleSharedImageUpload(event, photoNumber) {
+            // Guard clause for extra protection
+            if (photoNumber === 1 && APP_STATE.currentUserRole !== 'me') {
+                showPermissionDeniedMsg(1);
+                return;
+            }
+            if (photoNumber === 2 && APP_STATE.currentUserRole !== 'her') {
+                showPermissionDeniedMsg(2);
+                return;
+            }
+
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Img = e.target.result;
+                if (photoNumber === 1) {
+                    APP_STATE.sharedMemories.photo1 = base64Img;
+                } else {
+                    APP_STATE.sharedMemories.photo2 = base64Img;
+                }
+                saveLocalStorageData();
+                renderSharedMemories();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /* ================= TAB 1: REUNION TIMER & SLIDESHOW ================= */
+        function startCountdownTimer() {
+            function update() {
+                const now = new Date();
+                const diff = APP_STATE.targetReunionDate - now;
+
+                if (diff <= 0) {
+                    document.getElementById('timer-days').innerText = "00";
+                    document.getElementById('timer-hours').innerText = "00";
+                    document.getElementById('timer-minutes').innerText = "00";
+                    document.getElementById('timer-seconds').innerText = "00";
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / 1000 / 60) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                document.getElementById('timer-days').innerText = days.toString().padStart(2, '0');
+                document.getElementById('timer-hours').innerText = hours.toString().padStart(2, '0');
+                document.getElementById('timer-minutes').innerText = minutes.toString().padStart(2, '0');
+                document.getElementById('timer-seconds').innerText = seconds.toString().padStart(2, '0');
+
+                // Update formatted date label
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('target-date-label').innerText = APP_STATE.targetReunionDate.toLocaleDateString(undefined, options);
+            }
+
+            update();
+            setInterval(update, 1000);
+        }
+
+        function editReunionDate() {
+            const newDateStr = prompt("Enter new reunion date (YYYY-MM-DD):", APP_STATE.targetReunionDate.toISOString().split('T')[0]);
+            if (newDateStr) {
+                const parsed = new Date(newDateStr);
+                if (!isNaN(parsed.getTime())) {
+                    APP_STATE.targetReunionDate = parsed;
+                    saveLocalStorageData();
+                } else {
+                    alert("Invalid date format entered.");
+                }
+            }
+        }
+
+        function startSlideshowLoop() {
+            setInterval(() => {
+                if (APP_STATE.photos.length <= 1) return;
+                
+                const container = document.getElementById('slideshow-container');
+                const slides = container.querySelectorAll('.slide');
+                if (!slides || slides.length === 0) return;
+
+                slides[APP_STATE.currentPhotoIndex].classList.add('opacity-0');
+                slides[APP_STATE.currentPhotoIndex].classList.remove('opacity-100');
+
+                APP_STATE.currentPhotoIndex = (APP_STATE.currentPhotoIndex + 1) % APP_STATE.photos.length;
+
+                slides[APP_STATE.currentPhotoIndex].classList.remove('opacity-0');
+                slides[APP_STATE.currentPhotoIndex].classList.add('opacity-100');
+
+                // Update dots
+                const dotsContainer = document.getElementById('slideshow-dots');
+                const dots = dotsContainer.querySelectorAll('button');
+                dots.forEach((dot, idx) => {
+                    dot.className = idx === APP_STATE.currentPhotoIndex 
+                        ? 'w-2 h-2 rounded-full bg-white opacity-100 transition' 
+                        : 'w-2 h-2 rounded-full bg-white opacity-40 transition';
+                });
+            }, 6000);
+        }
+
+        function openPhotoManagerModal() {
+            renderPhotoList();
+            document.getElementById('photo-modal').classList.remove('hidden');
+        }
+
+        function closePhotoManagerModal() {
+            document.getElementById('photo-modal').classList.add('hidden');
+        }
+
+        function renderPhotoList() {
+            const container = document.getElementById('photo-url-list');
+            container.innerHTML = APP_STATE.photos.map((url, idx) => `
+                <div class="flex items-center justify-between bg-slate-800/80 p-2 rounded-xl text-xs text-slate-300">
+                    <span class="truncate max-w-[240px]">${url}</span>
+                    <button onclick="removePhotoUrl(${idx})" class="text-rose-400 hover:text-rose-300 p-1"><i class="fa-solid fa-trash-can"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function addNewPhotoUrl() {
+            const input = document.getElementById('new-photo-url');
+            if (input.value.trim()) {
+                APP_STATE.photos.push(input.value.trim());
+                input.value = '';
+                saveLocalStorageData();
+                renderPhotoList();
+            }
+        }
+
+        function removePhotoUrl(idx) {
+            if (APP_STATE.photos.length <= 1) {
+                alert("Please keep at least one background photo!");
+                return;
+            }
+            APP_STATE.photos.splice(idx, 1);
+            saveLocalStorageData();
+            renderPhotoList();
+        }
+
+        /* ================= TAB 1: DAILY QUESTION DUAL-REVEAL ================= */
+        function submitYourAnswer() {
+            const val = document.getElementById('your-answer-input').value.trim();
+            if (!val) return;
+
+            APP_STATE.questionData.yourAnswer = val;
+            APP_STATE.questionData.yourSubmitted = true;
+            saveLocalStorageData();
+            updateDailyQuestionUI();
+        }
+
+        function updateDailyQuestionUI() {
+            const q = APP_STATE.questionData;
+            document.getElementById('current-question').innerText = `"${q.prompt}"`;
+
+            // Your Answer UI logic
+            if (q.yourSubmitted) {
+                document.getElementById('your-answer-container').classList.add('hidden');
+                document.getElementById('your-answer-submitted').classList.remove('hidden');
+                document.getElementById('your-answer-text').innerText = q.yourAnswer;
+                document.getElementById('your-status-badge').className = "text-emerald-400 text-[11px]";
+                document.getElementById('your-status-badge').innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Answered';
+            } else {
+                document.getElementById('your-answer-container').classList.remove('hidden');
+                document.getElementById('your-answer-submitted').classList.add('hidden');
+            }
+
+            // Dual Reveal check
+            const bothUnlocked = q.yourSubmitted && q.wifeSubmitted;
+            if (bothUnlocked) {
+                document.getElementById('wife-answer-locked').classList.add('hidden');
+                document.getElementById('wife-answer-unlocked').classList.remove('hidden');
+                document.getElementById('wife-answer-text').innerText = `"${q.wifeAnswer}"`;
+            } else {
+                document.getElementById('wife-answer-locked').classList.remove('hidden');
+                document.getElementById('wife-answer-unlocked').classList.add('hidden');
+            }
+        }
+
+        function toggleWifeResponseSim() {
+            APP_STATE.questionData.wifeSubmitted = !APP_STATE.questionData.wifeSubmitted;
+            document.getElementById('sim-wife-toggle').innerText = APP_STATE.questionData.wifeSubmitted 
+                ? "Simulate Partner Answer (ON)" 
+                : "Simulate Partner Answer (OFF)";
+            
+            const badge = document.getElementById('wife-status-badge');
+            if (APP_STATE.questionData.wifeSubmitted) {
+                badge.className = "text-emerald-400 text-[11px]";
+                badge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i> Answered';
+            } else {
+                badge.className = "text-amber-400 text-[11px]";
+                badge.innerHTML = '<i class="fa-solid fa-clock mr-1"></i> Pending';
+            }
+
+            saveLocalStorageData();
+            updateDailyQuestionUI();
+        }
+
+        /* ================= TAB 2: WISHLIST & TIMELINE ================= */
+        function renderWishlist(filterCategory = 'all') {
+            const container = document.getElementById('wishlist-items-container');
+            let items = APP_STATE.wishlist;
+
+            if (filterCategory !== 'all') {
+                items = items.filter(i => i.category === filterCategory);
+            }
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 bg-slate-900/50 rounded-2xl border border-slate-800">
+                        <i class="fa-solid fa-compass-drafting text-2xl text-slate-600 mb-2"></i>
+                        <p class="text-xs text-slate-400">No entries in this section yet. Tap 'Add New' to pin one!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(item => {
+                let catBadge = '';
+                if (item.category === 'date') catBadge = '<span class="text-[10px] text-rose-400 bg-rose-950/60 border border-rose-800/40 px-2 py-0.5 rounded-full"><i class="fa-solid fa-utensils mr-1"></i> Date Idea</span>';
+                if (item.category === 'travel') catBadge = '<span class="text-[10px] text-sky-400 bg-sky-950/60 border border-sky-800/40 px-2 py-0.5 rounded-full"><i class="fa-solid fa-plane mr-1"></i> Travel</span>';
+                if (item.category === 'memory') catBadge = '<span class="text-[10px] text-amber-400 bg-amber-950/60 border border-amber-800/40 px-2 py-0.5 rounded-full"><i class="fa-solid fa-heart mr-1"></i> Memory</span>';
+
+                return `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 transition-all hover:border-slate-700">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="space-y-1">
+                                ${catBadge}
+                                <h3 class="text-sm font-semibold text-white ${item.completed ? 'line-through text-slate-500' : ''}">${item.title}</h3>
+                            </div>
+                            <button onclick="toggleItemFavorite(${item.id})" class="text-amber-400 text-xs p-1">
+                                <i class="${item.favorite ? 'fa-solid' : 'fa-regular'} fa-star"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-400 mb-3 leading-relaxed">${item.desc}</p>
+                        <div class="flex justify-between items-center text-[11px] pt-2 border-t border-slate-800/60">
+                            <button onclick="toggleItemCompleted(${item.id})" class="text-slate-400 hover:text-emerald-400 flex items-center space-x-1.5 transition">
+                                <i class="${item.completed ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-regular fa-circle'}"></i>
+                                <span>${item.completed ? 'Completed' : 'Mark as Done'}</span>
+                            </button>
+                            <button onclick="deleteWishlistItem(${item.id})" class="text-slate-500 hover:text-rose-400 transition">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterWishlist(cat) {
+            document.querySelectorAll('.wishlist-filter-btn').forEach(btn => {
+                btn.className = "wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition";
+            });
+            event.currentTarget.className = "wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-rose-500 text-white shadow-sm transition";
+            renderWishlist(cat);
+        }
+
+        function openAddItemModal() {
+            document.getElementById('add-item-modal').classList.remove('hidden');
+        }
+
+        function closeAddItemModal() {
+            document.getElementById('add-item-modal').classList.add('hidden');
+        }
+
+        function saveWishlistItem(e) {
+            e.preventDefault();
+            const cat = document.getElementById('item-category').value;
+            const title = document.getElementById('item-title').value.trim();
+            const desc = document.getElementById('item-description').value.trim();
+
+            if (title) {
+                APP_STATE.wishlist.unshift({
+                    id: Date.now(),
+                    category: cat,
+                    title: title,
+                    desc: desc,
+                    completed: false,
+                    favorite: false
+                });
+                saveLocalStorageData();
+                renderWishlist();
+                closeAddItemModal();
+                document.getElementById('add-item-form').reset();
+            }
+        }
+
+        function toggleItemCompleted(id) {
+            const item = APP_STATE.wishlist.find(i => i.id === id);
+            if (item) {
+                item.completed = !item.completed;
+                saveLocalStorageData();
+                renderWishlist();
+            }
+        }
+
+        function toggleItemFavorite(id) {
+            const item = APP_STATE.wishlist.find(i => i.id === id);
+            if (item) {
+                item.favorite = !item.favorite;
+                saveLocalStorageData();
+                renderWishlist();
+            }
+        }
+
+        function deleteWishlistItem(id) {
+            APP_STATE.wishlist = APP_STATE.wishlist.filter(i => i.id !== id);
+            saveLocalStorageData();
+            renderWishlist();
+        }
+
+        /* ================= TAB 3: AMBIENT TOUCH LAMP ================= */
+        function setLampColor(color) {
+            APP_STATE.lampColor = color;
+            const emotion = APP_STATE.emotionsConfig[color];
+            const aura = document.getElementById('lamp-aura');
+            const icon = document.getElementById('lamp-inner-icon');
+            const button = document.getElementById('touch-lamp-button');
+            const badge = document.getElementById('lamp-emotion-badge');
+
+            // Reset all color selector button borders
+            document.querySelectorAll('.color-select-btn').forEach(btn => {
+                btn.className = "color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/40 border border-slate-700/60 transition-all hover:bg-slate-800";
+            });
+
+            // Highlight active selector button
+            const activeBtn = document.getElementById(`color-btn-${color}`);
+            if (activeBtn) {
+                activeBtn.className = `color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-800/90 border-2 border-${color}-500 transition-all hover:bg-slate-800`;
+            }
+
+            // Update Lamp visual theme
+            if (color === 'sky') {
+                aura.className = "absolute w-64 h-64 rounded-full bg-sky-500/20 blur-3xl transition-all duration-700 pointer-events-none";
+                icon.className = "w-20 h-20 rounded-full bg-sky-500/20 border border-sky-400/40 flex items-center justify-center text-sky-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
+                button.className = "relative z-10 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-900 via-slate-800 to-sky-950/40 border-4 border-sky-500/40 flex flex-col items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 group focus:outline-none";
+                badge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-sky-500/30 text-sky-300 border border-sky-400/30 mb-1";
+            } else if (color === 'amber') {
+                aura.className = "absolute w-64 h-64 rounded-full bg-amber-500/20 blur-3xl transition-all duration-700 pointer-events-none";
+                icon.className = "w-20 h-20 rounded-full bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
+                button.className = "relative z-10 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-900 via-slate-800 to-amber-950/40 border-4 border-amber-500/40 flex flex-col items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 group focus:outline-none";
+                badge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-500/30 text-amber-300 border border-amber-400/30 mb-1";
+            } else if (color === 'purple') {
+                aura.className = "absolute w-64 h-64 rounded-full bg-purple-500/20 blur-3xl transition-all duration-700 pointer-events-none";
+                icon.className = "w-20 h-20 rounded-full bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-purple-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
+                button.className = "relative z-10 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-900 via-slate-800 to-purple-950/40 border-4 border-purple-500/40 flex flex-col items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 group focus:outline-none";
+                badge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-500/30 text-purple-300 border border-purple-400/30 mb-1";
+            } else if (color === 'rose') {
+                aura.className = "absolute w-64 h-64 rounded-full bg-rose-500/20 blur-3xl transition-all duration-700 pointer-events-none";
+                icon.className = "w-20 h-20 rounded-full bg-rose-500/20 border border-rose-400/40 flex items-center justify-center text-rose-400 text-3xl mb-2 transition-transform duration-500 group-hover:scale-110";
+                button.className = "relative z-10 w-48 h-48 rounded-full bg-gradient-to-tr from-slate-900 via-slate-800 to-rose-950/40 border-4 border-rose-500/40 flex flex-col items-center justify-center shadow-2xl transition-all duration-300 active:scale-95 group focus:outline-none";
+                badge.className = "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-500/30 text-rose-300 border border-rose-400/30 mb-1";
+            }
+
+            badge.innerText = emotion.name;
+        }
+
+        function triggerLampTouch() {
+            const aura = document.getElementById('lamp-aura');
+            const prompt = document.getElementById('lamp-prompt-text');
+            const emotion = APP_STATE.emotionsConfig[APP_STATE.lampColor];
+
+            // Burst pulse effect
+            aura.classList.remove('blur-3xl');
+            aura.classList.add('blur-xl', 'scale-125', 'opacity-100');
+            prompt.innerText = `Sending ${emotion.name}...`;
+            prompt.className = "text-[11px] font-semibold text-white tracking-wider uppercase animate-pulse";
+
+            setTimeout(() => {
+                aura.classList.add('blur-3xl');
+                aura.classList.remove('blur-xl', 'scale-125', 'opacity-100');
+                prompt.innerText = "Tap To Send Glow";
+                prompt.className = `text-[11px] font-semibold text-${emotion.colorClass}-200 tracking-wider uppercase`;
+            }, 1200);
+
+            // Add to activity log
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            APP_STATE.touchLogs.unshift({
+                sender: 'you',
+                time: `Just now (${timeStr})`,
+                message: emotion.msg,
+                color: APP_STATE.lampColor
+            });
+
+            saveLocalStorageData();
+            renderTouchLogs();
+        }
+
+        function renderTouchLogs() {
+            const container = document.getElementById('touch-logs-list');
+            container.innerHTML = APP_STATE.touchLogs.map(log => {
+                const color = log.color || 'rose';
+                return `
+                    <div class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800/80">
+                        <div class="flex items-center space-x-2.5">
+                            <div class="w-7 h-7 rounded-full bg-${color}-500/20 text-${color}-400 flex items-center justify-center text-xs">
+                                <i class="fa-solid ${log.sender === 'you' ? 'fa-fingerprint' : 'fa-heart'}"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-medium text-slate-200">${log.message}</p>
+                                <span class="text-[10px] text-slate-500">${log.time}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /* ================= PRIVACY OVERLAY ================= */
+        function togglePrivacyModal() {
+            const modal = document.getElementById('privacy-modal');
+            modal.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
