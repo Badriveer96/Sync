@@ -47,6 +47,13 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .nav-glow-pill { background: linear-gradient(135deg, rgba(244, 114, 182, 0.25) 0%, rgba(225, 29, 72, 0.2) 100%); border: 1px solid rgba(244, 114, 182, 0.4); box-shadow: 0 0 15px rgba(244, 114, 182, 0.25); }
+
+        /* 3D Flip Card Styles */
+        .flip-card { perspective: 1000px; }
+        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 1rem; }
+        .flip-card-back { transform: rotateY(180deg); }
     </style>
 </head>
 <body class="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
@@ -124,7 +131,7 @@
                 </div>
             </div>
 
-            <!-- Daily Question Prompt with Locked Partner Answer -->
+            <!-- Daily Question Prompt -->
             <div class="dark-glass animate-border-pulse rounded-3xl p-6 shadow-xl relative overflow-hidden space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-rose-900/30">
                     <div class="flex items-center space-x-2">
@@ -183,7 +190,7 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-xl font-bold text-white tracking-tight">Our Wishlist & Scrapbook</h2>
-                    <p class="text-xs text-pink-300/70">Future adventures & cherished memories</p>
+                    <p class="text-xs text-pink-300/70">Tap a card to flip over & view description</p>
                 </div>
                 <button onclick="openAddItemModal()" class="px-3.5 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-500/30 flex items-center space-x-1.5 transition">
                     <i class="fa-solid fa-plus"></i>
@@ -307,10 +314,60 @@
     </nav>
 
     <!-- ================= MODALS ================= -->
-    <div id="card-detail-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div id="card-detail-content" class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"></div>
+    <!-- Full Edit Modal for Card Details, Image, Date, Title, Description -->
+    <div id="card-edit-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center">
+                <h3 class="text-base font-bold text-white"><i class="fa-solid fa-pencil text-rose-400 mr-2"></i> Edit Memory Card</h3>
+                <button onclick="closeEditModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form id="edit-item-form" onsubmit="saveCardEdits(event)" class="space-y-3">
+                <input type="hidden" id="edit-item-id">
+                
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
+                    <select id="edit-item-category" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
+                        <option value="date">Date Idea / Restaurant</option>
+                        <option value="travel">Travel Goal / City</option>
+                        <option value="memory">Cherished Memory</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Title</label>
+                    <input id="edit-item-title" type="text" required class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Target / Planned Date</label>
+                    <input id="edit-item-date" type="date" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Card Photo</label>
+                    <label class="w-full py-2.5 rounded-xl border border-dashed border-slate-700 hover:border-rose-400 bg-slate-950/60 flex items-center justify-center space-x-2 text-xs text-slate-300 cursor-pointer transition">
+                        <i class="fa-solid fa-camera text-rose-400"></i>
+                        <span>Upload / Replace Image</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="handleModalPhotoUpload(event)">
+                    </label>
+                    <div id="edit-photo-preview" class="mt-2 text-[10px] text-pink-300/80 italic"></div>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Description (Shown on card flip back)</label>
+                    <textarea id="edit-item-description" rows="3" placeholder="Full memory description..." class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500 resize-none"></textarea>
+                </div>
+                
+                <div class="pt-2 space-y-2">
+                    <button type="submit" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-500/30 transition">Save Changes</button>
+                    <button type="button" onclick="deleteCurrentEditCard()" class="w-full py-2 bg-rose-950/40 text-rose-400 border border-rose-900/30 rounded-xl text-xs font-medium hover:bg-rose-900/40 transition">Delete Card</button>
+                </div>
+            </form>
+        </div>
     </div>
 
+    <!-- Add Item Modal -->
     <div id="add-item-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <div class="flex justify-between items-center">
@@ -378,7 +435,6 @@
             console.warn("Firebase init warning:", e);
         }
 
-        // Default state fallback
         const DEFAULT_APP_STATE = {
             targetReunionDate: "2026-11-12T16:30:00",
             activeTab: 1,
@@ -395,7 +451,7 @@
                 yourSubmitted: false
             },
             wishlist: [
-                { id: 1, category: 'date', title: 'Late Night Candlelight Dinner', date: '2027-02-14', desc: 'Try that small authentic bistro.', completed: false, favorite: true, image: '' }
+                { id: 1, category: 'date', title: 'Late Night Candlelight Dinner', date: '2027-02-14', desc: 'Try that small authentic bistro downtown with the great pasta.', completed: false, favorite: true, image: '' }
             ],
             lampColor: 'blue',
             emotionsConfig: {
@@ -410,6 +466,7 @@
         };
 
         let APP_STATE = JSON.parse(JSON.stringify(DEFAULT_APP_STATE));
+        let tempEditImage = '';
 
         window.addEventListener('DOMContentLoaded', () => {
             loadCloudData();
@@ -418,7 +475,6 @@
             setLampColor(APP_STATE.lampColor || 'blue');
         });
 
-        // Safe merge updater that NEVER overwrites existing data with empty states
         function mergeRemoteState(remote) {
             if (!remote) return;
             if (remote.sharedMemories) {
@@ -632,6 +688,13 @@
             }, 1000);
         }
 
+        /* ---------------------------------------------------------
+           🃏 3D FLIP CARDS & PENCIL EDITING FUNCTIONALITY
+        --------------------------------------------------------- */
+        function toggleCardFlip(cardEl) {
+            cardEl.classList.toggle('flipped');
+        }
+
         function renderWishlist(cat = 'all') {
             const container = document.getElementById('wishlist-items-container');
             if (!container) return;
@@ -644,69 +707,68 @@
                 if (item.category === 'travel') catIcon = 'fa-plane text-sky-400';
 
                 return `
-                    <div onclick="openCardDetail(${item.id})" class="aspect-square w-full dark-glass rounded-2xl p-3.5 border border-rose-900/30 hover:border-rose-400/60 shadow-md flex flex-col justify-between cursor-pointer transition-all hover:scale-[1.02] relative overflow-hidden group">
-                        ${item.image ? `<div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition" style="background-image: url('${item.image}')"></div>` : ''}
-                        <div class="relative z-10 flex justify-between items-start">
-                            <i class="fa-solid ${catIcon} text-xs"></i>
-                            ${item.favorite ? '<i class="fa-solid fa-star text-amber-400 text-[10px]"></i>' : ''}
-                        </div>
-                        <div class="relative z-10 my-auto text-center">
-                            <h3 class="text-xs font-semibold text-white leading-tight line-clamp-2">${item.title}</h3>
-                        </div>
-                        <div class="relative z-10 flex justify-between items-center text-[9px] text-pink-300/70 border-t border-rose-900/30 pt-1.5">
-                            <span>${item.date || 'No date'}</span>
-                            <span class="text-rose-400"><i class="fa-solid fa-expand"></i></span>
+                    <div class="flip-card aspect-square w-full cursor-pointer select-none" onclick="toggleCardFlip(this)">
+                        <div class="flip-card-inner">
+                            <!-- FRONT OF CARD -->
+                            <div class="flip-card-front dark-glass p-3.5 border border-rose-900/30 hover:border-rose-400/60 shadow-md flex flex-col justify-between overflow-hidden group">
+                                ${item.image ? `<div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition" style="background-image: url('${item.image}')"></div>` : ''}
+                                <div class="relative z-10 flex justify-between items-start">
+                                    <i class="fa-solid ${catIcon} text-xs"></i>
+                                    ${item.favorite ? '<i class="fa-solid fa-star text-amber-400 text-[10px]"></i>' : ''}
+                                </div>
+                                <div class="relative z-10 my-auto text-center">
+                                    <h3 class="text-xs font-semibold text-white leading-tight line-clamp-2">${item.title}</h3>
+                                </div>
+                                <div class="relative z-10 flex justify-between items-center text-[9px] text-pink-300/70 border-t border-rose-900/30 pt-1.5">
+                                    <!-- BOTTOM LEFT EDIT PENCIL BUTTON -->
+                                    <button onclick="event.stopPropagation(); openEditModal(${item.id});" class="text-rose-400 hover:text-white p-1 rounded-md bg-slate-900/80 border border-rose-900/40 transition">
+                                        <i class="fa-solid fa-pencil text-[10px]"></i>
+                                    </button>
+                                    <span>${item.date || 'No date'}</span>
+                                </div>
+                            </div>
+
+                            <!-- BACK OF CARD (DESCRIPTION) -->
+                            <div class="flip-card-back dark-glass p-4 border border-rose-400/50 shadow-xl flex flex-col justify-between overflow-hidden bg-slate-950/95">
+                                <div class="flex justify-between items-center border-b border-rose-900/40 pb-1.5">
+                                    <span class="text-[9px] font-bold text-rose-300 uppercase tracking-wider">${item.category}</span>
+                                    <span class="text-[9px] text-pink-300/60"><i class="fa-solid fa-rotate-left mr-1"></i> Flip Back</span>
+                                </div>
+                                <div class="my-auto overflow-y-auto max-h-24 hide-scrollbar py-1">
+                                    <p class="text-xs text-slate-200 leading-relaxed font-medium">${item.desc || 'No description provided yet. Click the pencil icon to edit.'}</p>
+                                </div>
+                                <div class="text-[9px] text-slate-400 text-center border-t border-rose-900/40 pt-1 font-mono">
+                                    ${item.date ? item.date : 'Unscheduled Goal'}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('') || '<p class="text-xs text-slate-400 col-span-full text-center">No entries yet.</p>';
         }
 
-        function openCardDetail(id) {
+        function openEditModal(id) {
             const item = APP_STATE.wishlist.find(i => i.id === id);
             if (!item) return;
-            const content = document.getElementById('card-detail-content');
-            if (content) {
-                content.innerHTML = `
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] text-rose-300 bg-rose-950/40 border border-rose-800/30 px-2.5 py-1 rounded-full uppercase">${item.category}</span>
-                        <button onclick="document.getElementById('card-detail-modal').classList.add('hidden')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
-                    </div>
-                    <h2 class="text-lg font-bold text-white">${item.title}</h2>
-                    
-                    <div class="space-y-1">
-                        <label class="block text-[11px] font-medium text-slate-300">Target / Cherished Date</label>
-                        <div class="flex space-x-2">
-                            <input id="edit-item-date" type="date" value="${item.date || ''}" class="flex-1 bg-slate-800 text-slate-100 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-rose-500">
-                            <button onclick="saveItemDate(${item.id})" class="px-3 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-medium transition">Save Date</button>
-                        </div>
-                    </div>
-
-                    <label class="w-full py-3 rounded-xl border border-dashed border-slate-700 hover:border-rose-400 bg-slate-950/40 flex items-center justify-center space-x-2 text-xs text-slate-300 cursor-pointer transition">
-                        <i class="fa-solid fa-image text-rose-400"></i>
-                        <span>Upload Photo to Card</span>
-                        <input type="file" accept="image/*" class="hidden" onchange="uploadItemImage(event, ${item.id})">
-                    </label>
-                    <p class="text-xs text-slate-300 bg-slate-950/70 p-3 rounded-xl">${item.desc || 'No notes added.'}</p>
-                    <button onclick="deleteWishlistItem(${item.id}); document.getElementById('card-detail-modal').classList.add('hidden');" class="w-full py-2 bg-rose-950/40 text-rose-400 rounded-xl text-xs">Delete Item</button>
-                `;
-            }
-            document.getElementById('card-detail-modal').classList.remove('hidden');
+            
+            document.getElementById('edit-item-id').value = item.id;
+            document.getElementById('edit-item-category').value = item.category;
+            document.getElementById('edit-item-title').value = item.title;
+            document.getElementById('edit-item-date').value = item.date || '';
+            document.getElementById('edit-item-description').value = item.desc || '';
+            
+            tempEditImage = item.image || '';
+            const preview = document.getElementById('edit-photo-preview');
+            if (preview) preview.innerText = tempEditImage ? "Image currently attached to card" : "No custom image attached";
+            
+            document.getElementById('card-edit-modal').classList.remove('hidden');
         }
 
-        function saveItemDate(id) {
-            const dateInput = document.getElementById('edit-item-date');
-            if (!dateInput) return;
-            const item = APP_STATE.wishlist.find(i => i.id === id);
-            if (item) {
-                item.date = dateInput.value;
-                saveCloudData();
-                renderWishlist();
-                openCardDetail(id);
-            }
+        function closeEditModal() {
+            document.getElementById('card-edit-modal').classList.add('hidden');
         }
 
-        function uploadItemImage(event, id) {
+        function handleModalPhotoUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
@@ -721,17 +783,39 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
-                    const item = APP_STATE.wishlist.find(i => i.id === id);
-                    if (item) {
-                        item.image = canvas.toDataURL('image/jpeg', 0.7);
-                        saveCloudData();
-                        renderWishlist();
-                        openCardDetail(id);
-                    }
+                    tempEditImage = canvas.toDataURL('image/jpeg', 0.7);
+                    const preview = document.getElementById('edit-photo-preview');
+                    if (preview) preview.innerText = "New photo selected & compressed!";
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
+        }
+
+        function saveCardEdits(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('edit-item-id').value);
+            const item = APP_STATE.wishlist.find(i => i.id === id);
+            
+            if (item) {
+                item.category = document.getElementById('edit-item-category').value;
+                item.title = document.getElementById('edit-item-title').value.trim();
+                item.date = document.getElementById('edit-item-date').value;
+                item.desc = document.getElementById('edit-item-description').value.trim();
+                if (tempEditImage) item.image = tempEditImage;
+                
+                saveCloudData();
+                renderWishlist();
+                closeEditModal();
+            }
+        }
+
+        function deleteCurrentEditCard() {
+            const id = parseInt(document.getElementById('edit-item-id').value);
+            APP_STATE.wishlist = APP_STATE.wishlist.filter(i => i.id !== id);
+            saveCloudData();
+            renderWishlist();
+            closeEditModal();
         }
 
         function filterWishlist(cat) {
@@ -766,12 +850,6 @@
                 closeAddItemModal();
                 document.getElementById('add-item-form').reset();
             }
-        }
-
-        function deleteWishlistItem(id) {
-            APP_STATE.wishlist = APP_STATE.wishlist.filter(i => i.id !== id);
-            saveCloudData();
-            renderWishlist();
         }
 
         function setLampColor(color) {
