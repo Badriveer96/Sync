@@ -13,18 +13,15 @@
       0%, 100% { transform: scale(1); opacity: 0.8; }
       50% { transform: scale(1.05); opacity: 1; }
     }
-    .lamp-glow {
-      animation: pulseGlow 3s infinite ease-in-out;
-    }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-24 selection:bg-rose-500/30">
+<body class="bg-lavender-950 bg-slate-950 text-slate-100 min-h-screen pb-24 selection:bg-rose-500/30">
 
   <!-- Header -->
   <header class="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-rose-900/30 px-4 py-3 flex items-center justify-between">
     <div class="flex items-center gap-2">
       <div class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
-      <h1 class="text-xl font-bold tracking-wider bg-gradient-to-r from-rose-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">SYNC</h1>
+      <h1 class="text-xl font-bold tracking-wider bg-gradient-to-r from-rose-400 via-pink-400 to-purple-400 bg-clip-text text-transparent">Sync</h1>
     </div>
     <!-- Role Selector -->
     <div class="flex items-center gap-1 bg-slate-900 border border-rose-900/40 rounded-full p-1 text-xs">
@@ -40,7 +37,7 @@
     <section id="tab-1" class="space-y-6">
       <!-- Countdown Card -->
       <div class="bg-slate-900/80 border border-rose-900/30 rounded-2xl p-5 shadow-xl backdrop-blur-sm">
-        <h2 class="text-xs uppercase tracking-widest text-rose-400 font-semibold mb-2">Reunion Countdown</h2>
+        <h2 class="text-xs uppercase tracking-widest text-rose-400 font-semibold mb-2">Reunion Countdown (Nov 12, 4:30 PM)</h2>
         <div class="grid grid-cols-4 gap-2 text-center">
           <div class="bg-slate-950/60 p-2 rounded-xl border border-rose-900/20"><span id="timer-days" class="text-xl font-bold text-rose-300">00</span><p class="text-[10px] text-slate-400 uppercase">Days</p></div>
           <div class="bg-slate-950/60 p-2 rounded-xl border border-rose-900/20"><span id="timer-hours" class="text-xl font-bold text-rose-300">00</span><p class="text-[10px] text-slate-400 uppercase">Hours</p></div>
@@ -103,7 +100,7 @@
         
         <!-- Glowing Aura Lamp Center -->
         <div class="relative w-48 h-48 mx-auto flex items-center justify-center my-4">
-          <div id="lamp-aura" class="absolute inset-0 rounded-full blur-3xl opacity-60 transition-all duration-700 bg-blue-500 w-60 h-60 -inset-6"></div>
+          <div id="lamp-aura" class="absolute inset-0 rounded-full blur-3xl opacity-60 transition-all duration-700 bg-blue-500 w-80 h-80 -inset-16"></div>
           <button onclick="sendTouchPulse()" id="main-lamp-btn" class="relative z-10 w-36 h-36 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 shadow-2xl flex flex-col items-center justify-center border-4 border-slate-900 active:scale-95 transition-all cursor-pointer">
             <span class="text-2xl mb-1">✨</span>
             <span id="lamp-label" class="text-xs font-bold text-white uppercase tracking-wider">Missing You</span>
@@ -166,12 +163,10 @@
 
   <!-- Script & Firebase Integration -->
   <script>
-    // Request Notification Permissions on Load
     if ("Notification" in window && Notification.permission !== "granted") {
       Notification.requestPermission();
     }
 
-    // Firebase Configuration (Project: sync-1b23b)
     const firebaseConfig = {
       apiKey: "AIzaSyAGVy4yvKW0zUBP6W7NlmnPeooqjg7Ms",
       authDomain: "sync-1b23b.firebaseapp.com",
@@ -182,13 +177,12 @@
       appId: "1:92472383396:web:5da7e71e4dcf272af08631"
     };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-    const syncRef = db.ref('appState');
+    let db = null;
+    let syncRef = null;
 
     let APP_STATE = {
       currentRole: 'husband',
-      reunionDate: '2026-08-01T00:00:00',
+      reunionDate: '2026-11-12T16:30:00',
       activeLamp: { color: 'blue', name: 'Missing You', bgClass: 'from-blue-500 to-blue-700' },
       pulses: [],
       questionsHistory: [
@@ -202,44 +196,42 @@
 
     let previousPulseCount = 0;
 
-    // Listen for Realtime Sync from Firebase
-    syncRef.on('value', (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        // Check if a new pulse was added by the other partner
-        if (data.pulses && data.pulses.length > previousPulseCount && previousPulseCount > 0) {
-          const latestPulse = data.pulses[data.pulses.length - 1];
-          if (latestPulse.role !== APP_STATE.currentRole) {
-            triggerVibrationAndNotification(latestPulse);
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+      syncRef = db.ref('appState');
+
+      syncRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          if (data.pulses && data.pulses.length > previousPulseCount && previousPulseCount > 0) {
+            const latestPulse = data.pulses[data.pulses.length - 1];
+            if (latestPulse.role !== APP_STATE.currentRole) {
+              if ("vibrate" in navigator) navigator.vibrate([200, 100, 200, 100, 300]);
+              if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("✨ New Touch Pulse Received!", {
+                  body: `${latestPulse.role === 'husband' ? 'Husband' : 'Wife'} sent a ${latestPulse.color} pulse!`
+                });
+              }
+            }
           }
-        }
-        if (data.pulses) {
-          previousPulseCount = data.pulses.length;
-        }
+          if (data.pulses) previousPulseCount = data.pulses.length;
 
-        APP_STATE = data;
-        updateUI();
-      } else {
-        syncRef.set(APP_STATE);
-      }
-    });
-
-    function saveState() {
-      syncRef.set(APP_STATE);
+          APP_STATE = data;
+          updateUI();
+        } else {
+          syncRef.set(APP_STATE);
+        }
+      });
+    } catch (e) {
+      console.warn("Running in local mode:", e);
     }
 
-    function triggerVibrationAndNotification(pulse) {
-      // 1. Android Haptic Feedback Vibration
-      if ("vibrate" in navigator) {
-        navigator.vibrate([200, 100, 200, 100, 300]);
+    function saveState() {
+      if (syncRef) {
+        syncRef.set(APP_STATE).catch(() => {});
       }
-      // 2. Browser Push Notification
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification("✨ New Touch Pulse Received!", {
-          body: `${pulse.role === 'husband' ? 'Husband' : 'Wife'} sent a ${pulse.color} pulse!`,
-          icon: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=128"
-        });
-      }
+      updateUI();
     }
 
     function handleRoleChange(role) {
@@ -267,16 +259,4 @@
         document.getElementById('subtab-history').className = 'text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white';
       } else {
         document.getElementById('prompt-today-view').classList.add('hidden');
-        document.getElementById('prompt-history-view').classList.remove('hidden');
-        document.getElementById('subtab-history').className = 'text-xs px-2.5 py-1 rounded-lg bg-rose-600/30 text-rose-300 border border-rose-500/30 font-medium';
-        document.getElementById('subtab-today').className = 'text-xs px-2.5 py-1 rounded-lg bg-slate-800 text-slate-400 hover:text-white';
-        renderQuestionHistory();
-      }
-    }
-
-    function setLampColor(colorKey, name) {
-      const gradients = {
-        blue: 'from-blue-500 to-blue-700',
-        red: 'from-red-500 to-red-700',
-        green: 'from-emerald-500 to-emerald-700',
-        purple: 'from-purple-500 to-purple-700'
+        document.
