@@ -294,7 +294,7 @@
             <form id="add-item-form" onsubmit="saveWishlistItem(event)" class="space-y-3">
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Category</label>
-                    <select id="item-category" onchange="updateDateLabel(this.value)" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
+                    <select id="item-category" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
                         <option value="date">Date Idea / Restaurant</option>
                         <option value="travel">Travel Goal / City</option>
                         <option value="memory">Cherished Memory</option>
@@ -305,7 +305,7 @@
                     <input id="item-title" type="text" required placeholder="e.g. Picnic in Central Park" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
                 </div>
                 <div>
-                    <label id="item-date-label" class="block text-xs font-medium text-slate-300 mb-1">Target / Planned Date (Optional)</label>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Target / Planned Date (Optional)</label>
                     <input id="item-date" type="date" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
                 </div>
                 <div>
@@ -353,7 +353,7 @@
         }
 
         const APP_STATE = {
-            targetReunionDate: new Date("2026-11-12T16:30:00"),
+            targetReunionDate: "2026-11-12T16:30:00",
             activeTab: 1,
             currentUserRole: 'me',
             sharedMemories: {
@@ -525,7 +525,8 @@
 
         function startCountdownTimer() {
             setInterval(() => {
-                const diff = APP_STATE.targetReunionDate - new Date();
+                const target = new Date(APP_STATE.targetReunionDate);
+                const diff = target - new Date();
                 if (diff <= 0) return;
                 const dEl = document.getElementById('timer-days');
                 const hEl = document.getElementById('timer-hours');
@@ -568,6 +569,78 @@
             }).join('') || '<p class="text-xs text-slate-400 col-span-full text-center">No entries yet.</p>';
         }
 
+        function openCardDetail(id) {
+            const item = APP_STATE.wishlist.find(i => i.id === id);
+            if (!item) return;
+            const content = document.getElementById('card-detail-content');
+            if (content) {
+                content.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <span class="text-[10px] text-rose-300 bg-rose-950/40 border border-rose-800/30 px-2.5 py-1 rounded-full uppercase">${item.category}</span>
+                        <button onclick="document.getElementById('card-detail-modal').classList.add('hidden')" class="text-slate-400 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+                    <h2 class="text-lg font-bold text-white">${item.title}</h2>
+                    
+                    <div class="space-y-1">
+                        <label class="block text-[11px] font-medium text-slate-300">Target / Cherished Date</label>
+                        <div class="flex space-x-2">
+                            <input id="edit-item-date" type="date" value="${item.date || ''}" class="flex-1 bg-slate-800 text-slate-100 text-xs rounded-xl p-2.5 border border-slate-700 focus:outline-none focus:border-rose-500">
+                            <button onclick="saveItemDate(${item.id})" class="px-3 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-medium transition">Save Date</button>
+                        </div>
+                    </div>
+
+                    <label class="w-full py-3 rounded-xl border border-dashed border-slate-700 hover:border-rose-400 bg-slate-950/40 flex items-center justify-center space-x-2 text-xs text-slate-300 cursor-pointer transition">
+                        <i class="fa-solid fa-image text-rose-400"></i>
+                        <span>Upload Photo to Card</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadItemImage(event, ${item.id})">
+                    </label>
+                    <p class="text-xs text-slate-300 bg-slate-950/70 p-3 rounded-xl">${item.desc || 'No notes added.'}</p>
+                    <button onclick="deleteWishlistItem(${item.id}); document.getElementById('card-detail-modal').classList.add('hidden');" class="w-full py-2 bg-rose-950/40 text-rose-400 rounded-xl text-xs">Delete Item</button>
+                `;
+            }
+            document.getElementById('card-detail-modal').classList.remove('hidden');
+        }
+
+        function saveItemDate(id) {
+            const dateInput = document.getElementById('edit-item-date');
+            if (!dateInput) return;
+            const item = APP_STATE.wishlist.find(i => i.id === id);
+            if (item) {
+                item.date = dateInput.value;
+                saveCloudData();
+                renderWishlist();
+                openCardDetail(id);
+            }
+        }
+
+        function uploadItemImage(event, id) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600;
+                    const scaleSize = MAX_WIDTH / img.width;
+                    canvas.width = MAX_WIDTH;
+                    canvas.height = img.height * scaleSize;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const item = APP_STATE.wishlist.find(i => i.id === id);
+                    if (item) {
+                        item.image = canvas.toDataURL('image/jpeg', 0.7);
+                        saveCloudData();
+                        renderWishlist();
+                        openCardDetail(id);
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
         function filterWishlist(cat) {
             document.querySelectorAll('.wishlist-filter-btn').forEach(btn => {
                 btn.className = "wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition";
@@ -578,6 +651,35 @@
 
         function openAddItemModal() { document.getElementById('add-item-modal').classList.remove('hidden'); }
         function closeAddItemModal() { document.getElementById('add-item-modal').classList.add('hidden'); }
+
+        function saveWishlistItem(e) {
+            e.preventDefault();
+            const titleInput = document.getElementById('item-title');
+            if (!titleInput) return;
+            const title = titleInput.value.trim();
+            if (title) {
+                APP_STATE.wishlist.unshift({
+                    id: Date.now(),
+                    category: document.getElementById('item-category').value,
+                    title: title,
+                    date: document.getElementById('item-date').value,
+                    desc: document.getElementById('item-description').value.trim(),
+                    completed: false,
+                    favorite: false,
+                    image: ''
+                });
+                saveCloudData();
+                renderWishlist();
+                closeAddItemModal();
+                document.getElementById('add-item-form').reset();
+            }
+        }
+
+        function deleteWishlistItem(id) {
+            APP_STATE.wishlist = APP_STATE.wishlist.filter(i => i.id !== id);
+            saveCloudData();
+            renderWishlist();
+        }
 
         function setLampColor(color) {
             APP_STATE.lampColor = color;
