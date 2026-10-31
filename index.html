@@ -154,7 +154,7 @@
     </button>
   </nav>
 
-  <!-- Script & Firebase Integration -->
+  <!-- Script & Safe Fallback/Firebase Integration -->
   <script>
     if ("Notification" in window && Notification.permission !== "granted") {
       Notification.requestPermission();
@@ -189,35 +189,38 @@
 
     let previousPulseCount = 0;
 
+    // Safe Initialization
     try {
-      firebase.initializeApp(firebaseConfig);
-      db = firebase.database();
-      syncRef = db.ref('appState');
+      if (typeof firebase !== 'undefined') {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.database();
+        syncRef = db.ref('appState');
 
-      syncRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          if (data.pulses && data.pulses.length > previousPulseCount && previousPulseCount > 0) {
-            const latestPulse = data.pulses[data.pulses.length - 1];
-            if (latestPulse.role !== APP_STATE.currentRole) {
-              if ("vibrate" in navigator) navigator.vibrate([200, 100, 200, 100, 300]);
-              if ("Notification" in window && Notification.permission === "granted") {
-                new Notification("✨ New Touch Pulse Received!", {
-                  body: `${latestPulse.role === 'husband' ? 'Husband' : 'Wife'} sent a ${latestPulse.color} pulse!`
-                });
+        syncRef.on('value', (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            if (data.pulses && data.pulses.length > previousPulseCount && previousPulseCount > 0) {
+              const latestPulse = data.pulses[data.pulses.length - 1];
+              if (latestPulse.role !== APP_STATE.currentRole) {
+                if ("vibrate" in navigator) navigator.vibrate([200, 100, 200, 100, 300]);
+                if ("Notification" in window && Notification.permission === "granted") {
+                  new Notification("✨ New Touch Pulse Received!", {
+                    body: `${latestPulse.role === 'husband' ? 'Husband' : 'Wife'} sent a ${latestPulse.color} pulse!`
+                  });
+                }
               }
             }
-          }
-          if (data.pulses) previousPulseCount = data.pulses.length;
+            if (data.pulses) previousPulseCount = data.pulses.length;
 
-          APP_STATE = data;
-          updateUI();
-        } else {
-          syncRef.set(APP_STATE);
-        }
-      });
+            APP_STATE = data;
+            updateUI();
+          } else {
+            syncRef.set(APP_STATE);
+          }
+        });
+      }
     } catch (e) {
-      console.warn("Running local sync mode:", e);
+      console.warn("Running in local fallback mode:", e);
     }
 
     function saveState() {
@@ -285,7 +288,7 @@
       const input = document.getElementById(`${role}-answer-input`);
       if (!input || !input.value.trim()) return;
       
-      if (APP_STATE.questionsHistory.length > 0) {
+      if (APP_STATE.questionsHistory && APP_STATE.questionsHistory.length > 0) {
         if (role === 'husband') APP_STATE.questionsHistory[0].husbandAnswer = input.value;
         if (role === 'wife') APP_STATE.questionsHistory[0].wifeAnswer = input.value;
       }
@@ -319,7 +322,7 @@
       const lampAura = document.getElementById('lamp-aura');
       const lampLabel = document.getElementById('lamp-label');
       
-      if (lampBtn && lampAura && lampLabel) {
+      if (lampBtn && lampAura && lampLabel && APP_STATE.activeLamp) {
         lampBtn.className = `relative z-10 w-36 h-36 rounded-full bg-gradient-to-br ${APP_STATE.activeLamp.bgClass} shadow-2xl flex flex-col items-center justify-center border-4 border-slate-900 active:scale-95 transition-all cursor-pointer`;
         lampLabel.textContent = APP_STATE.activeLamp.name;
         const colorHexes = { blue: '#3b82f6', red: '#ef4444', green: '#22c55e', purple: '#a855f7' };
@@ -362,8 +365,10 @@
       }
     }
 
+    // Live Countdown Timer targeting November 12th, 2026 at 4:30 PM
     setInterval(() => {
-      const diff = new Date(APP_STATE.reunionDate) - new Date();
+      const targetDate = new Date('2026-11-12T16:30:00');
+      const diff = targetDate - new Date();
       if (diff > 0) {
         const d = document.getElementById('timer-days');
         const h = document.getElementById('timer-hours');
