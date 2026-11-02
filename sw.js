@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sync-hub-v2';
+const CACHE_NAME = 'sync-hub-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -43,7 +43,6 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     fetch(event.request)
       .then((response) => {
-        // If good network response, return it
         if (response && response.status === 200 && response.type === 'basic') {
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -53,7 +52,6 @@ self.addEventListener('fetch', (event) => {
         return response;
       })
       .catch(() => {
-        // Fallback to cache if network is unavailable
         return caches.match(event.request).then((cachedResponse) => {
           if (cachedResponse) return cachedResponse;
           if (event.request.headers.get('accept')?.includes('text/html')) {
