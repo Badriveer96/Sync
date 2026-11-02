@@ -9,8 +9,10 @@
     <meta name="application-name" content="Sync">
     <meta name="apple-mobile-web-app-title" content="Sync">
 
-    <!-- ================== Custom 'SYNC' App Icons ================== -->
-    <!-- Custom minimalist modern S-logo branding -->
+    <!-- Dynamic Web App Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Custom 'SYNC' App Icons -->
     <link rel="icon" type="image/png" href="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=192&h=192&fit=crop">
     <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=192&h=192&fit=crop">
 
@@ -76,11 +78,13 @@
 </head>
 <body class="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
 
-    <!-- Top Status Banner -->
+    <!-- Top Status Banner with Sync Logo Branding -->
     <header class="sticky top-0 z-50 px-4 py-2.5 bg-slate-950/90 text-slate-300 text-xs flex justify-between items-center backdrop-blur-md border-b border-rose-900/30">
         <div class="flex items-center space-x-2">
-            <span id="connection-dot" class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-md shadow-emerald-500/30"></span>
-            <span class="font-medium tracking-wide">Sync Server: <span id="sync-status-text" class="text-emerald-300">Live Firebase Connected</span></span>
+            <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-rose-500 to-pink-500 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-rose-500/30">
+                S
+            </div>
+            <span class="font-bold tracking-wider bg-gradient-to-r from-white via-pink-200 to-rose-300 bg-clip-text text-transparent text-sm">SYNC</span>
         </div>
         <div class="flex items-center space-x-3">
             <div class="flex items-center space-x-1.5 bg-slate-900/80 border border-rose-900/40 rounded-full px-2.5 py-1">
@@ -149,7 +153,7 @@
                 </div>
             </div>
 
-            <!-- Daily Question Prompt with Independent Role Locks -->
+            <!-- Daily Question Prompt with Midnight Auto-Rotation -->
             <div class="dark-glass animate-border-pulse rounded-3xl p-6 shadow-xl relative overflow-hidden space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-rose-900/30">
                     <div class="flex items-center space-x-2">
@@ -158,7 +162,7 @@
                         </div>
                         <div>
                             <h2 class="text-white text-base font-semibold">Daily Connection Prompts</h2>
-                            <p class="text-pink-300/70 text-xs">Curated romantic questions updated daily</p>
+                            <p class="text-pink-300/70 text-xs">New romantic question every midnight</p>
                         </div>
                     </div>
                 </div>
@@ -269,7 +273,7 @@
                 </div>
             </div>
 
-            <!-- Touch Activity Feed & Live Chart Visualization -->
+            <!-- Touch Activity Feed & Timeline with X-Axis Time Labels -->
             <div class="dark-glass animate-border-pulse rounded-3xl p-5 shadow-xl space-y-4">
                 <div class="flex justify-between items-center border-b border-rose-900/30 pb-3">
                     <div class="flex items-center space-x-2">
@@ -290,11 +294,11 @@
                         </div>
                     </div>
 
-                    <div class="space-y-2 pt-1">
+                    <div class="space-y-3 pt-1">
                         <div>
                             <div class="flex justify-between items-center text-[10px] text-slate-400 mb-1">
                                 <span class="font-medium text-slate-300"><i class="fa-solid fa-mars text-rose-400 mr-1"></i> Me (Husband)</span>
-                                <span class="text-pink-300/60">Active</span>
+                                <span class="text-pink-300/60">Pulse Stream</span>
                             </div>
                             <div id="husband-emotion-timeline" class="h-6 w-full bg-slate-900 rounded-lg p-1 flex items-center gap-1 border border-rose-900/40"></div>
                         </div>
@@ -302,9 +306,20 @@
                         <div>
                             <div class="flex justify-between items-center text-[10px] text-slate-400 mb-1">
                                 <span class="font-medium text-slate-300"><i class="fa-solid fa-venus text-pink-400 mr-1"></i> Her (Wife)</span>
-                                <span class="text-pink-300/60">Active</span>
+                                <span class="text-pink-300/60">Pulse Stream</span>
                             </div>
                             <div id="wife-emotion-timeline" class="h-6 w-full bg-slate-900 rounded-lg p-1 flex items-center gap-1 border border-rose-900/40"></div>
+                        </div>
+
+                        <!-- X-Axis Time Labels -->
+                        <div class="flex justify-between text-[9px] text-slate-400 font-mono px-1 pt-1 border-t border-slate-800">
+                            <span>12 AM</span>
+                            <span>4 AM</span>
+                            <span>8 AM</span>
+                            <span>12 PM</span>
+                            <span>4 PM</span>
+                            <span>8 PM</span>
+                            <span>12 AM</span>
                         </div>
                     </div>
                 </div>
@@ -434,6 +449,13 @@
 
     <!-- ================= SCRIPT & FIREBASE INTEGRATION ================= -->
     <script>
+        // Register Service Worker for PWA Installation on Android
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed: ', err));
+            });
+        }
+
         const firebaseConfig = {
             apiKey: "AIzaSyAGVy4yvKVW0zoUBP6W7NlmnPeooqjg7Ms",
             authDomain: "sync-1b23b.firebaseapp.com",
@@ -454,6 +476,16 @@
             console.warn("Firebase init warning:", e);
         }
 
+        const DAILY_QUESTIONS_POOL = [
+            "What is a small detail about our last meeting you still think about?",
+            "What song instantly reminds you of us when you hear it?",
+            "If we could teleport to anywhere right now for dinner, where would we go?",
+            "What is one thing you are most looking forward to doing together when we reunite?",
+            "What was the funniest memory of us that made you smile this week?",
+            "What is a cozy future habit you can't wait for us to establish?",
+            "What is something small I did recently that made you feel loved?"
+        ];
+
         const DEFAULT_APP_STATE = {
             targetReunionDate: "2026-11-12T16:30:00",
             activeTab: 1,
@@ -463,8 +495,9 @@
                 photo2: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1000&q=80'
             },
             activePhotoIndex: 1,
+            lastQuestionDate: "",
             questionData: {
-                prompt: "What is a small detail about our last meeting you still think about?",
+                prompt: "",
                 husbandAnswer: "",
                 husbandSubmitted: false,
                 wifeAnswer: "",
@@ -480,20 +513,33 @@
                 green: { name: 'Enthusiastic', hex: 'rgba(34, 197, 94, 0.5)', shadow: 'rgba(34, 197, 94, 0.3)', border: 'border-emerald-500', bgClass: 'bg-emerald-500' },
                 purple: { name: 'Passionate', hex: 'rgba(168, 85, 247, 0.5)', shadow: 'rgba(168, 85, 247, 0.3)', border: 'border-purple-500', bgClass: 'bg-purple-500' }
             },
-            touchLogs: [
-                { sender: 'partner', time: '10 mins ago', message: 'Partner sent a "Missing You" blue pulse', color: 'blue', hour: 14 }
-            ]
+            touchLogs: []
         };
 
         let APP_STATE = JSON.parse(JSON.stringify(DEFAULT_APP_STATE));
         let tempEditImage = '';
 
         window.addEventListener('DOMContentLoaded', () => {
+            checkDailyQuestionRotation();
             loadCloudData();
             startCountdownTimer();
             startPhotoCrossFadeLoop();
             setLampColor(APP_STATE.lampColor || 'blue');
         });
+
+        function checkDailyQuestionRotation() {
+            const todayStr = new Date().toDateString();
+            if (APP_STATE.lastQuestionDate !== todayStr) {
+                APP_STATE.lastQuestionDate = todayStr;
+                const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % DAILY_QUESTIONS_POOL.length;
+                APP_STATE.questionData.prompt = DAILY_QUESTIONS_POOL[dayIndex];
+                APP_STATE.questionData.husbandAnswer = "";
+                APP_STATE.questionData.husbandSubmitted = false;
+                APP_STATE.questionData.wifeAnswer = "";
+                APP_STATE.questionData.wifeSubmitted = false;
+                saveCloudData();
+            }
+        }
 
         function mergeRemoteState(remote) {
             if (!remote) return;
@@ -501,6 +547,7 @@
                 if (remote.sharedMemories.photo1) APP_STATE.sharedMemories.photo1 = remote.sharedMemories.photo1;
                 if (remote.sharedMemories.photo2) APP_STATE.sharedMemories.photo2 = remote.sharedMemories.photo2;
             }
+            if (remote.lastQuestionDate) APP_STATE.lastQuestionDate = remote.lastQuestionDate;
             if (remote.questionData) {
                 if (remote.questionData.prompt) APP_STATE.questionData.prompt = remote.questionData.prompt;
                 if (remote.questionData.husbandAnswer !== undefined) APP_STATE.questionData.husbandAnswer = remote.questionData.husbandAnswer;
@@ -525,7 +572,6 @@
             if (db) {
                 db.ref('sync_hub_state').set(APP_STATE).catch(err => {
                     console.error("Firebase write error:", err);
-                    document.getElementById('firebase-diag-text').innerText = "Write Error: " + err.message;
                 });
             }
         }
@@ -538,6 +584,7 @@
                 }
             } catch (e) {}
 
+            checkDailyQuestionRotation();
             renderAllUI();
 
             if (db) {
@@ -545,13 +592,9 @@
                     const remote = snapshot.val();
                     if (remote) {
                         mergeRemoteState(remote);
+                        checkDailyQuestionRotation();
                         renderAllUI();
-                        document.getElementById('firebase-diag-text').innerText = "Connected & syncing live successfully!";
                     }
-                }, (error) => {
-                    document.getElementById('firebase-diag-text').innerText = "Error: " + error.message;
-                    document.getElementById('connection-dot').className = "inline-block w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse";
-                    document.getElementById('sync-status-text').innerText = "Database Rules Error";
                 });
             }
         }
@@ -739,9 +782,6 @@
             }, 1000);
         }
 
-        /* ---------------------------------------------------------
-           🃏 3D FLIP CARDS & CHRONOLOGICAL SORTING BY DATE
-        --------------------------------------------------------- */
         function toggleCardFlip(cardEl) {
             cardEl.classList.toggle('flipped');
         }
@@ -752,7 +792,6 @@
             let items = [...APP_STATE.wishlist];
             if (cat !== 'all') items = items.filter(i => i.category === cat);
 
-            // Sort chronologically by date: earliest dates first, no-date items at the end
             items.sort((a, b) => {
                 if (!a.date && !b.date) return 0;
                 if (!a.date) return 1;
@@ -768,7 +807,6 @@
                 return `
                     <div class="flip-card aspect-square w-full cursor-pointer select-none" onclick="toggleCardFlip(this)">
                         <div class="flip-card-inner">
-                            <!-- FRONT OF CARD -->
                             <div class="flip-card-front dark-glass p-3.5 border border-rose-900/30 hover:border-rose-400/60 shadow-md flex flex-col justify-between overflow-hidden group">
                                 ${item.image ? `<div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition" style="background-image: url('${item.image}')"></div>` : ''}
                                 <div class="relative z-10 flex justify-between items-start">
@@ -785,8 +823,6 @@
                                     <span>${item.date || 'No date'}</span>
                                 </div>
                             </div>
-
-                            <!-- BACK OF CARD (AUTOSCALING DESCRIPTION) -->
                             <div class="flip-card-back dark-glass p-3.5 border border-rose-400/50 shadow-xl flex flex-col justify-between overflow-hidden bg-slate-950/95">
                                 <div class="flex justify-between items-center border-b border-rose-900/40 pb-1">
                                     <span class="text-[9px] font-bold text-rose-300 uppercase tracking-wider">${item.category}</span>
@@ -808,23 +844,16 @@
         function openEditModal(id) {
             const item = APP_STATE.wishlist.find(i => i.id === id);
             if (!item) return;
-            
             document.getElementById('edit-item-id').value = item.id;
             document.getElementById('edit-item-category').value = item.category;
             document.getElementById('edit-item-title').value = item.title;
             document.getElementById('edit-item-date').value = item.date || '';
             document.getElementById('edit-item-description').value = item.desc || '';
-            
             tempEditImage = item.image || '';
-            const preview = document.getElementById('edit-photo-preview');
-            if (preview) preview.innerText = tempEditImage ? "Image currently attached to card" : "No custom image attached";
-            
             document.getElementById('card-edit-modal').classList.remove('hidden');
         }
 
-        function closeEditModal() {
-            document.getElementById('card-edit-modal').classList.add('hidden');
-        }
+        function closeEditModal() { document.getElementById('card-edit-modal').classList.add('hidden'); }
 
         function handleModalPhotoUpload(event) {
             const file = event.target.files[0];
@@ -838,12 +867,8 @@
                     const scaleSize = MAX_WIDTH / img.width;
                     canvas.width = MAX_WIDTH;
                     canvas.height = img.height * scaleSize;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                     tempEditImage = canvas.toDataURL('image/jpeg', 0.7);
-                    const preview = document.getElementById('edit-photo-preview');
-                    if (preview) preview.innerText = "New photo selected & compressed!";
                 };
                 img.src = e.target.result;
             };
@@ -854,14 +879,12 @@
             e.preventDefault();
             const id = parseInt(document.getElementById('edit-item-id').value);
             const item = APP_STATE.wishlist.find(i => i.id === id);
-            
             if (item) {
                 item.category = document.getElementById('edit-item-category').value;
                 item.title = document.getElementById('edit-item-title').value.trim();
                 item.date = document.getElementById('edit-item-date').value;
                 item.desc = document.getElementById('edit-item-description').value.trim();
                 if (tempEditImage) item.image = tempEditImage;
-                
                 saveCloudData();
                 renderWishlist();
                 closeEditModal();
@@ -931,12 +954,15 @@
         function triggerLampTouch() {
             if ("vibrate" in navigator) navigator.vibrate([120, 60, 120]);
             const now = new Date();
+            const timeFormatted = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const emotion = APP_STATE.emotionsConfig[APP_STATE.lampColor];
+            const senderRole = APP_STATE.currentUserRole === 'me' ? 'you' : 'partner';
+            const senderLabel = APP_STATE.currentUserRole === 'me' ? 'You' : 'Partner';
             
             APP_STATE.touchLogs.unshift({
-                sender: APP_STATE.currentUserRole === 'me' ? 'you' : 'partner',
-                time: 'Just now',
-                message: `${APP_STATE.currentUserRole === 'me' ? 'You' : 'Partner'} sent a "${emotion.name}" pulse`,
+                sender: senderRole,
+                time: timeFormatted,
+                message: `${senderLabel} sent a "${emotion.name}" pulse`,
                 color: APP_STATE.lampColor,
                 hour: now.getHours()
             });
@@ -980,7 +1006,7 @@
                 logs.innerHTML = APP_STATE.touchLogs.map(l => `
                     <div class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs text-slate-200">
                         <span>${l.message}</span>
-                        <span class="text-[10px] text-slate-500">${l.time}</span>
+                        <span class="text-[10px] text-rose-300/80 font-mono">${l.time}</span>
                     </div>
                 `).join('');
             }
