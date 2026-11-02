@@ -71,10 +71,9 @@
 </head>
 <body class="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
 
-    <!-- Top Status Banner with Custom Generated Logo Emblem -->
+    <!-- Top Status Banner -->
     <header class="sticky top-0 z-50 px-4 py-2.5 bg-slate-950/90 text-slate-300 text-xs flex justify-between items-center backdrop-blur-md border-b border-rose-900/30">
         <div class="flex items-center space-x-2">
-            <!-- Custom App Logo -->
             <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=192&h=192&fit=crop" 
                  alt="Sync Logo" 
                  class="w-7 h-7 rounded-lg object-cover shadow-md shadow-rose-500/30 border border-rose-400/40">
@@ -169,7 +168,7 @@
                 </div>
             </div>
 
-            <!-- Daily Question Prompt with Synchronized Cloud Rotation -->
+            <!-- Daily Question Prompt -->
             <div class="dark-glass animate-border-pulse rounded-3xl p-6 shadow-xl relative overflow-hidden space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-rose-900/30">
                     <div class="flex items-center space-x-2">
@@ -178,7 +177,7 @@
                         </div>
                         <div>
                             <h2 class="text-white text-base font-semibold">Daily Connection Prompts</h2>
-                            <p class="text-pink-300/70 text-xs">Synchronized midnight prompt</p>
+                            <p class="text-pink-300/70 text-xs">Synchronized daily prompt</p>
                         </div>
                     </div>
                 </div>
@@ -287,7 +286,7 @@
                 </div>
             </div>
 
-            <!-- Touch Activity Feed & Timeline with Clear 1-to-1 X-Axis & History Selector -->
+            <!-- Touch Activity Feed & Timeline -->
             <div class="dark-glass animate-border-pulse rounded-3xl p-5 shadow-xl space-y-4">
                 <div class="flex justify-between items-center border-b border-rose-900/30 pb-3 flex-wrap gap-2">
                     <div class="flex items-center space-x-2">
@@ -295,12 +294,10 @@
                         <h3 class="text-sm font-semibold text-white">Touch Activity Feed</h3>
                     </div>
                     
-                    <!-- Date Filter & History Selector Dropdown -->
                     <div class="flex items-center space-x-2">
                         <div class="relative flex items-center">
                             <i class="fa-solid fa-calendar-day text-rose-400 text-[10px] absolute left-2 pointer-events-none"></i>
                             <select id="touch-history-date-select" onchange="handleHistoryDateChange(event)" class="bg-slate-900 text-pink-200 border border-rose-900/40 text-[11px] font-medium rounded-xl pl-6 pr-3 py-1 focus:outline-none focus:border-rose-400 cursor-pointer shadow-sm">
-                                <!-- Populated dynamically by JavaScript -->
                             </select>
                         </div>
                         <span id="live-indicator-badge" class="text-[10px] text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/50 flex items-center whitespace-nowrap">
@@ -337,7 +334,7 @@
                             <div id="wife-emotion-timeline" class="h-7 w-full bg-slate-900 rounded-lg p-1 flex items-center gap-1 border border-rose-900/40 shadow-inner"></div>
                         </div>
 
-                        <!-- Crystal Clear 1-to-1 Column Aligned X-Axis Time Labels (12 Blocks = 24 Hours) -->
+                        <!-- 12 Blocks = 24 Hours in Viewer's Local Time -->
                         <div class="grid grid-cols-12 text-center text-[8.5px] text-slate-400 font-mono pt-1.5 border-t border-slate-800/80">
                             <span title="12:00 AM - 2:00 AM">12a</span>
                             <span title="2:00 AM - 4:00 AM">2a</span>
@@ -524,11 +521,13 @@
     <script>
         let deferredPWAInstallPrompt = null;
 
-        // Register Service Worker and Catch Android Install Event
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Service Worker registered with scope: ', reg.scope))
+                    .then(reg => {
+                        reg.update();
+                        console.log('Service Worker active');
+                    })
                     .catch(err => console.log('SW registration error: ', err));
             });
         }
@@ -550,10 +549,7 @@
         function triggerPWAInstall() {
             if (deferredPWAInstallPrompt) {
                 deferredPWAInstallPrompt.prompt();
-                deferredPWAInstallPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted PWA installation');
-                    }
+                deferredPWAInstallPrompt.userChoice.then(() => {
                     deferredPWAInstallPrompt = null;
                     document.getElementById('android-install-btn')?.classList.add('hidden');
                 });
@@ -593,7 +589,9 @@
             "What is something small I did recently that made you feel loved?"
         ];
 
-        // Helper to format ISO date key (YYYY-MM-DD)
+        // Track flipped card IDs so re-renders NEVER flip them back
+        const flippedCardIds = new Set();
+
         function getTodayDateKey() {
             const d = new Date();
             const year = d.getFullYear();
@@ -608,6 +606,58 @@
             if (parts.length !== 3) return key;
             const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
             return d.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // Timezone Adapter: Parses universal UTC epoch timestamp into viewing device's local time
+        function getViewerLogDetails(log) {
+            if (!log) return null;
+            let ts = Number(log.timestamp);
+            if (!ts || isNaN(ts)) {
+                const parsedId = Number(log.id);
+                if (!isNaN(parsedId) && parsedId > 1600000000000) {
+                    ts = parsedId;
+                } else if (log.dateKey) {
+                    const parsed = Date.parse(log.dateKey);
+                    ts = !isNaN(parsed) ? parsed : Date.now();
+                } else {
+                    ts = Date.now();
+                }
+            }
+
+            const localDate = new Date(ts);
+            const y = localDate.getFullYear();
+            const m = String(localDate.getMonth() + 1).padStart(2, '0');
+            const d = String(localDate.getDate()).padStart(2, '0');
+            const viewerDateKey = `${y}-${m}-${d}`;
+
+            return {
+                ...log,
+                timestamp: ts,
+                viewerDateKey: viewerDateKey,
+                viewerTime: localDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                viewerHour: localDate.getHours()
+            };
+        }
+
+        // Normalizes both legacy array data and new Firebase object keyed maps
+        function normalizeToArrayWithIds(data) {
+            if (!data) return [];
+            if (Array.isArray(data)) {
+                return data.filter(Boolean).map((item, idx) => ({
+                    id: item.id || String(idx),
+                    ...item
+                }));
+            }
+            if (typeof data === 'object') {
+                return Object.entries(data).map(([key, value]) => {
+                    if (!value || typeof value !== 'object') return null;
+                    return {
+                        id: value.id || key,
+                        ...value
+                    };
+                }).filter(Boolean);
+            }
+            return [];
         }
 
         // Central State
@@ -630,9 +680,7 @@
                 wifeAnswer: "",
                 wifeSubmitted: false
             },
-            wishlist: [
-                { id: 1, category: 'date', title: 'Late Night Candlelight Dinner', date: '2027-02-14', desc: 'Try that small authentic bistro downtown with the great pasta.', completed: false, favorite: true, image: '' }
-            ],
+            wishlist: [],
             lampColor: 'blue',
             emotionsConfig: {
                 red: { name: 'Sad', hex: 'rgba(239, 68, 68, 0.5)', shadow: 'rgba(239, 68, 68, 0.3)', border: 'border-red-500', bgClass: 'bg-red-500' },
@@ -644,47 +692,6 @@
         };
 
         let tempModalImage = '';
-
-        function normalizeArray(data) {
-            if (!data) return [];
-            if (Array.isArray(data)) return data.filter(item => item !== null && item !== undefined);
-            if (typeof data === 'object') return Object.values(data).filter(item => item !== null && item !== undefined);
-            return [];
-        }
-
-        // Ensure every log has dateKey for historical indexing & filtering
-        function sanitizeTouchLog(log) {
-            if (!log) return null;
-            if (!log.dateKey) {
-                if (log.date) {
-                    try {
-                        const parsed = new Date(log.date);
-                        if (!isNaN(parsed.getTime())) {
-                            const y = parsed.getFullYear();
-                            const m = String(parsed.getMonth() + 1).padStart(2, '0');
-                            const d = String(parsed.getDate()).padStart(2, '0');
-                            log.dateKey = `${y}-${m}-${d}`;
-                        }
-                    } catch(e) {}
-                }
-                if (!log.dateKey) {
-                    const numId = parseInt(log.id);
-                    if (!isNaN(numId) && numId > 1600000000000) {
-                        const d = new Date(numId);
-                        const y = d.getFullYear();
-                        const m = String(d.getMonth() + 1).padStart(2, '0');
-                        const day = String(d.getDate()).padStart(2, '0');
-                        log.dateKey = `${y}-${m}-${day}`;
-                    } else {
-                        log.dateKey = getTodayDateKey();
-                    }
-                }
-            }
-            if (!log.dateLabel) {
-                log.dateLabel = formatDateKeyLabel(log.dateKey);
-            }
-            return log;
-        }
 
         window.addEventListener('DOMContentLoaded', () => {
             loadLocalCache();
@@ -709,10 +716,17 @@
 
         function loadLocalCache() {
             try {
-                const cached = localStorage.getItem('heart_sync_cache');
+                const cached = localStorage.getItem('heart_sync_cache_v3');
                 if (cached) {
                     const parsed = JSON.parse(cached);
-                    mergeRemoteData(parsed, false);
+                    if (parsed.targetReunionDate) APP_STATE.targetReunionDate = parsed.targetReunionDate;
+                    if (parsed.sharedMemories) APP_STATE.sharedMemories = parsed.sharedMemories;
+                    if (parsed.wishlist) APP_STATE.wishlist = parsed.wishlist;
+                    if (parsed.lampColor) APP_STATE.lampColor = parsed.lampColor;
+                    if (parsed.questionData) APP_STATE.questionData = parsed.questionData;
+                    if (parsed.touchLogs) {
+                        APP_STATE.touchLogs = parsed.touchLogs.map(getViewerLogDetails).filter(Boolean);
+                    }
                 }
             } catch (e) {
                 console.warn("Local cache read error", e);
@@ -721,7 +735,7 @@
 
         function saveLocalCache() {
             try {
-                localStorage.setItem('heart_sync_cache', JSON.stringify({
+                localStorage.setItem('heart_sync_cache_v3', JSON.stringify({
                     targetReunionDate: APP_STATE.targetReunionDate,
                     sharedMemories: APP_STATE.sharedMemories,
                     lastQuestionDate: APP_STATE.lastQuestionDate,
@@ -733,23 +747,21 @@
             } catch (e) {}
         }
 
-        // Automatic 12 Midnight Clock Tick Listener
         let lastTrackedDate = getTodayDateKey();
         function startMidnightAutoRefreshCheck() {
             setInterval(() => {
                 const currentToday = getTodayDateKey();
                 if (currentToday !== lastTrackedDate) {
                     lastTrackedDate = currentToday;
-                    // Midnight crossed: Set viewing date to the fresh new day
                     APP_STATE.selectedHistoryDate = currentToday;
                     populateHistoryDateDropdown();
                     renderEmotionGraph();
                     renderTouchLogs();
-                    showToast("A new day has started! Touch stream refreshed.");
                 }
-            }, 15000); // Check every 15 seconds
+            }, 10000);
         }
 
+        // ================= INDEPENDENT FIREBASE LISTENERS =================
         function initFirebaseSync() {
             if (!db) {
                 updateConnectionBadge(false, "Offline (No DB)");
@@ -761,104 +773,103 @@
                 updateConnectionBadge(isFirebaseOnline, isFirebaseOnline ? "Live Sync" : "Connecting");
             });
 
-            db.ref('sync_hub_state').on('value', (snapshot) => {
-                const cloudVal = snapshot.val();
-                const diagLast = document.getElementById('diag-last-sync');
-                if (diagLast) diagLast.innerText = new Date().toLocaleTimeString();
-
-                if (!cloudVal) {
-                    if (!isInitialCloudLoaded) {
-                        isInitialCloudLoaded = true;
-                        seedInitialCloudData();
-                    }
-                    return;
-                }
-
-                isInitialCloudLoaded = true;
-                mergeRemoteData(cloudVal, true);
-                saveLocalCache();
-                renderAllUI();
-            }, (error) => {
-                console.error("Firebase read error:", error);
-                document.getElementById('firebase-rules-alert')?.classList.remove('hidden');
-                updateConnectionBadge(false, "Rule Error");
-                showToast("Firebase Permission Error: Check Rules");
-            });
-        }
-
-        function seedInitialCloudData() {
-            const todayStr = new Date().toDateString();
-            const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % DAILY_QUESTIONS_POOL.length;
-            APP_STATE.lastQuestionDate = todayStr;
-            APP_STATE.questionData.prompt = DAILY_QUESTIONS_POOL[dayIndex];
-            
-            db.ref('sync_hub_state').set({
-                targetReunionDate: APP_STATE.targetReunionDate,
-                sharedMemories: APP_STATE.sharedMemories,
-                lastQuestionDate: todayStr,
-                questionData: APP_STATE.questionData,
-                wishlist: APP_STATE.wishlist,
-                lampColor: APP_STATE.lampColor,
-                touchLogs: APP_STATE.touchLogs
-            }).catch(err => {
-                console.error("Cloud seed error:", err);
-                document.getElementById('firebase-rules-alert')?.classList.remove('hidden');
-            });
-        }
-
-        function mergeRemoteData(remote, fromCloud = false) {
-            if (!remote) return;
-
-            if (remote.targetReunionDate) APP_STATE.targetReunionDate = remote.targetReunionDate;
-
-            if (remote.sharedMemories) {
-                if (remote.sharedMemories.photo1) APP_STATE.sharedMemories.photo1 = remote.sharedMemories.photo1;
-                if (remote.sharedMemories.photo2) APP_STATE.sharedMemories.photo2 = remote.sharedMemories.photo2;
-            }
-
-            if (remote.wishlist !== undefined) {
-                APP_STATE.wishlist = normalizeArray(remote.wishlist);
-            }
-
-            if (remote.touchLogs !== undefined) {
-                const logs = normalizeArray(remote.touchLogs);
-                APP_STATE.touchLogs = logs.map(sanitizeTouchLog).filter(Boolean);
-            }
-
-            if (remote.lampColor) {
-                APP_STATE.lampColor = remote.lampColor;
-            }
-
-            // Daily midnight question rotation check synchronized with cloud date
-            const todayStr = new Date().toDateString();
-            if (remote.lastQuestionDate && remote.lastQuestionDate === todayStr) {
-                APP_STATE.lastQuestionDate = remote.lastQuestionDate;
-                if (remote.questionData) {
-                    APP_STATE.questionData = {
-                        prompt: remote.questionData.prompt || DAILY_QUESTIONS_POOL[0],
-                        husbandAnswer: remote.questionData.husbandAnswer || "",
-                        husbandSubmitted: !!remote.questionData.husbandSubmitted,
-                        wifeAnswer: remote.questionData.wifeAnswer || "",
-                        wifeSubmitted: !!remote.questionData.wifeSubmitted
+            // 1. Wishlist Listener (Isolated - Keeps Cards From Reverting Flip)
+            db.ref('sync_hub_state/wishlist').on('value', (snapshot) => {
+                const val = snapshot.val();
+                if (val !== null && val !== undefined) {
+                    APP_STATE.wishlist = normalizeToArrayWithIds(val);
+                } else if (!isInitialCloudLoaded) {
+                    // Seed initial card if database is empty
+                    const defaultItem = {
+                        id: 'item_default_1',
+                        category: 'date',
+                        title: 'Late Night Candlelight Dinner',
+                        date: '2027-02-14',
+                        desc: 'Try that small authentic bistro downtown with great pasta.',
+                        completed: false,
+                        favorite: true,
+                        image: ''
                     };
+                    APP_STATE.wishlist = [defaultItem];
+                    db.ref('sync_hub_state/wishlist/item_default_1').set(defaultItem);
                 }
-            } else if (fromCloud && remote.lastQuestionDate && remote.lastQuestionDate !== todayStr) {
-                const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % DAILY_QUESTIONS_POOL.length;
-                APP_STATE.lastQuestionDate = todayStr;
-                APP_STATE.questionData = {
-                    prompt: DAILY_QUESTIONS_POOL[dayIndex],
-                    husbandAnswer: "",
-                    husbandSubmitted: false,
-                    wifeAnswer: "",
-                    wifeSubmitted: false
-                };
-                if (db) {
-                    db.ref('sync_hub_state/lastQuestionDate').set(todayStr);
+                renderWishlist();
+                saveLocalCache();
+                markDiagSync();
+            });
+
+            // 2. Touch Logs Listener (Isolated - Timezone Aware)
+            db.ref('sync_hub_state/touchLogs').on('value', (snapshot) => {
+                const val = snapshot.val();
+                if (val !== null && val !== undefined) {
+                    const rawLogs = normalizeToArrayWithIds(val);
+                    APP_STATE.touchLogs = rawLogs.map(getViewerLogDetails).filter(Boolean)
+                        .sort((a, b) => b.timestamp - a.timestamp);
+                }
+                populateHistoryDateDropdown();
+                renderTouchLogs();
+                renderEmotionGraph();
+                saveLocalCache();
+                markDiagSync();
+            });
+
+            // 3. Lamp Color Listener
+            db.ref('sync_hub_state/lampColor').on('value', (snapshot) => {
+                const color = snapshot.val();
+                if (color) {
+                    setLampColor(color, false);
+                }
+            });
+
+            // 4. Reunion Date Listener
+            db.ref('sync_hub_state/targetReunionDate').on('value', (snapshot) => {
+                const d = snapshot.val();
+                if (d) {
+                    APP_STATE.targetReunionDate = d;
+                    updateReunionHeaderDisplay();
+                }
+            });
+
+            // 5. Shared Memories Listener
+            db.ref('sync_hub_state/sharedMemories').on('value', (snapshot) => {
+                const mem = snapshot.val();
+                if (mem) {
+                    if (mem.photo1) APP_STATE.sharedMemories.photo1 = mem.photo1;
+                    if (mem.photo2) APP_STATE.sharedMemories.photo2 = mem.photo2;
+                    renderSharedMemories();
+                }
+            });
+
+            // 6. Daily Question Listener with Universal Day Rotation
+            db.ref('sync_hub_state/questionData').on('value', (snapshot) => {
+                const q = snapshot.val();
+                const universalDay = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+                const targetPrompt = DAILY_QUESTIONS_POOL[universalDay % DAILY_QUESTIONS_POOL.length];
+
+                if (q && q.universalDay === universalDay) {
+                    APP_STATE.questionData = q;
+                } else if (!q || q.universalDay !== universalDay) {
+                    // Universal UTC day advancement prevents India/Canada midnight desync
+                    APP_STATE.questionData = {
+                        universalDay: universalDay,
+                        prompt: targetPrompt,
+                        husbandAnswer: "",
+                        husbandSubmitted: false,
+                        wifeAnswer: "",
+                        wifeSubmitted: false
+                    };
                     db.ref('sync_hub_state/questionData').set(APP_STATE.questionData);
                 }
-            } else if (!remote.lastQuestionDate && remote.questionData) {
-                APP_STATE.questionData = remote.questionData;
-            }
+                updateDailyQuestionUI();
+                saveLocalCache();
+            });
+
+            isInitialCloudLoaded = true;
+        }
+
+        function markDiagSync() {
+            const diagLast = document.getElementById('diag-last-sync');
+            if (diagLast) diagLast.innerText = new Date().toLocaleTimeString();
         }
 
         function updateConnectionBadge(connected, text) {
@@ -933,7 +944,7 @@
                 updates[`sync_hub_state/questionData/${isHusband ? 'husbandSubmitted' : 'wifeSubmitted'}`] = true;
                 
                 db.ref().update(updates).then(() => {
-                    showToast("Answer locked and synced!");
+                    showToast("Answer locked & synced!");
                 }).catch(err => {
                     console.error("Answer update error:", err);
                     showToast("Error saving to cloud");
@@ -944,7 +955,7 @@
         function updateDailyQuestionUI() {
             const q = APP_STATE.questionData;
             const qEl = document.getElementById('current-question');
-            if (qEl) qEl.innerText = `"${q.prompt}"`;
+            if (qEl) qEl.innerText = `"${q.prompt || DAILY_QUESTIONS_POOL[0]}"`;
 
             const isMe = APP_STATE.currentUserRole === 'me';
             const yourLabel = document.getElementById('your-answer-label');
@@ -1119,8 +1130,17 @@
             }
         }
 
-        function toggleCardFlip(cardEl) {
-            cardEl.classList.toggle('flipped');
+        // ================= WISHLIST & CARDS (PERSISTENT FLIP STATE) =================
+
+        function toggleCardFlip(cardEl, cardId) {
+            const strId = String(cardId);
+            if (flippedCardIds.has(strId)) {
+                flippedCardIds.delete(strId);
+                cardEl.classList.remove('flipped');
+            } else {
+                flippedCardIds.add(strId);
+                cardEl.classList.add('flipped');
+            }
         }
 
         function filterWishlist(cat) {
@@ -1157,8 +1177,10 @@
                 if (item.category === 'date') catIcon = 'fa-utensils text-rose-400';
                 if (item.category === 'travel') catIcon = 'fa-plane text-sky-400';
 
+                const isFlipped = flippedCardIds.has(String(item.id)) ? 'flipped' : '';
+
                 return `
-                    <div class="flip-card aspect-square w-full cursor-pointer select-none" onclick="toggleCardFlip(this)">
+                    <div class="flip-card aspect-square w-full cursor-pointer select-none ${isFlipped}" onclick="toggleCardFlip(this, '${item.id}')">
                         <div class="flip-card-inner">
                             <div class="flip-card-front dark-glass p-3.5 border border-rose-900/30 hover:border-rose-400/60 shadow-md flex flex-col justify-between overflow-hidden group">
                                 ${item.image ? `<div class="absolute inset-0 bg-cover bg-center opacity-30 group-hover:opacity-40 transition" style="background-image: url('${item.image}')"></div>` : ''}
@@ -1230,33 +1252,36 @@
             document.getElementById('add-item-modal')?.classList.add('hidden');
         }
 
+        // Granular write: Saves unique child node so other cards NEVER disappear
         function saveWishlistItem(e) {
             e.preventDefault();
             const titleInput = document.getElementById('item-title');
             if (!titleInput || !titleInput.value.trim()) return;
 
+            const itemId = 'card_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
             const newItem = {
-                id: Date.now().toString(),
+                id: itemId,
                 category: document.getElementById('item-category').value,
                 title: titleInput.value.trim(),
                 date: document.getElementById('item-date').value,
                 desc: document.getElementById('item-description').value.trim(),
                 completed: false,
                 favorite: false,
-                image: tempModalImage || ''
+                image: tempModalImage || '',
+                createdAt: Date.now()
             };
 
-            APP_STATE.wishlist.unshift(newItem);
-            saveLocalCache();
-            renderWishlist();
             closeAddItemModal();
             document.getElementById('add-item-form').reset();
             tempModalImage = '';
 
             if (db) {
-                db.ref('sync_hub_state/wishlist').set(APP_STATE.wishlist).then(() => {
+                db.ref(`sync_hub_state/wishlist/${itemId}`).set(newItem).then(() => {
                     showToast("Card saved & synced!");
-                }).catch(err => console.error("Wishlist cloud sync error:", err));
+                }).catch(err => {
+                    console.error("Card save error:", err);
+                    showToast("Error saving card to cloud");
+                });
             }
         }
 
@@ -1284,41 +1309,37 @@
         function saveCardEdits(e) {
             e.preventDefault();
             const id = document.getElementById('edit-item-id').value;
-            const item = APP_STATE.wishlist.find(i => String(i.id) === String(id));
-            if (item) {
-                item.category = document.getElementById('edit-item-category').value;
-                item.title = document.getElementById('edit-item-title').value.trim();
-                item.date = document.getElementById('edit-item-date').value;
-                item.desc = document.getElementById('edit-item-description').value.trim();
-                if (tempModalImage) item.image = tempModalImage;
+            if (!id) return;
 
-                saveLocalCache();
-                renderWishlist();
-                closeEditModal();
+            const updates = {
+                category: document.getElementById('edit-item-category').value,
+                title: document.getElementById('edit-item-title').value.trim(),
+                date: document.getElementById('edit-item-date').value,
+                desc: document.getElementById('edit-item-description').value.trim()
+            };
+            if (tempModalImage) updates.image = tempModalImage;
 
-                if (db) {
-                    db.ref('sync_hub_state/wishlist').set(APP_STATE.wishlist).then(() => {
-                        showToast("Changes synced to cloud!");
-                    }).catch(err => console.error("Cloud edit error:", err));
-                }
+            closeEditModal();
+
+            if (db) {
+                db.ref(`sync_hub_state/wishlist/${id}`).update(updates).then(() => {
+                    showToast("Changes synced to cloud!");
+                }).catch(err => console.error("Cloud edit error:", err));
             }
         }
 
         function deleteCurrentEditCard() {
             const id = document.getElementById('edit-item-id').value;
-            APP_STATE.wishlist = APP_STATE.wishlist.filter(i => String(i.id) !== String(id));
-            saveLocalCache();
-            renderWishlist();
             closeEditModal();
 
-            if (db) {
-                db.ref('sync_hub_state/wishlist').set(APP_STATE.wishlist).then(() => {
+            if (db && id) {
+                db.ref(`sync_hub_state/wishlist/${id}`).remove().then(() => {
                     showToast("Card removed!");
                 }).catch(err => console.error("Cloud delete error:", err));
             }
         }
 
-        // ================= TOUCH LAMP, 12 AM RESET, HISTORY SELECTOR =================
+        // ================= TOUCH LAMP (APPEND ONLY + DYNAMIC TIMEZONE) =================
 
         function setLampColor(color, persistCloud = false) {
             APP_STATE.lampColor = color;
@@ -1344,44 +1365,27 @@
 
         function triggerLampTouch() {
             if ("vibrate" in navigator) navigator.vibrate([120, 60, 120]);
-            const now = new Date();
-            const timeFormatted = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const emotion = APP_STATE.emotionsConfig[APP_STATE.lampColor] || APP_STATE.emotionsConfig.blue;
             const isMe = APP_STATE.currentUserRole === 'me';
-            const todayKey = getTodayDateKey();
             
+            // Log universal UTC epoch timestamp
             const newLog = {
-                id: Date.now().toString(),
                 sender: isMe ? 'husband' : 'wife',
-                time: timeFormatted,
-                dateKey: todayKey,
-                dateLabel: formatDateKeyLabel(todayKey),
                 emotionName: emotion.name,
                 color: APP_STATE.lampColor,
-                hour: now.getHours(),
-                minute: now.getMinutes(),
                 timestamp: Date.now()
             };
 
-            APP_STATE.touchLogs.unshift(newLog);
-            if (APP_STATE.touchLogs.length > 500) APP_STATE.touchLogs.pop(); // Generous historical buffer
-
-            // Automatically focus view on today if viewing an older day
-            APP_STATE.selectedHistoryDate = todayKey;
-
-            saveLocalCache();
-            populateHistoryDateDropdown();
-            renderTouchLogs();
-            renderEmotionGraph();
+            APP_STATE.selectedHistoryDate = getTodayDateKey();
             showToast(`Sent ${emotion.name} pulse!`);
 
             if (db) {
+                // .push() appends uniquely without ever wiping existing touch history
+                db.ref('sync_hub_state/touchLogs').push(newLog);
                 db.ref('sync_hub_state/lampColor').set(APP_STATE.lampColor);
-                db.ref('sync_hub_state/touchLogs').set(APP_STATE.touchLogs);
             }
         }
 
-        // Populate Date History Dropdown with all dates containing touches + Today
         function populateHistoryDateDropdown() {
             const selectEl = document.getElementById('touch-history-date-select');
             if (!selectEl) return;
@@ -1391,13 +1395,11 @@
             dateSet.add(todayKey);
 
             APP_STATE.touchLogs.forEach(l => {
-                if (l.dateKey) dateSet.add(l.dateKey);
+                if (l.viewerDateKey) dateSet.add(l.viewerDateKey);
             });
 
-            // Sort descending: newest dates first
             const sortedDates = Array.from(dateSet).sort().reverse();
 
-            // Calculate yesterday key for friendly labeling
             const yDate = new Date();
             yDate.setDate(yDate.getDate() - 1);
             const yYear = yDate.getFullYear();
@@ -1453,18 +1455,15 @@
             if (!husbandContainer || !wifeContainer) return;
 
             const targetDate = APP_STATE.selectedHistoryDate || getTodayDateKey();
+            const filteredLogs = APP_STATE.touchLogs.filter(log => log.viewerDateKey === targetDate);
 
-            // Filter pulses strictly for the active selected day
-            const filteredLogs = APP_STATE.touchLogs.filter(log => log.dateKey === targetDate);
-
-            // 12 columns: each index represents a 2-hour window
-            // 0: 12am-2am, 1: 2am-4am, ..., 11: 10pm-12am
+            // 12 blocks representing 2-hour windows in viewer's local time
             const timeBlocks = Array.from({ length: 12 }, () => ({ husbandLogs: [], wifeLogs: [] }));
             let totalHusband = 0;
             let totalWife = 0;
             
             filteredLogs.forEach(log => {
-                const hour = log.hour !== undefined ? log.hour : 12;
+                const hour = log.viewerHour !== undefined ? log.viewerHour : 12;
                 const blockIdx = Math.min(11, Math.max(0, Math.floor(hour / 2)));
                 if (log.sender === 'husband') {
                     timeBlocks[blockIdx].husbandLogs.push(log);
@@ -1478,7 +1477,6 @@
             if (husbandCountEl) husbandCountEl.innerText = `${totalHusband} pulse${totalHusband === 1 ? '' : 's'}`;
             if (wifeCountEl) wifeCountEl.innerText = `${totalWife} pulse${totalWife === 1 ? '' : 's'}`;
 
-            // Helper for 2-hour block time range descriptions
             const blockLabels = [
                 "12:00 AM - 2:00 AM", "2:00 AM - 4:00 AM", "4:00 AM - 6:00 AM", 
                 "6:00 AM - 8:00 AM", "8:00 AM - 10:00 AM", "10:00 AM - 12:00 PM",
@@ -1493,7 +1491,7 @@
                 }
                 const latest = block.husbandLogs[0];
                 const cfg = APP_STATE.emotionsConfig[latest.color] || APP_STATE.emotionsConfig.blue;
-                return `<div title="Husband (${blockLabels[i]}): ${count} pulse${count > 1 ? 's' : ''} • Last: ${latest.emotionName || 'Glow'} at ${latest.time}" class="h-full flex-1 ${cfg.bgClass} rounded-sm shadow-sm cursor-pointer hover:opacity-80 transition transform hover:scale-105"></div>`;
+                return `<div title="Husband (${blockLabels[i]}): ${count} pulse${count > 1 ? 's' : ''} • Last: ${latest.emotionName || 'Glow'} at ${latest.viewerTime}" class="h-full flex-1 ${cfg.bgClass} rounded-sm shadow-sm cursor-pointer hover:opacity-80 transition transform hover:scale-105"></div>`;
             }).join('');
 
             wifeContainer.innerHTML = timeBlocks.map((block, i) => {
@@ -1503,7 +1501,7 @@
                 }
                 const latest = block.wifeLogs[0];
                 const cfg = APP_STATE.emotionsConfig[latest.color] || APP_STATE.emotionsConfig.blue;
-                return `<div title="Wife (${blockLabels[i]}): ${count} pulse${count > 1 ? 's' : ''} • Last: ${latest.emotionName || 'Glow'} at ${latest.time}" class="h-full flex-1 ${cfg.bgClass} rounded-sm shadow-sm cursor-pointer hover:opacity-80 transition transform hover:scale-105"></div>`;
+                return `<div title="Wife (${blockLabels[i]}): ${count} pulse${count > 1 ? 's' : ''} • Last: ${latest.emotionName || 'Glow'} at ${latest.viewerTime}" class="h-full flex-1 ${cfg.bgClass} rounded-sm shadow-sm cursor-pointer hover:opacity-80 transition transform hover:scale-105"></div>`;
             }).join('');
         }
 
@@ -1513,9 +1511,7 @@
 
             const isMe = APP_STATE.currentUserRole === 'me';
             const targetDate = APP_STATE.selectedHistoryDate || getTodayDateKey();
-
-            // Filter pulses matching the selected date
-            const dateLogs = APP_STATE.touchLogs.filter(l => l.dateKey === targetDate);
+            const dateLogs = APP_STATE.touchLogs.filter(l => l.viewerDateKey === targetDate);
 
             if (dateLogs.length === 0) {
                 const isToday = targetDate === getTodayDateKey();
@@ -1529,7 +1525,7 @@
                 return;
             }
 
-            logs.innerHTML = dateLogs.slice(0, 20).map(l => {
+            logs.innerHTML = dateLogs.slice(0, 30).map(l => {
                 const youSent = (isMe && l.sender === 'husband') || (!isMe && l.sender === 'wife');
                 const label = youSent ? 'You' : (l.sender === 'husband' ? 'Husband' : 'Wife');
                 const cfg = APP_STATE.emotionsConfig[l.color] || APP_STATE.emotionsConfig.blue;
@@ -1540,7 +1536,7 @@
                             <span class="w-2.5 h-2.5 rounded-full ${cfg.bgClass} shadow-sm"></span>
                             <span><strong class="${youSent ? 'text-rose-300' : 'text-pink-300'}">${label}</strong> sent a "${l.emotionName || 'Warm'}" glow</span>
                         </div>
-                        <span class="text-[10px] text-rose-300/80 font-mono">${l.time}</span>
+                        <span class="text-[10px] text-rose-300/80 font-mono">${l.viewerTime}</span>
                     </div>
                 `;
             }).join('');
