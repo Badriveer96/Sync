@@ -71,15 +71,24 @@
 </head>
 <body class="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
 
-    <!-- Top Status Banner with Sync Logo Branding -->
+    <!-- Top Status Banner with Custom Generated Logo Emblem -->
     <header class="sticky top-0 z-50 px-4 py-2.5 bg-slate-950/90 text-slate-300 text-xs flex justify-between items-center backdrop-blur-md border-b border-rose-900/30">
         <div class="flex items-center space-x-2">
-            <div class="w-6 h-6 rounded-lg bg-gradient-to-tr from-rose-500 to-pink-500 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-rose-500/30">
-                S
-            </div>
+            <!-- Custom Generated App Logo -->
+            <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=192&h=192&fit=crop" 
+                 alt="Sync Logo" 
+                 class="w-7 h-7 rounded-lg object-cover shadow-md shadow-rose-500/30 border border-rose-400/40">
             <span class="font-bold tracking-wider bg-gradient-to-r from-white via-pink-200 to-rose-300 bg-clip-text text-transparent text-sm">SYNC</span>
+            <div id="cloud-status-indicator" class="flex items-center space-x-1 pl-1 cursor-pointer" onclick="togglePrivacyModal()" title="Firebase Connection Status">
+                <span id="cloud-status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="cloud-status-label" class="text-[9px] text-slate-400">Connecting</span>
+            </div>
         </div>
-        <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+            <button id="android-install-btn" onclick="triggerPWAInstall()" class="hidden px-2.5 py-1 bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white text-[10px] font-semibold rounded-full shadow-md shadow-rose-500/20 transition flex items-center space-x-1">
+                <i class="fa-solid fa-download text-[9px]"></i>
+                <span>Install</span>
+            </button>
             <div class="flex items-center space-x-1.5 bg-slate-900/80 border border-rose-900/40 rounded-full px-2.5 py-1">
                 <i class="fa-solid fa-user-tag text-rose-400 text-[10px]"></i>
                 <span class="text-[10px] text-pink-300 font-medium">Role:</span>
@@ -88,11 +97,14 @@
                     <option value="her" class="bg-slate-900 text-slate-200">Her (Wife)</option>
                 </select>
             </div>
-            <button onclick="togglePrivacyModal()" class="text-slate-400 hover:text-white transition-colors">
+            <button onclick="togglePrivacyModal()" class="text-slate-400 hover:text-white transition-colors" title="Cloud Diagnostics">
                 <i class="fa-solid fa-shield-halved text-slate-400 hover:text-rose-300"></i>
             </button>
         </div>
     </header>
+
+    <!-- Notification Toast -->
+    <div id="toast-message" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 border border-rose-500/50 text-white text-xs px-4 py-2 rounded-full shadow-lg backdrop-blur-md hidden transition-opacity duration-300 pointer-events-none"></div>
 
     <!-- Main Content Container -->
     <main class="flex-1 pt-4 pb-36 max-w-lg mx-auto w-full relative min-h-screen overflow-x-hidden px-4 space-y-6">
@@ -101,9 +113,9 @@
         <section id="tab-1" class="tab-content space-y-6">
             <div class="relative rounded-3xl overflow-hidden shadow-xl dark-glass animate-border-pulse p-5 space-y-4">
                 <div class="flex justify-between items-center z-20 relative">
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30 backdrop-blur-md">
-                        <i class="fa-solid fa-heart mr-1.5 text-xs animate-pulse text-rose-400"></i> Next Reunion
-                    </span>
+                    <button onclick="openEditReunionModal()" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30 backdrop-blur-md hover:bg-rose-500/30 transition">
+                        <i class="fa-solid fa-heart mr-1.5 text-xs animate-pulse text-rose-400"></i> Next Reunion <i class="fa-solid fa-pencil text-[9px] ml-1.5 text-rose-300/70"></i>
+                    </button>
                     <span id="role-indicator-badge" class="text-[11px] text-pink-200 bg-slate-950/70 px-2.5 py-1 rounded-full border border-pink-900/40 font-medium">
                         <i class="fa-solid fa-user-check text-rose-400 mr-1"></i> Role: Me
                     </span>
@@ -119,12 +131,23 @@
                             <i class="fa-solid fa-images text-rose-400"></i>
                             <span id="photo-cycle-indicator" class="font-medium">Memory #1 of 2</span>
                         </div>
-                        <div id="photo-permissions-container" class="flex space-x-2"></div>
+                        <div id="photo-permissions-container" class="flex space-x-1.5">
+                            <label class="px-2 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 shadow-md">
+                                <i class="fa-solid fa-camera"></i>
+                                <span>Photo #1</span>
+                                <input type="file" accept="image/*" class="hidden" onchange="compressAndUploadPhoto(event, 1)">
+                            </label>
+                            <label class="px-2 py-1 bg-pink-600 hover:bg-pink-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 shadow-md">
+                                <i class="fa-solid fa-camera"></i>
+                                <span>Photo #2</span>
+                                <input type="file" accept="image/*" class="hidden" onchange="compressAndUploadPhoto(event, 2)">
+                            </label>
+                        </div>
                     </div>
                 </div>
 
                 <div class="text-center pt-1">
-                    <h1 class="text-pink-200/90 text-xs font-medium mb-3">Counting down until November 12th, 4:30 PM...</h1>
+                    <h1 id="countdown-subtext" class="text-pink-200/90 text-xs font-medium mb-3">Counting down to our reunion...</h1>
                     <div class="grid grid-cols-4 gap-2 max-w-sm mx-auto">
                         <div class="dark-glass rounded-2xl p-2.5 text-center border border-rose-900/40 shadow-sm">
                             <span id="timer-days" class="block text-xl font-bold text-rose-200 font-mono">00</span>
@@ -146,7 +169,7 @@
                 </div>
             </div>
 
-            <!-- Daily Question Prompt with Midnight Auto-Rotation -->
+            <!-- Daily Question Prompt with Synchronized Cloud Rotation -->
             <div class="dark-glass animate-border-pulse rounded-3xl p-6 shadow-xl relative overflow-hidden space-y-4">
                 <div class="flex items-center justify-between pb-3 border-b border-rose-900/30">
                     <div class="flex items-center space-x-2">
@@ -155,14 +178,14 @@
                         </div>
                         <div>
                             <h2 class="text-white text-base font-semibold">Daily Connection Prompts</h2>
-                            <p class="text-pink-300/70 text-xs">New question every midnight</p>
+                            <p class="text-pink-300/70 text-xs">Synchronized midnight prompt</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-slate-950/80 rounded-2xl p-4 border border-rose-900/30">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-rose-400">Today's Question</span>
-                    <p id="current-question" class="text-slate-200 text-sm italic font-medium leading-relaxed mt-1"></p>
+                    <p id="current-question" class="text-slate-200 text-sm italic font-medium leading-relaxed mt-1">Loading connection prompt...</p>
                 </div>
 
                 <div class="space-y-3">
@@ -188,7 +211,7 @@
                                 <div class="w-7 h-7 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mb-1">
                                     <i class="fa-solid fa-lock text-xs"></i>
                                 </div>
-                                <p class="text-[11px] text-slate-300 font-medium">Locked until you submit your answer above!</p>
+                                <p id="partner-lock-caption" class="text-[11px] text-slate-300 font-medium">Locked until you submit your answer above!</p>
                             </div>
                         </div>
                         <div id="partner-answer-unlocked" class="hidden bg-rose-950/20 border border-rose-500/30 rounded-xl p-3 text-slate-200 text-sm">
@@ -205,7 +228,7 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-xl font-bold text-white tracking-tight">Our Wishlist & Scrapbook</h2>
-                    <p class="text-xs text-pink-300/70">Sorted chronologically by date</p>
+                    <p class="text-xs text-pink-300/70">Synced in real-time across both devices</p>
                 </div>
                 <button onclick="openAddItemModal()" class="px-3.5 py-2 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-500/30 flex items-center space-x-1.5 transition">
                     <i class="fa-solid fa-plus"></i>
@@ -214,10 +237,10 @@
             </div>
 
             <div class="flex space-x-2 overflow-x-auto hide-scrollbar pb-1">
-                <button onclick="filterWishlist('all')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-rose-500 text-white shadow-sm transition">All Entries</button>
-                <button onclick="filterWishlist('date')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition"><i class="fa-solid fa-utensils text-rose-400 mr-1.5"></i> Date Ideas</button>
-                <button onclick="filterWishlist('travel')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition"><i class="fa-solid fa-plane text-sky-400 mr-1.5"></i> Travel Goals</button>
-                <button onclick="filterWishlist('memory')" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition"><i class="fa-solid fa-heart text-amber-400 mr-1.5"></i> Memories</button>
+                <button onclick="filterWishlist('all')" id="filter-all" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-rose-500 text-white shadow-sm transition">All Entries</button>
+                <button onclick="filterWishlist('date')" id="filter-date" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition"><i class="fa-solid fa-utensils text-rose-400 mr-1.5"></i> Date Ideas</button>
+                <button onclick="filterWishlist('travel')" id="filter-travel" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition"><i class="fa-solid fa-plane text-sky-400 mr-1.5"></i> Travel Goals</button>
+                <button onclick="filterWishlist('memory')" id="filter-memory" class="wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900/80 text-pink-200 hover:text-white border border-rose-900/30 transition"><i class="fa-solid fa-heart text-amber-400 mr-1.5"></i> Memories</button>
             </div>
 
             <div id="wishlist-items-container" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
@@ -227,7 +250,7 @@
         <section id="tab-3" class="tab-content hidden space-y-6">
             <div class="text-center space-y-1">
                 <h2 class="text-xl font-bold text-white tracking-tight">Ambient Touch Lamp</h2>
-                <p class="text-xs text-pink-300/70">Select how you feel and tap to send your mood instantly</p>
+                <p class="text-xs text-pink-300/70">Select your mood and tap to light up both screens instantly</p>
             </div>
 
             <div class="py-6 flex flex-col items-center justify-center relative">
@@ -244,21 +267,21 @@
                 <div class="mt-7 w-full max-w-xs dark-glass animate-border-pulse p-3 rounded-2xl shadow-xl space-y-2">
                     <p class="text-[11px] text-pink-200/80 text-center font-medium">Choose current emotion glow:</p>
                     <div class="grid grid-cols-4 gap-2">
-                        <button onclick="setLampColor('blue')" id="color-btn-blue" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border-2 border-blue-500 transition-all">
+                        <button onclick="setLampColor('blue', true)" id="color-btn-blue" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border-2 border-blue-500 transition-all">
                             <span class="w-4 h-4 rounded-full bg-blue-500 mb-1"></span>
                             <span class="text-[10px] font-medium text-slate-300">Missing</span>
                         </button>
-                        <button onclick="setLampColor('red')" id="color-btn-red" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
+                        <button onclick="setLampColor('red', true)" id="color-btn-red" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
                             <span class="w-4 h-4 rounded-full bg-red-500 mb-1"></span>
                             <span class="text-[10px] font-medium text-slate-400">Sad</span>
                         </button>
-                        <button onclick="setLampColor('green')" id="color-btn-green" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
+                        <button onclick="setLampColor('green', true)" id="color-btn-green" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
                             <span class="w-4 h-4 rounded-full bg-emerald-500 mb-1"></span>
-                            <span class="text-[10px] font-medium text-slate-400">Enthusiastic</span>
+                            <span class="text-[10px] font-medium text-slate-400">Happy</span>
                         </button>
-                        <button onclick="setLampColor('purple')" id="color-btn-purple" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
+                        <button onclick="setLampColor('purple', true)" id="color-btn-purple" class="color-select-btn flex flex-col items-center p-2 rounded-xl bg-slate-950 border border-rose-900/30 transition-all hover:bg-slate-800">
                             <span class="w-4 h-4 rounded-full bg-purple-500 mb-1"></span>
-                            <span class="text-[10px] font-medium text-slate-400">Passionate</span>
+                            <span class="text-[10px] font-medium text-slate-400">Love</span>
                         </button>
                     </div>
                 </div>
@@ -340,6 +363,7 @@
     </nav>
 
     <!-- ================= MODALS ================= -->
+    <!-- Edit Card Modal -->
     <div id="card-edit-modal" class="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center">
@@ -374,7 +398,7 @@
                     <label class="w-full py-2.5 rounded-xl border border-dashed border-slate-700 hover:border-rose-400 bg-slate-950/60 flex items-center justify-center space-x-2 text-xs text-slate-300 cursor-pointer transition">
                         <i class="fa-solid fa-camera text-rose-400"></i>
                         <span>Upload / Replace Image</span>
-                        <input type="file" accept="image/*" class="hidden" onchange="handleModalPhotoUpload(event)">
+                        <input type="file" accept="image/*" class="hidden" onchange="handleModalPhotoUpload(event, 'edit')">
                     </label>
                     <div id="edit-photo-preview" class="mt-2 text-[10px] text-pink-300/80 italic"></div>
                 </div>
@@ -394,7 +418,7 @@
 
     <!-- Add Item Modal -->
     <div id="add-item-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+        <div class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center">
                 <h3 class="text-base font-bold text-white"><i class="fa-solid fa-plus-circle text-rose-400 mr-2"></i> New Future Memory / Idea</h3>
                 <button onclick="closeAddItemModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -417,6 +441,15 @@
                     <input id="item-date" type="date" class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
                 </div>
                 <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Optional Photo</label>
+                    <label class="w-full py-2.5 rounded-xl border border-dashed border-slate-700 hover:border-rose-400 bg-slate-950/60 flex items-center justify-center space-x-2 text-xs text-slate-300 cursor-pointer transition">
+                        <i class="fa-solid fa-camera text-rose-400"></i>
+                        <span>Upload Image</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="handleModalPhotoUpload(event, 'add')">
+                    </label>
+                    <div id="add-photo-preview" class="mt-2 text-[10px] text-pink-300/80 italic"></div>
+                </div>
+                <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Notes / Description</label>
                     <textarea id="item-description" rows="2" placeholder="Special details..." class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500 resize-none"></textarea>
                 </div>
@@ -427,23 +460,87 @@
         </div>
     </div>
 
+    <!-- Edit Reunion Modal -->
+    <div id="reunion-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-sm w-full shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="text-base font-bold text-white"><i class="fa-solid fa-clock text-rose-400 mr-2"></i> Update Reunion Time</h3>
+                <button onclick="closeEditReunionModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="saveReunionDate(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Reunion Date & Time</label>
+                    <input id="reunion-datetime-input" type="datetime-local" required class="w-full bg-slate-800 text-slate-100 text-xs rounded-xl p-3 border border-slate-700 focus:outline-none focus:border-rose-500">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl text-xs font-semibold shadow-lg shadow-rose-500/30 transition">Save Date</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Privacy / Firebase Diagnostics Modal -->
     <div id="privacy-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="dark-glass animate-border-pulse rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <div class="flex justify-between items-center">
-                <h3 class="text-base font-bold text-white"><i class="fa-solid fa-shield-halved text-emerald-400 mr-2"></i> Firebase Realtime Cloud Sync</h3>
+                <h3 class="text-base font-bold text-white"><i class="fa-solid fa-shield-halved text-emerald-400 mr-2"></i> Firebase Realtime Sync Status</h3>
                 <button onclick="togglePrivacyModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <p id="firebase-diag-text" class="text-xs text-slate-300 bg-slate-950 p-3 rounded-xl">Checking connection...</p>
-            <button onclick="togglePrivacyModal()" class="w-full py-2.5 bg-slate-800 text-white rounded-xl text-xs">Close</button>
+            <div class="space-y-2">
+                <div id="firebase-diag-status" class="text-xs text-slate-300 bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+                    <p><span class="font-semibold text-rose-300">Connection:</span> <span id="diag-conn-text">Checking...</span></p>
+                    <p><span class="font-semibold text-rose-300">Database:</span> sync-1b23b-default-rtdb</p>
+                    <p><span class="font-semibold text-rose-300">Last Synced:</span> <span id="diag-last-sync">Never</span></p>
+                </div>
+                <div id="firebase-rules-alert" class="hidden text-[11px] text-amber-200 bg-amber-950/60 p-3 rounded-xl border border-amber-600/40">
+                    <p class="font-bold mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Firebase Rules Warning:</p>
+                    <span>If updates do not save, make sure your Firebase Realtime Database Rules allow read/write in Firebase Console:</span>
+                    <pre class="mt-1 bg-black/40 p-1.5 rounded text-[10px] text-amber-300 font-mono">{ "rules": { ".read": true, ".write": true } }</pre>
+                </div>
+            </div>
+            <div class="flex space-x-2">
+                <button onclick="testFirebaseConnection()" class="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl text-xs font-semibold transition">Test Ping Cloud</button>
+                <button onclick="togglePrivacyModal()" class="flex-1 py-2 bg-slate-800 text-slate-200 hover:bg-slate-700 rounded-xl text-xs transition">Close</button>
+            </div>
         </div>
     </div>
 
     <!-- ================= SCRIPT & FIREBASE INTEGRATION ================= -->
     <script>
+        let deferredPWAInstallPrompt = null;
+
+        // Register Service Worker and Catch Android Install Event
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed: ', err));
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker registered with scope: ', reg.scope))
+                    .catch(err => console.log('SW registration error: ', err));
             });
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPWAInstallPrompt = e;
+            const installBtn = document.getElementById('android-install-btn');
+            if (installBtn) installBtn.classList.remove('hidden');
+        });
+
+        window.addEventListener('appinstalled', () => {
+            deferredPWAInstallPrompt = null;
+            const installBtn = document.getElementById('android-install-btn');
+            if (installBtn) installBtn.classList.add('hidden');
+            showToast("Sync app installed successfully!");
+        });
+
+        function triggerPWAInstall() {
+            if (deferredPWAInstallPrompt) {
+                deferredPWAInstallPrompt.prompt();
+                deferredPWAInstallPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted PWA installation');
+                    }
+                    deferredPWAInstallPrompt = null;
+                    document.getElementById('android-install-btn')?.classList.add('hidden');
+                });
+            }
         }
 
         const firebaseConfig = {
@@ -457,13 +554,16 @@
         };
 
         let db = null;
+        let isFirebaseOnline = false;
+        let isInitialCloudLoaded = false;
+
         try {
             if (typeof firebase !== 'undefined') {
                 firebase.initializeApp(firebaseConfig);
                 db = firebase.database();
             }
         } catch (e) {
-            console.warn("Firebase init warning:", e);
+            console.warn("Firebase initialization notice:", e);
         }
 
         const DAILY_QUESTIONS_POOL = [
@@ -476,10 +576,12 @@
             "What is something small I did recently that made you feel loved?"
         ];
 
-        const DEFAULT_APP_STATE = {
+        // Central State
+        let APP_STATE = {
             targetReunionDate: "2026-11-12T16:30:00",
             activeTab: 1,
-            currentUserRole: 'me',
+            currentUserRole: localStorage.getItem('sync_device_user_role') || 'me',
+            currentFilter: 'all',
             sharedMemories: {
                 photo1: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1000&q=80',
                 photo2: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1000&q=80'
@@ -487,7 +589,7 @@
             activePhotoIndex: 1,
             lastQuestionDate: "",
             questionData: {
-                prompt: "",
+                prompt: DAILY_QUESTIONS_POOL[0],
                 husbandAnswer: "",
                 husbandSubmitted: false,
                 wifeAnswer: "",
@@ -500,117 +602,213 @@
             emotionsConfig: {
                 red: { name: 'Sad', hex: 'rgba(239, 68, 68, 0.5)', shadow: 'rgba(239, 68, 68, 0.3)', border: 'border-red-500', bgClass: 'bg-red-500' },
                 blue: { name: 'Missing You', hex: 'rgba(59, 130, 246, 0.5)', shadow: 'rgba(59, 130, 246, 0.3)', border: 'border-blue-500', bgClass: 'bg-blue-500' },
-                green: { name: 'Enthusiastic', hex: 'rgba(34, 197, 94, 0.5)', shadow: 'rgba(34, 197, 94, 0.3)', border: 'border-emerald-500', bgClass: 'bg-emerald-500' },
-                purple: { name: 'Passionate', hex: 'rgba(168, 85, 247, 0.5)', shadow: 'rgba(168, 85, 247, 0.3)', border: 'border-purple-500', bgClass: 'bg-purple-500' }
+                green: { name: 'Happy', hex: 'rgba(34, 197, 94, 0.5)', shadow: 'rgba(34, 197, 94, 0.3)', border: 'border-emerald-500', bgClass: 'bg-emerald-500' },
+                purple: { name: 'Love', hex: 'rgba(168, 85, 247, 0.5)', shadow: 'rgba(168, 85, 247, 0.3)', border: 'border-purple-500', bgClass: 'bg-purple-500' }
             },
             touchLogs: []
         };
 
-        let APP_STATE = JSON.parse(JSON.stringify(DEFAULT_APP_STATE));
-        let tempEditImage = '';
+        let tempModalImage = '';
+
+        function normalizeArray(data) {
+            if (!data) return [];
+            if (Array.isArray(data)) return data.filter(item => item !== null && item !== undefined);
+            if (typeof data === 'object') return Object.values(data).filter(item => item !== null && item !== undefined);
+            return [];
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
-            checkDailyQuestionRotation();
-            loadCloudData();
+            loadLocalCache();
+            renderAllUI();
             startCountdownTimer();
             startPhotoCrossFadeLoop();
-            setLampColor(APP_STATE.lampColor || 'blue');
+            initFirebaseSync();
         });
 
-        function checkDailyQuestionRotation() {
-            const todayStr = new Date().toDateString();
-            if (APP_STATE.lastQuestionDate !== todayStr) {
-                APP_STATE.lastQuestionDate = todayStr;
-                const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % DAILY_QUESTIONS_POOL.length;
-                APP_STATE.questionData.prompt = DAILY_QUESTIONS_POOL[dayIndex];
-                APP_STATE.questionData.husbandAnswer = "";
-                APP_STATE.questionData.husbandSubmitted = false;
-                APP_STATE.questionData.wifeAnswer = "";
-                APP_STATE.questionData.wifeSubmitted = false;
-                saveCloudData();
+        function showToast(msg) {
+            const toast = document.getElementById('toast-message');
+            if (!toast) return;
+            toast.innerText = msg;
+            toast.classList.remove('hidden');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.classList.add('hidden'), 300);
+            }, 2500);
+        }
+
+        function loadLocalCache() {
+            try {
+                const cached = localStorage.getItem('heart_sync_cache');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    mergeRemoteData(parsed, false);
+                }
+            } catch (e) {
+                console.warn("Local cache read error", e);
             }
         }
 
-        function mergeRemoteState(remote) {
+        function saveLocalCache() {
+            try {
+                localStorage.setItem('heart_sync_cache', JSON.stringify({
+                    targetReunionDate: APP_STATE.targetReunionDate,
+                    sharedMemories: APP_STATE.sharedMemories,
+                    lastQuestionDate: APP_STATE.lastQuestionDate,
+                    questionData: APP_STATE.questionData,
+                    wishlist: APP_STATE.wishlist,
+                    lampColor: APP_STATE.lampColor,
+                    touchLogs: APP_STATE.touchLogs
+                }));
+            } catch (e) {}
+        }
+
+        function initFirebaseSync() {
+            if (!db) {
+                updateConnectionBadge(false, "Offline (No DB)");
+                return;
+            }
+
+            db.ref('.info/connected').on('value', (snap) => {
+                isFirebaseOnline = snap.val() === true;
+                updateConnectionBadge(isFirebaseOnline, isFirebaseOnline ? "Live Sync" : "Connecting");
+            });
+
+            db.ref('sync_hub_state').on('value', (snapshot) => {
+                const cloudVal = snapshot.val();
+                const diagLast = document.getElementById('diag-last-sync');
+                if (diagLast) diagLast.innerText = new Date().toLocaleTimeString();
+
+                if (!cloudVal) {
+                    if (!isInitialCloudLoaded) {
+                        isInitialCloudLoaded = true;
+                        seedInitialCloudData();
+                    }
+                    return;
+                }
+
+                isInitialCloudLoaded = true;
+                mergeRemoteData(cloudVal, true);
+                saveLocalCache();
+                renderAllUI();
+            }, (error) => {
+                console.error("Firebase read error:", error);
+                document.getElementById('firebase-rules-alert')?.classList.remove('hidden');
+                updateConnectionBadge(false, "Rule Error");
+                showToast("Firebase Permission Error: Check Rules");
+            });
+        }
+
+        function seedInitialCloudData() {
+            const todayStr = new Date().toDateString();
+            const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % DAILY_QUESTIONS_POOL.length;
+            APP_STATE.lastQuestionDate = todayStr;
+            APP_STATE.questionData.prompt = DAILY_QUESTIONS_POOL[dayIndex];
+            
+            db.ref('sync_hub_state').set({
+                targetReunionDate: APP_STATE.targetReunionDate,
+                sharedMemories: APP_STATE.sharedMemories,
+                lastQuestionDate: todayStr,
+                questionData: APP_STATE.questionData,
+                wishlist: APP_STATE.wishlist,
+                lampColor: APP_STATE.lampColor,
+                touchLogs: APP_STATE.touchLogs
+            }).catch(err => {
+                console.error("Cloud seed error:", err);
+                document.getElementById('firebase-rules-alert')?.classList.remove('hidden');
+            });
+        }
+
+        function mergeRemoteData(remote, fromCloud = false) {
             if (!remote) return;
+
+            if (remote.targetReunionDate) APP_STATE.targetReunionDate = remote.targetReunionDate;
+
             if (remote.sharedMemories) {
                 if (remote.sharedMemories.photo1) APP_STATE.sharedMemories.photo1 = remote.sharedMemories.photo1;
                 if (remote.sharedMemories.photo2) APP_STATE.sharedMemories.photo2 = remote.sharedMemories.photo2;
             }
-            if (remote.lastQuestionDate) APP_STATE.lastQuestionDate = remote.lastQuestionDate;
-            if (remote.questionData) {
-                if (remote.questionData.prompt) APP_STATE.questionData.prompt = remote.questionData.prompt;
-                if (remote.questionData.husbandAnswer !== undefined) APP_STATE.questionData.husbandAnswer = remote.questionData.husbandAnswer;
-                if (remote.questionData.husbandSubmitted !== undefined) APP_STATE.questionData.husbandSubmitted = remote.questionData.husbandSubmitted;
-                if (remote.questionData.wifeAnswer !== undefined) APP_STATE.questionData.wifeAnswer = remote.questionData.wifeAnswer;
-                if (remote.questionData.wifeSubmitted !== undefined) APP_STATE.questionData.wifeSubmitted = remote.questionData.wifeSubmitted;
-            }
-            if (remote.wishlist && Array.isArray(remote.wishlist) && remote.wishlist.length > 0) {
-                APP_STATE.wishlist = remote.wishlist;
-            }
-            if (remote.touchLogs && Array.isArray(remote.touchLogs)) {
-                APP_STATE.touchLogs = remote.touchLogs;
-            }
-            if (remote.lampColor) APP_STATE.lampColor = remote.lampColor;
-        }
 
-        function saveCloudData() {
-            try {
-                localStorage.setItem('heart_sync_cache', JSON.stringify(APP_STATE));
-            } catch (e) {}
-
-            if (db) {
-                db.ref('sync_hub_state').set(APP_STATE).catch(err => {
-                    console.error("Firebase write error:", err);
-                });
+            if (remote.wishlist !== undefined) {
+                APP_STATE.wishlist = normalizeArray(remote.wishlist);
             }
-        }
 
-        function loadCloudData() {
-            try {
-                const cached = localStorage.getItem('heart_sync_cache');
-                if (cached) {
-                    mergeRemoteState(JSON.parse(cached));
+            if (remote.touchLogs !== undefined) {
+                APP_STATE.touchLogs = normalizeArray(remote.touchLogs);
+            }
+
+            if (remote.lampColor) {
+                APP_STATE.lampColor = remote.lampColor;
+            }
+
+            const todayStr = new Date().toDateString();
+            if (remote.lastQuestionDate && remote.lastQuestionDate === todayStr) {
+                APP_STATE.lastQuestionDate = remote.lastQuestionDate;
+                if (remote.questionData) {
+                    APP_STATE.questionData = {
+                        prompt: remote.questionData.prompt || DAILY_QUESTIONS_POOL[0],
+                        husbandAnswer: remote.questionData.husbandAnswer || "",
+                        husbandSubmitted: !!remote.questionData.husbandSubmitted,
+                        wifeAnswer: remote.questionData.wifeAnswer || "",
+                        wifeSubmitted: !!remote.questionData.wifeSubmitted
+                    };
                 }
-            } catch (e) {}
-
-            checkDailyQuestionRotation();
-            renderAllUI();
-
-            if (db) {
-                db.ref('sync_hub_state').on('value', (snapshot) => {
-                    const remote = snapshot.val();
-                    if (remote) {
-                        mergeRemoteState(remote);
-                        checkDailyQuestionRotation();
-                        renderAllUI();
-                    }
-                });
+            } else if (fromCloud && remote.lastQuestionDate && remote.lastQuestionDate !== todayStr) {
+                const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24)) % DAILY_QUESTIONS_POOL.length;
+                APP_STATE.lastQuestionDate = todayStr;
+                APP_STATE.questionData = {
+                    prompt: DAILY_QUESTIONS_POOL[dayIndex],
+                    husbandAnswer: "",
+                    husbandSubmitted: false,
+                    wifeAnswer: "",
+                    wifeSubmitted: false
+                };
+                if (db) {
+                    db.ref('sync_hub_state/lastQuestionDate').set(todayStr);
+                    db.ref('sync_hub_state/questionData').set(APP_STATE.questionData);
+                }
+            } else if (!remote.lastQuestionDate && remote.questionData) {
+                APP_STATE.questionData = remote.questionData;
             }
+        }
+
+        function updateConnectionBadge(connected, text) {
+            const dot = document.getElementById('cloud-status-dot');
+            const lbl = document.getElementById('cloud-status-label');
+            const diagText = document.getElementById('diag-conn-text');
+            if (dot) dot.className = `w-2 h-2 rounded-full ${connected ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`;
+            if (lbl) lbl.innerText = text;
+            if (diagText) diagText.innerText = connected ? 'Online & Synchronized' : text;
         }
 
         function renderAllUI() {
             renderSharedMemories();
-            renderWishlist();
+            renderWishlist(APP_STATE.currentFilter);
             renderTouchLogs();
             renderEmotionGraph();
             updateRolePermissionsUI();
             updateDailyQuestionUI();
+            setLampColor(APP_STATE.lampColor || 'blue', false);
+            updateReunionHeaderDisplay();
         }
 
         function switchTab(tabIndex) {
             APP_STATE.activeTab = tabIndex;
             [1, 2, 3].forEach(id => {
-                document.getElementById(`tab-${id}`).classList.toggle('hidden', id !== tabIndex);
-                document.getElementById(`nav-btn-${id}`).className = `nav-tab-btn flex flex-col items-center py-1.5 px-4 rounded-full transition-all duration-300 ${id === tabIndex ? 'nav-glow-pill text-rose-300 font-semibold' : 'text-slate-400 hover:text-rose-300'}`;
+                const el = document.getElementById(`tab-${id}`);
+                const btn = document.getElementById(`nav-btn-${id}`);
+                if (el) el.classList.toggle('hidden', id !== tabIndex);
+                if (btn) btn.className = `nav-tab-btn flex flex-col items-center py-1.5 px-4 rounded-full transition-all duration-300 ${id === tabIndex ? 'nav-glow-pill text-rose-300 font-semibold' : 'text-slate-400 hover:text-rose-300'}`;
             });
         }
 
         function handleRoleChange(event) {
             APP_STATE.currentUserRole = event.target.value;
-            saveCloudData();
+            localStorage.setItem('sync_device_user_role', APP_STATE.currentUserRole);
             updateRolePermissionsUI();
             updateDailyQuestionUI();
+            renderTouchLogs();
+            showToast(`Role set to ${APP_STATE.currentUserRole === 'me' ? 'Husband' : 'Wife'}`);
         }
 
         function updateRolePermissionsUI() {
@@ -619,18 +817,6 @@
 
             const badge = document.getElementById('role-indicator-badge');
             if (badge) badge.innerHTML = `<i class="fa-solid fa-user-check text-rose-400 mr-1"></i> Role: ${APP_STATE.currentUserRole === 'me' ? 'Me (Husband)' : 'Her (Wife)'}`;
-
-            const perm = document.getElementById('photo-permissions-container');
-            if (perm) {
-                const slot = APP_STATE.currentUserRole === 'me' ? 1 : 2;
-                perm.innerHTML = `
-                    <label class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-semibold rounded-lg cursor-pointer transition flex items-center space-x-1 shadow-md">
-                        <i class="fa-solid fa-camera"></i>
-                        <span>Edit Photo #${slot}</span>
-                        <input type="file" accept="image/*" class="hidden" onchange="compressAndUploadPhoto(event, ${slot})">
-                    </label>
-                `;
-            }
         }
 
         function submitYourAnswer() {
@@ -648,23 +834,21 @@
                 APP_STATE.questionData.wifeSubmitted = true;
             }
 
-            try {
-                localStorage.setItem('heart_sync_cache', JSON.stringify(APP_STATE));
-            } catch(e) {}
+            saveLocalCache();
+            updateDailyQuestionUI();
 
             if (db) {
                 const updates = {};
-                if (isHusband) {
-                    updates['sync_hub_state/questionData/husbandAnswer'] = val;
-                    updates['sync_hub_state/questionData/husbandSubmitted'] = true;
-                } else {
-                    updates['sync_hub_state/questionData/wifeAnswer'] = val;
-                    updates['sync_hub_state/questionData/wifeSubmitted'] = true;
-                }
-                db.ref().update(updates).catch(err => console.error("Firebase update error:", err));
+                updates[`sync_hub_state/questionData/${isHusband ? 'husbandAnswer' : 'wifeAnswer'}`] = val;
+                updates[`sync_hub_state/questionData/${isHusband ? 'husbandSubmitted' : 'wifeSubmitted'}`] = true;
+                
+                db.ref().update(updates).then(() => {
+                    showToast("Answer locked and synced!");
+                }).catch(err => {
+                    console.error("Answer update error:", err);
+                    showToast("Error saving to cloud");
+                });
             }
-
-            updateDailyQuestionUI();
         }
 
         function updateDailyQuestionUI() {
@@ -693,11 +877,7 @@
             const lockedContainer = document.getElementById('partner-answer-locked');
             const unlockedContainer = document.getElementById('partner-answer-unlocked');
             const partnerText = document.getElementById('partner-submitted-text');
-
-            if (inputContainer && !mySubmitted) {
-                const txtArea = document.getElementById('your-answer-input');
-                if (txtArea && txtArea.value === '') txtArea.value = myAnswer;
-            }
+            const lockCaption = document.getElementById('partner-lock-caption');
 
             if (mySubmitted) {
                 if (inputContainer) inputContainer.classList.add('hidden');
@@ -715,30 +895,46 @@
             } else {
                 if (lockedContainer) lockedContainer.classList.remove('hidden');
                 if (unlockedContainer) unlockedContainer.classList.add('hidden');
+                if (lockCaption) {
+                    lockCaption.innerText = !mySubmitted 
+                        ? "Locked until you submit your answer above!" 
+                        : "Waiting for partner to submit their answer...";
+                }
             }
         }
 
         function compressAndUploadPhoto(event, slot) {
             const file = event.target.files[0];
             if (!file) return;
+
+            showToast(`Uploading Photo #${slot}...`);
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800;
+                    const MAX_WIDTH = 700;
                     const scaleSize = MAX_WIDTH / img.width;
                     canvas.width = MAX_WIDTH;
                     canvas.height = img.height * scaleSize;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
-                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.65);
                     if (slot === 1) APP_STATE.sharedMemories.photo1 = compressedDataUrl;
                     else APP_STATE.sharedMemories.photo2 = compressedDataUrl;
                     
-                    saveCloudData();
+                    saveLocalCache();
                     renderSharedMemories();
+
+                    if (db) {
+                        db.ref(`sync_hub_state/sharedMemories/photo${slot}`).set(compressedDataUrl).then(() => {
+                            showToast(`Photo #${slot} synced to cloud!`);
+                        }).catch(err => {
+                            console.error("Photo write error:", err);
+                            showToast("Failed to sync photo to cloud");
+                        });
+                    }
                 };
                 img.src = e.target.result;
             };
@@ -748,8 +944,8 @@
         function renderSharedMemories() {
             const p1 = document.getElementById('memory-photo-1');
             const p2 = document.getElementById('memory-photo-2');
-            if (p1) p1.src = APP_STATE.sharedMemories.photo1;
-            if (p2) p2.src = APP_STATE.sharedMemories.photo2;
+            if (p1 && APP_STATE.sharedMemories.photo1) p1.src = APP_STATE.sharedMemories.photo1;
+            if (p2 && APP_STATE.sharedMemories.photo2) p2.src = APP_STATE.sharedMemories.photo2;
         }
 
         function startPhotoCrossFadeLoop() {
@@ -773,15 +969,31 @@
             }, 6000);
         }
 
+        function updateReunionHeaderDisplay() {
+            const sub = document.getElementById('countdown-subtext');
+            if (sub && APP_STATE.targetReunionDate) {
+                const d = new Date(APP_STATE.targetReunionDate);
+                if (!isNaN(d.getTime())) {
+                    sub.innerText = `Counting down until ${d.toLocaleDateString([], { month: 'short', day: 'numeric' })}, ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}...`;
+                }
+            }
+        }
+
         function startCountdownTimer() {
             setInterval(() => {
                 const target = new Date(APP_STATE.targetReunionDate);
                 const diff = target - new Date();
-                if (diff <= 0) return;
                 const dEl = document.getElementById('timer-days');
                 const hEl = document.getElementById('timer-hours');
                 const mEl = document.getElementById('timer-minutes');
                 const sEl = document.getElementById('timer-seconds');
+                if (diff <= 0) {
+                    if (dEl) dEl.innerText = "00";
+                    if (hEl) hEl.innerText = "00";
+                    if (mEl) mEl.innerText = "00";
+                    if (sEl) sEl.innerText = "00";
+                    return;
+                }
                 if (dEl) dEl.innerText = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
                 if (hEl) hEl.innerText = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
                 if (mEl) mEl.innerText = String(Math.floor((diff / (1000 * 60)) % 60)).padStart(2, '0');
@@ -789,13 +1001,52 @@
             }, 1000);
         }
 
+        function openEditReunionModal() {
+            const input = document.getElementById('reunion-datetime-input');
+            if (input && APP_STATE.targetReunionDate) {
+                input.value = APP_STATE.targetReunionDate.substring(0, 16);
+            }
+            document.getElementById('reunion-modal')?.classList.remove('hidden');
+        }
+
+        function closeEditReunionModal() {
+            document.getElementById('reunion-modal')?.classList.add('hidden');
+        }
+
+        function saveReunionDate(e) {
+            e.preventDefault();
+            const val = document.getElementById('reunion-datetime-input').value;
+            if (val) {
+                APP_STATE.targetReunionDate = val;
+                saveLocalCache();
+                updateReunionHeaderDisplay();
+                if (db) {
+                    db.ref('sync_hub_state/targetReunionDate').set(val).then(() => {
+                        showToast("Reunion countdown updated!");
+                    });
+                }
+                closeEditReunionModal();
+            }
+        }
+
         function toggleCardFlip(cardEl) {
             cardEl.classList.toggle('flipped');
         }
 
-        function renderWishlist(cat = 'all') {
+        function filterWishlist(cat) {
+            APP_STATE.currentFilter = cat;
+            document.querySelectorAll('.wishlist-filter-btn').forEach(btn => {
+                btn.className = "wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition";
+            });
+            const activeBtn = document.getElementById(`filter-${cat}`);
+            if (activeBtn) activeBtn.className = "wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-rose-500 text-white shadow-sm transition";
+            renderWishlist(cat);
+        }
+
+        function renderWishlist(cat = APP_STATE.currentFilter) {
             const container = document.getElementById('wishlist-items-container');
             if (!container) return;
+
             let items = [...APP_STATE.wishlist];
             if (cat !== 'all') items = items.filter(i => i.category === cat);
 
@@ -805,6 +1056,11 @@
                 if (!b.date) return -1;
                 return new Date(a.date) - new Date(b.date);
             });
+
+            if (items.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 col-span-full text-center py-8">No memories or goals added yet.</p>';
+                return;
+            }
 
             container.innerHTML = items.map(item => {
                 let catIcon = 'fa-heart text-amber-400';
@@ -820,14 +1076,14 @@
                                     <i class="fa-solid ${catIcon} text-xs"></i>
                                     ${item.favorite ? '<i class="fa-solid fa-star text-amber-400 text-[10px]"></i>' : ''}
                                 </div>
-                                <div class="relative z-10 my-auto text-center">
+                                <div class="relative z-10 my-auto text-center px-1">
                                     <h3 class="text-xs font-semibold text-white leading-tight line-clamp-2">${item.title}</h3>
                                 </div>
                                 <div class="relative z-10 flex justify-between items-center text-[9px] text-pink-300/70 border-t border-rose-900/30 pt-1.5">
-                                    <button onclick="event.stopPropagation(); openEditModal(${item.id});" class="text-rose-400 hover:text-white p-1 rounded-md bg-slate-900/80 border border-rose-900/40 transition">
+                                    <button onclick="event.stopPropagation(); openEditModal('${item.id}');" class="text-rose-400 hover:text-white p-1 rounded-md bg-slate-900/80 border border-rose-900/40 transition">
                                         <i class="fa-solid fa-pencil text-[10px]"></i>
                                     </button>
-                                    <span>${item.date || 'No date'}</span>
+                                    <span>${item.date || 'Unscheduled'}</span>
                                 </div>
                             </div>
                             <div class="flip-card-back dark-glass p-3.5 border border-rose-400/50 shadow-xl flex flex-col justify-between overflow-hidden bg-slate-950/95">
@@ -836,7 +1092,7 @@
                                     <span class="text-[9px] text-pink-300/60"><i class="fa-solid fa-rotate-left mr-1"></i> Flip</span>
                                 </div>
                                 <div class="my-auto overflow-y-auto max-h-24 hide-scrollbar py-1">
-                                    <p class="autoscale-text text-slate-200 font-medium">${item.desc || 'No description provided yet. Click the pencil icon to edit.'}</p>
+                                    <p class="autoscale-text text-slate-200 font-medium">${item.desc || 'No description provided yet.'}</p>
                                 </div>
                                 <div class="text-[9px] text-slate-400 text-center border-t border-rose-900/40 pt-1 font-mono">
                                     ${item.date ? item.date : 'Unscheduled'}
@@ -845,104 +1101,136 @@
                         </div>
                     </div>
                 `;
-            }).join('') || '<p class="text-xs text-slate-400 col-span-full text-center">No entries yet.</p>';
+            }).join('');
         }
 
-        function openEditModal(id) {
-            const item = APP_STATE.wishlist.find(i => i.id === id);
-            if (!item) return;
-            document.getElementById('edit-item-id').value = item.id;
-            document.getElementById('edit-item-category').value = item.category;
-            document.getElementById('edit-item-title').value = item.title;
-            document.getElementById('edit-item-date').value = item.date || '';
-            document.getElementById('edit-item-description').value = item.desc || '';
-            tempEditImage = item.image || '';
-            document.getElementById('card-edit-modal').classList.remove('hidden');
-        }
-
-        function closeEditModal() { document.getElementById('card-edit-modal').classList.add('hidden'); }
-
-        function handleModalPhotoUpload(event) {
+        function handleModalPhotoUpload(event, type) {
             const file = event.target.files[0];
             if (!file) return;
+            const previewEl = document.getElementById(`${type}-photo-preview`);
+            if (previewEl) previewEl.innerText = "Processing image...";
+
             const reader = new FileReader();
             reader.onload = function(e) {
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 600;
+                    const MAX_WIDTH = 500;
                     const scaleSize = MAX_WIDTH / img.width;
                     canvas.width = MAX_WIDTH;
                     canvas.height = img.height * scaleSize;
-                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                    tempEditImage = canvas.toDataURL('image/jpeg', 0.7);
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    tempModalImage = canvas.toDataURL('image/jpeg', 0.65);
+                    if (previewEl) previewEl.innerText = "Image attached successfully!";
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
 
+        function openAddItemModal() {
+            tempModalImage = '';
+            const preview = document.getElementById('add-photo-preview');
+            if (preview) preview.innerText = '';
+            document.getElementById('add-item-modal')?.classList.remove('hidden');
+        }
+
+        function closeAddItemModal() {
+            document.getElementById('add-item-modal')?.classList.add('hidden');
+        }
+
+        function saveWishlistItem(e) {
+            e.preventDefault();
+            const titleInput = document.getElementById('item-title');
+            if (!titleInput || !titleInput.value.trim()) return;
+
+            const newItem = {
+                id: Date.now().toString(),
+                category: document.getElementById('item-category').value,
+                title: titleInput.value.trim(),
+                date: document.getElementById('item-date').value,
+                desc: document.getElementById('item-description').value.trim(),
+                completed: false,
+                favorite: false,
+                image: tempModalImage || ''
+            };
+
+            APP_STATE.wishlist.unshift(newItem);
+            saveLocalCache();
+            renderWishlist();
+            closeAddItemModal();
+            document.getElementById('add-item-form').reset();
+            tempModalImage = '';
+
+            if (db) {
+                db.ref('sync_hub_state/wishlist').set(APP_STATE.wishlist).then(() => {
+                    showToast("Card saved & synced!");
+                }).catch(err => console.error("Wishlist cloud sync error:", err));
+            }
+        }
+
+        function openEditModal(id) {
+            const item = APP_STATE.wishlist.find(i => String(i.id) === String(id));
+            if (!item) return;
+
+            document.getElementById('edit-item-id').value = item.id;
+            document.getElementById('edit-item-category').value = item.category;
+            document.getElementById('edit-item-title').value = item.title;
+            document.getElementById('edit-item-date').value = item.date || '';
+            document.getElementById('edit-item-description').value = item.desc || '';
+            tempModalImage = item.image || '';
+            
+            const preview = document.getElementById('edit-photo-preview');
+            if (preview) preview.innerText = item.image ? "Current image attached" : "No image";
+
+            document.getElementById('card-edit-modal')?.classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('card-edit-modal')?.classList.add('hidden');
+        }
+
         function saveCardEdits(e) {
             e.preventDefault();
-            const id = parseInt(document.getElementById('edit-item-id').value);
-            const item = APP_STATE.wishlist.find(i => i.id === id);
+            const id = document.getElementById('edit-item-id').value;
+            const item = APP_STATE.wishlist.find(i => String(i.id) === String(id));
             if (item) {
                 item.category = document.getElementById('edit-item-category').value;
                 item.title = document.getElementById('edit-item-title').value.trim();
                 item.date = document.getElementById('edit-item-date').value;
                 item.desc = document.getElementById('edit-item-description').value.trim();
-                if (tempEditImage) item.image = tempEditImage;
-                saveCloudData();
+                if (tempModalImage) item.image = tempModalImage;
+
+                saveLocalCache();
                 renderWishlist();
                 closeEditModal();
+
+                if (db) {
+                    db.ref('sync_hub_state/wishlist').set(APP_STATE.wishlist).then(() => {
+                        showToast("Changes synced to cloud!");
+                    }).catch(err => console.error("Cloud edit error:", err));
+                }
             }
         }
 
         function deleteCurrentEditCard() {
-            const id = parseInt(document.getElementById('edit-item-id').value);
-            APP_STATE.wishlist = APP_STATE.wishlist.filter(i => i.id !== id);
-            saveCloudData();
+            const id = document.getElementById('edit-item-id').value;
+            APP_STATE.wishlist = APP_STATE.wishlist.filter(i => String(i.id) !== String(id));
+            saveLocalCache();
             renderWishlist();
             closeEditModal();
-        }
 
-        function filterWishlist(cat) {
-            document.querySelectorAll('.wishlist-filter-btn').forEach(btn => {
-                btn.className = "wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-slate-900 text-slate-400 hover:text-white border border-slate-800 transition";
-            });
-            event.currentTarget.className = "wishlist-filter-btn px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap bg-rose-500 text-white shadow-sm transition";
-            renderWishlist(cat);
-        }
-
-        function openAddItemModal() { document.getElementById('add-item-modal').classList.remove('hidden'); }
-        function closeAddItemModal() { document.getElementById('add-item-modal').classList.add('hidden'); }
-
-        function saveWishlistItem(e) {
-            e.preventDefault();
-            const titleInput = document.getElementById('item-title');
-            if (!titleInput) return;
-            const title = titleInput.value.trim();
-            if (title) {
-                APP_STATE.wishlist.unshift({
-                    id: Date.now(),
-                    category: document.getElementById('item-category').value,
-                    title: title,
-                    date: document.getElementById('item-date').value,
-                    desc: document.getElementById('item-description').value.trim(),
-                    completed: false,
-                    favorite: false,
-                    image: ''
-                });
-                saveCloudData();
-                renderWishlist();
-                closeAddItemModal();
-                document.getElementById('add-item-form').reset();
+            if (db) {
+                db.ref('sync_hub_state/wishlist').set(APP_STATE.wishlist).then(() => {
+                    showToast("Card removed!");
+                }).catch(err => console.error("Cloud delete error:", err));
             }
         }
 
-        function setLampColor(color) {
+        function setLampColor(color, persistCloud = false) {
             APP_STATE.lampColor = color;
-            const emotion = APP_STATE.emotionsConfig[color];
+            const emotion = APP_STATE.emotionsConfig[color] || APP_STATE.emotionsConfig.blue;
             const aura = document.getElementById('lamp-aura');
             const button = document.getElementById('touch-lamp-button');
             const badge = document.getElementById('lamp-emotion-badge');
@@ -956,36 +1244,68 @@
             if (aura) aura.style.backgroundColor = emotion.hex;
             if (button) button.className = `relative z-10 w-48 h-48 rounded-full bg-slate-900/90 border-2 ${emotion.border} flex flex-col items-center justify-center shadow-[0_0_40px_${emotion.shadow}] transition-all duration-300 active:scale-95 group focus:outline-none`;
             if (badge) badge.innerText = emotion.name;
+
+            if (persistCloud && db) {
+                db.ref('sync_hub_state/lampColor').set(color);
+            }
         }
 
         function triggerLampTouch() {
             if ("vibrate" in navigator) navigator.vibrate([120, 60, 120]);
             const now = new Date();
             const timeFormatted = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const emotion = APP_STATE.emotionsConfig[APP_STATE.lampColor];
-            const senderRole = APP_STATE.currentUserRole === 'me' ? 'you' : 'partner';
-            const senderLabel = APP_STATE.currentUserRole === 'me' ? 'You' : 'Partner';
+            const emotion = APP_STATE.emotionsConfig[APP_STATE.lampColor] || APP_STATE.emotionsConfig.blue;
+            const isMe = APP_STATE.currentUserRole === 'me';
             
             const newLog = {
-                sender: senderRole,
+                id: Date.now().toString(),
+                sender: isMe ? 'husband' : 'wife',
                 time: timeFormatted,
-                message: `${senderLabel} sent a "${emotion.name}" pulse`,
+                emotionName: emotion.name,
                 color: APP_STATE.lampColor,
                 hour: now.getHours()
             };
 
             APP_STATE.touchLogs.unshift(newLog);
+            if (APP_STATE.touchLogs.length > 50) APP_STATE.touchLogs.pop();
 
-            try {
-                localStorage.setItem('heart_sync_cache', JSON.stringify(APP_STATE));
-            } catch(e) {}
-
-            if (db) {
-                db.ref('sync_hub_state/touchLogs').set(APP_STATE.touchLogs).catch(err => console.error("Firebase update error:", err));
-            }
-
+            saveLocalCache();
             renderTouchLogs();
             renderEmotionGraph();
+            showToast(`Sent ${emotion.name} pulse!`);
+
+            if (db) {
+                db.ref('sync_hub_state/lampColor').set(APP_STATE.lampColor);
+                db.ref('sync_hub_state/touchLogs').set(APP_STATE.touchLogs);
+            }
+        }
+
+        function renderTouchLogs() {
+            const logs = document.getElementById('touch-logs-list');
+            if (!logs) return;
+
+            const isMe = APP_STATE.currentUserRole === 'me';
+
+            if (APP_STATE.touchLogs.length === 0) {
+                logs.innerHTML = '<p class="text-[11px] text-slate-500 text-center py-3">No pulses recorded yet today. Tap the lamp above!</p>';
+                return;
+            }
+
+            logs.innerHTML = APP_STATE.touchLogs.slice(0, 15).map(l => {
+                const youSent = (isMe && l.sender === 'husband') || (!isMe && l.sender === 'wife');
+                const label = youSent ? 'You' : (l.sender === 'husband' ? 'Husband' : 'Wife');
+                const cfg = APP_STATE.emotionsConfig[l.color] || APP_STATE.emotionsConfig.blue;
+
+                return `
+                    <div class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs text-slate-200">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2 h-2 rounded-full ${cfg.bgClass}"></span>
+                            <span><strong class="${youSent ? 'text-rose-300' : 'text-pink-300'}">${label}</strong> sent a "${l.emotionName || 'Warm'}" glow</span>
+                        </div>
+                        <span class="text-[10px] text-rose-300/80 font-mono">${l.time}</span>
+                    </div>
+                `;
+            }).join('');
         }
 
         function renderEmotionGraph() {
@@ -994,10 +1314,11 @@
             if (!husbandContainer || !wifeContainer) return;
 
             const timeBlocks = Array.from({ length: 12 }, () => ({ husbandLogs: [], wifeLogs: [] }));
+            
             APP_STATE.touchLogs.forEach(log => {
                 const hour = log.hour !== undefined ? log.hour : 12;
                 const blockIdx = Math.min(11, Math.floor(hour / 2));
-                if (log.sender === 'you') timeBlocks[blockIdx].husbandLogs.push(log);
+                if (log.sender === 'husband') timeBlocks[blockIdx].husbandLogs.push(log);
                 else timeBlocks[blockIdx].wifeLogs.push(log);
             });
 
@@ -1005,31 +1326,34 @@
                 if (block.husbandLogs.length === 0) return `<div class="h-full flex-1 bg-slate-950/40 rounded-sm"></div>`;
                 const latest = block.husbandLogs[0];
                 const cfg = APP_STATE.emotionsConfig[latest.color] || APP_STATE.emotionsConfig.blue;
-                return `<div title="${latest.message}" class="h-full flex-1 ${cfg.bgClass} rounded-sm"></div>`;
+                return `<div title="Husband: ${latest.emotionName || 'Glow'}" class="h-full flex-1 ${cfg.bgClass} rounded-sm shadow-sm"></div>`;
             }).join('');
 
             wifeContainer.innerHTML = timeBlocks.map(block => {
                 if (block.wifeLogs.length === 0) return `<div class="h-full flex-1 bg-slate-950/40 rounded-sm"></div>`;
                 const latest = block.wifeLogs[0];
                 const cfg = APP_STATE.emotionsConfig[latest.color] || APP_STATE.emotionsConfig.blue;
-                return `<div title="${latest.message}" class="h-full flex-1 ${cfg.bgClass} rounded-sm"></div>`;
+                return `<div title="Wife: ${latest.emotionName || 'Glow'}" class="h-full flex-1 ${cfg.bgClass} rounded-sm shadow-sm"></div>`;
             }).join('');
         }
 
-        function renderTouchLogs() {
-            const logs = document.getElementById('touch-logs-list');
-            if (logs) {
-                logs.innerHTML = APP_STATE.touchLogs.map(l => `
-                    <div class="flex items-center justify-between bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs text-slate-200">
-                        <span>${l.message}</span>
-                        <span class="text-[10px] text-rose-300/80 font-mono">${l.time}</span>
-                    </div>
-                `).join('');
-            }
+        function togglePrivacyModal() {
+            document.getElementById('privacy-modal')?.classList.toggle('hidden');
         }
 
-        function togglePrivacyModal() {
-            document.getElementById('privacy-modal').classList.toggle('hidden');
+        function testFirebaseConnection() {
+            if (!db) {
+                alert("Firebase SDK not initialized");
+                return;
+            }
+            const pingTime = Date.now().toString();
+            db.ref('sync_hub_state/lastPing').set(pingTime).then(() => {
+                showToast("Connection test succeeded! Cloud write verified.");
+                document.getElementById('diag-conn-text').innerText = "Online & Verified (Write OK)";
+            }).catch(err => {
+                console.error("Test write failed:", err);
+                alert("Firebase write error: " + err.message + "\nPlease check that Realtime Database Rules allow read/write in Firebase console.");
+            });
         }
     </script>
 </body>
