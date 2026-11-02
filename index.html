@@ -9,10 +9,7 @@
     <meta name="application-name" content="Sync">
     <meta name="apple-mobile-web-app-title" content="Sync">
 
-    <!-- Dynamic Web App Manifest Link -->
     <link rel="manifest" href="manifest.json">
-
-    <!-- Custom 'SYNC' App Icons -->
     <link rel="icon" type="image/png" href="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=192&h=192&fit=crop">
     <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=192&h=192&fit=crop">
 
@@ -63,17 +60,13 @@
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .nav-glow-pill { background: linear-gradient(135deg, rgba(244, 114, 182, 0.25) 0%, rgba(225, 29, 72, 0.2) 100%); border: 1px solid rgba(244, 114, 182, 0.4); box-shadow: 0 0 15px rgba(244, 114, 182, 0.25); }
 
-        /* 3D Flip Card Styles */
         .flip-card { perspective: 1000px; }
         .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
         .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 1rem; }
         .flip-card-back { transform: rotateY(180deg); }
 
-        .autoscale-text {
-            font-size: clamp(9px, 2.5vw, 12px);
-            line-height: 1.35;
-        }
+        .autoscale-text { font-size: clamp(9px, 2.5vw, 12px); line-height: 1.35; }
     </style>
 </head>
 <body class="bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between selection:bg-rose-500 selection:text-white">
@@ -162,7 +155,7 @@
                         </div>
                         <div>
                             <h2 class="text-white text-base font-semibold">Daily Connection Prompts</h2>
-                            <p class="text-pink-300/70 text-xs">New romantic question every midnight</p>
+                            <p class="text-pink-300/70 text-xs">New question every midnight</p>
                         </div>
                     </div>
                 </div>
@@ -173,7 +166,6 @@
                 </div>
 
                 <div class="space-y-3">
-                    <!-- Your Answer Section -->
                     <div class="space-y-1.5">
                         <label id="your-answer-label" class="text-xs font-semibold text-slate-300">Your Answer (Me)</label>
                         <div id="your-answer-input-container">
@@ -186,7 +178,6 @@
                         </div>
                     </div>
 
-                    <!-- Partner's Answer Section -->
                     <div class="space-y-1.5 pt-2 border-t border-slate-800">
                         <label id="partner-answer-label" class="text-xs font-semibold text-slate-300">Partner's Answer</label>
                         <div id="partner-answer-locked" class="relative rounded-xl overflow-hidden bg-slate-950 p-4 border border-slate-800 text-center">
@@ -449,7 +440,6 @@
 
     <!-- ================= SCRIPT & FIREBASE INTEGRATION ================= -->
     <script>
-        // Register Service Worker for PWA Installation on Android
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW registration failed: ', err));
@@ -479,7 +469,7 @@
         const DAILY_QUESTIONS_POOL = [
             "What is a small detail about our last meeting you still think about?",
             "What song instantly reminds you of us when you hear it?",
-            "If we could teleport to anywhere right now for dinner, where would we go?",
+            "If we could teleport anywhere right now for dinner, where would we go?",
             "What is one thing you are most looking forward to doing together when we reunite?",
             "What was the funniest memory of us that made you smile this week?",
             "What is a cozy future habit you can't wait for us to establish?",
@@ -647,16 +637,33 @@
             const input = document.getElementById('your-answer-input');
             if (!input || !input.value.trim()) return;
 
-            const q = APP_STATE.questionData;
-            if (APP_STATE.currentUserRole === 'me') {
-                q.husbandAnswer = input.value.trim();
-                q.husbandSubmitted = true;
+            const isHusband = APP_STATE.currentUserRole === 'me';
+            const val = input.value.trim();
+
+            if (isHusband) {
+                APP_STATE.questionData.husbandAnswer = val;
+                APP_STATE.questionData.husbandSubmitted = true;
             } else {
-                q.wifeAnswer = input.value.trim();
-                q.wifeSubmitted = true;
+                APP_STATE.questionData.wifeAnswer = val;
+                APP_STATE.questionData.wifeSubmitted = true;
             }
 
-            saveCloudData();
+            try {
+                localStorage.setItem('heart_sync_cache', JSON.stringify(APP_STATE));
+            } catch(e) {}
+
+            if (db) {
+                const updates = {};
+                if (isHusband) {
+                    updates['sync_hub_state/questionData/husbandAnswer'] = val;
+                    updates['sync_hub_state/questionData/husbandSubmitted'] = true;
+                } else {
+                    updates['sync_hub_state/questionData/wifeAnswer'] = val;
+                    updates['sync_hub_state/questionData/wifeSubmitted'] = true;
+                }
+                db.ref().update(updates).catch(err => console.error("Firebase update error:", err));
+            }
+
             updateDailyQuestionUI();
         }
 
@@ -959,15 +966,24 @@
             const senderRole = APP_STATE.currentUserRole === 'me' ? 'you' : 'partner';
             const senderLabel = APP_STATE.currentUserRole === 'me' ? 'You' : 'Partner';
             
-            APP_STATE.touchLogs.unshift({
+            const newLog = {
                 sender: senderRole,
                 time: timeFormatted,
                 message: `${senderLabel} sent a "${emotion.name}" pulse`,
                 color: APP_STATE.lampColor,
                 hour: now.getHours()
-            });
+            };
 
-            saveCloudData();
+            APP_STATE.touchLogs.unshift(newLog);
+
+            try {
+                localStorage.setItem('heart_sync_cache', JSON.stringify(APP_STATE));
+            } catch(e) {}
+
+            if (db) {
+                db.ref('sync_hub_state/touchLogs').set(APP_STATE.touchLogs).catch(err => console.error("Firebase update error:", err));
+            }
+
             renderTouchLogs();
             renderEmotionGraph();
         }
